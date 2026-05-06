@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Circuit Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div id="toolbar">
+  <button data-tool="node">● Node</button>
+  <button data-tool="resistor">⏤/\/\/\⏤ Resistor</button>
+  <button data-tool="capacitor">⏤||⏤ Capacitor</button>
+  <button data-tool="inductor">⏤⥮⥮⏤ Inductor</button>
+  <button data-tool="voltage">⏤| |⏤ Voltage Source</button>
+  <button data-tool="current">⏤→⏤ Current Source</button>
+  <button data-tool="wire">─┐ Wire</button>
+  <button data-tool="ground">⏚ Ground</button>
+  <button data-tool="rotate">⟳ Rotate</button>
+  <button data-tool="edit">✎ Edit</button>
+  <button data-tool="solve">Start DC Simulation</button>
+  <button data-tool="delete">🗑 Delete</button>
+</div>
+
+
+  <canvas id="circuitCanvas" width="1000" height="600"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
