@@ -24,6 +24,24 @@ body {
   background: #666;
 }
 
+#toolbar button.selected {
+  background: #0d7cff;
+  color: white;
+  box-shadow: 0 0 0 2px rgba(13, 124, 255, 0.3);
+}
+
+#toolbar button.start {
+  background: #28a745;
+  color: white;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+}
+
+#toolbar button.stop {
+  background: #dc3545;
+  color: white;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+}
+
 canvas {
   background: white;
   border-top: 2px solid #222;

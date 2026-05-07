@@ -14,13 +14,25 @@ let wireDraft = null;
 let animPhase = 0;
 let animating = false;
 
+let nodeVoltages = null;
+let groundNodeId = null;
+
 const NODE_RADIUS = 6;
+const GRID_SIZE = 40;
 
 // ---------------------- TOOLBAR ----------------------
 
-document.querySelectorAll("#toolbar button").forEach(btn => {
+const toolbarButtons = document.querySelectorAll("#toolbar button");
+toolbarButtons.forEach(btn => {
   btn.onclick = () => {
-    tool = btn.dataset.tool;
+    const clickedTool = btn.dataset.tool;
+    if (tool === clickedTool) {
+      tool = null;
+      btn.classList.remove("selected");
+    } else {
+      tool = clickedTool;
+      toolbarButtons.forEach(b => b.classList.toggle("selected", b === btn));
+    }
     selectedNode = null;
     wireDraft = null;
   };
@@ -64,29 +76,7 @@ canvas.addEventListener("mousedown", e => {
   // EDIT TOOL
   if (tool === "edit") {
     const comp = findNearestComponent(x, y);
-    if (comp) {
-      if (comp.type === "resistor") {
-        const newVal = prompt("Enter resistance (ohms):", comp.value);
-        if (newVal !== null) comp.value = parseFloat(newVal);
-      }
-      if (comp.type === "capacitor") {
-        const newVal = prompt("Enter capacitance (farads):", comp.value);
-        if (newVal !== null) comp.value = parseFloat(newVal);
-      }
-      if (comp.type === "inductor") {
-        const newVal = prompt("Enter inductance (henrys):", comp.value);
-        if (newVal !== null) comp.value = parseFloat(newVal);
-      }
-      if (comp.type === "voltage") {
-        const newVal = prompt("Enter voltage (V):", comp.value);
-        if (newVal !== null) comp.value = parseFloat(newVal);
-      }
-      if (comp.type === "current") {
-        const newVal = prompt("Enter current (A):", comp.value);
-        if (newVal !== null) comp.value = parseFloat(newVal);
-      }
-      draw();
-    }
+    editComponent(comp);
     return;
   }
 
@@ -96,7 +86,7 @@ canvas.addEventListener("mousedown", e => {
       draggingNode = node;
       isDragging = true;
     } else {
-      nodes.push({ id: nodes.length, x, y });
+      nodes.push({ id: nodes.length, x: snapToGrid(x), y: snapToGrid(y) });
       draw();
     }
     return;
@@ -241,8 +231,8 @@ canvas.addEventListener("mousemove", e => {
   hoverNode = findNearestNode(x, y, 10);
 
   if (isDragging && draggingNode) {
-    draggingNode.x = x;
-    draggingNode.y = y;
+    draggingNode.x = snapToGrid(x);
+    draggingNode.y = snapToGrid(y);
     draw();
   }
 });
@@ -252,28 +242,63 @@ canvas.addEventListener("mouseup", () => {
   isDragging = false;
 });
 
+canvas.addEventListener("dblclick", e => {
+  const {x, y} = getMouse(e);
+  const comp = findNearestComponent(x, y);
+  editComponent(comp);
+});
+
 // ---------------------- SOLVE BUTTON ----------------------
 
-document.querySelector('[data-tool="solve"]').onclick = () => {
+const solveButton = document.querySelector('[data-tool="solve"]');
+solveButton.classList.add("start");
+solveButton.onclick = () => {
   if (animating) {
     animating = false;
-    document.querySelector('[data-tool="solve"]').textContent = "Start DC Simulation";
+    solveButton.textContent = "Start DC Simulation";
+    solveButton.classList.remove("stop");
+    solveButton.classList.add("start");
   } else {
     if (nodes.length === 0) return;
 
     const V = solveDC(nodes, components);
+    nodeVoltages = V.slice(0, nodes.length);
     const sourceCurrents = V.slice(nodes.length);
     const voltageSources = components.filter(c => c.type === "voltage");
     voltageSources.forEach((vs, i) => vs.current = sourceCurrents[i]);
-    computeCurrents(components, V.slice(0, nodes.length));
+    computeCurrents(components, nodeVoltages);
+    
+    // Find ground node reference
+    const ground = components.find(c => c.type === "ground");
+    groundNodeId = ground ? ground.n1 : 0;
+    
     draw();
 
     animating = true;
-    document.querySelector('[data-tool="solve"]').textContent = "Stop Simulation";
+    solveButton.textContent = "Stop Simulation";
+    solveButton.classList.remove("start");
+    solveButton.classList.add("stop");
   }
 };
 
 // ---------------------- HELPERS ----------------------
+
+// Calculate optimal text offset to avoid overlap with component graphics
+function getOptimalTextOffset(componentType) {
+  const offsets = {
+    'resistor': 50,      // zigzag extends ~12px perpendicular
+    'capacitor': 50,     // plates extend ~8px perpendicular
+    'inductor': 55,      // coils extend ~15px perpendicular
+    'voltage': 50,       // circle radius 12px
+    'current': 50,       // circle radius 12px
+    'wire': 40           // minimal width
+  };
+  return offsets[componentType] || 40;
+}
+
+function snapToGrid(value) {
+  return Math.round(value / GRID_SIZE) * GRID_SIZE;
+}
 
 function getMouse(e) {
   const rect = canvas.getBoundingClientRect();
@@ -282,6 +307,30 @@ function getMouse(e) {
 
 function findNearestNode(x, y, r) {
   return nodes.find(n => Math.hypot(n.x - x, n.y - y) < r);
+}
+
+function getComponentLabelPosition(c) {
+  const n1 = nodes[c.n1];
+  const n2 = nodes[c.n2];
+  if (!n1 || !n2) return null;
+
+  const mx = (n1.x + n2.x) / 2;
+  const my = (n1.y + n2.y) / 2;
+  const dx = n2.x - n1.x;
+  const dy = n2.y - n1.y;
+  const L = Math.hypot(dx, dy);
+  if (L === 0) return { x: mx, y: my };
+
+  const ux = dx / L;
+  const uy = dy / L;
+  const px = -uy;
+  const py = ux;
+  const offset = getOptimalTextOffset(c.type);
+
+  return {
+    x: mx + px * offset,
+    y: my + py * offset
+  };
 }
 
 function findNearestComponent(x, y) {
@@ -294,13 +343,49 @@ function findNearestComponent(x, y) {
     if (!n1 || !n2) return;
 
     const dist = distanceToLineSegment(x, y, n1.x, n1.y, n2.x, n2.y);
-    if (dist < bestDist && dist < 10) {
+    if (dist < bestDist && dist < 20) {
       bestDist = dist;
       best = c;
+    }
+
+    const labelPos = getComponentLabelPosition(c);
+    if (labelPos) {
+      const labelDist = Math.hypot(x - labelPos.x, y - labelPos.y);
+      if (labelDist < 30 && labelDist < bestDist) {
+        bestDist = labelDist;
+        best = c;
+      }
     }
   });
 
   return best;
+}
+
+function editComponent(comp) {
+  if (!comp) return;
+
+  if (comp.type === "resistor") {
+    const newVal = prompt("Enter resistance (ohms):", comp.value);
+    if (newVal !== null) comp.value = parseFloat(newVal);
+  }
+  if (comp.type === "capacitor") {
+    const newVal = prompt("Enter capacitance (farads):", comp.value);
+    if (newVal !== null) comp.value = parseFloat(newVal);
+  }
+  if (comp.type === "inductor") {
+    const newVal = prompt("Enter inductance (henrys):", comp.value);
+    if (newVal !== null) comp.value = parseFloat(newVal);
+  }
+  if (comp.type === "voltage") {
+    const newVal = prompt("Enter voltage (V):", comp.value);
+    if (newVal !== null) comp.value = parseFloat(newVal);
+  }
+  if (comp.type === "current") {
+    const newVal = prompt("Enter current (A):", comp.value);
+    if (newVal !== null) comp.value = parseFloat(newVal);
+  }
+
+  draw();
 }
 
 function distanceToLineSegment(px, py, x1, y1, x2, y2) {
@@ -319,6 +404,7 @@ function distanceToLineSegment(px, py, x1, y1, x2, y2) {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGrid();
 
   components.forEach(c => {
     const n1 = nodes[c.n1];
@@ -335,19 +421,19 @@ function draw() {
       drawWire(n1, n2, c.current);
     }
     if (c.type === "resistor") {
-      drawResistor(n1, n2, `R=${c.value}Ω`, c.current, c.rotation);
+      drawResistor(n1, n2, `R=${c.value}Ω`, c.current, c.voltageDrop, c.rotation);
     }
     if (c.type === "capacitor") {
-      drawCapacitor(n1, n2, `C=${c.value}F`, c.current, c.rotation);
+      drawCapacitor(n1, n2, `C=${c.value}F`, c.current, c.voltageDrop, c.rotation);
     }
     if (c.type === "inductor") {
-      drawInductor(n1, n2, `L=${c.value}H`, c.current, c.rotation);
+      drawInductor(n1, n2, `L=${c.value}H`, c.current, c.voltageDrop, c.rotation);
     }
     if (c.type === "voltage") {
-      drawVoltageSource(n1, n2, `${c.value}V, ${c.current ? c.current.toFixed(3) : 0}A`, c.rotation);
+      drawVoltageSource(n1, n2, c.value, c.current, c.voltageDrop, c.rotation);
     }
     if (c.type === "current") {
-      drawCurrentSource(n1, n2, `${c.value}A, ${c.voltageDrop ? c.voltageDrop.toFixed(3) : 0}V`, c.rotation, c.value);
+      drawCurrentSource(n1, n2, c.value, c.voltageDrop, c.rotation);
     }
   });
 
@@ -360,6 +446,36 @@ function drawNode(n) {
   ctx.fillStyle = hoverNode === n ? "orange" : "black";
   ctx.fill();
   ctx.fillText("N" + n.id, n.x + 8, n.y - 8);
+  
+  // Display node voltage if simulation has been run
+  if (nodeVoltages && nodeVoltages[n.id] !== undefined) {
+    ctx.fillStyle = "blue";
+    ctx.font = "11px Arial";
+    const voltageText = nodeVoltages[n.id].toFixed(2) + "V";
+    ctx.fillText(voltageText, n.x + 8, n.y + 8);
+  }
+}
+
+function drawGrid() {
+  ctx.save();
+  ctx.strokeStyle = "#e0e0e0";
+  ctx.lineWidth = 1;
+
+  for (let x = 0; x <= canvas.width; x += GRID_SIZE) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+
+  for (let y = 0; y <= canvas.height; y += GRID_SIZE) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+
+  ctx.restore();
 }
 
 function drawWire(n1, n2, current) {
@@ -373,7 +489,7 @@ function drawWire(n1, n2, current) {
   drawCurrentDot(n1.x, n1.y, n2.x, n2.y, current);
 }
 
-function drawResistor(n1, n2, label, current, rotation) {
+function drawResistor(n1, n2, label, current, voltageDrop, rotation = 0) {
   const x1 = n1.x, y1 = n1.y;
   const x2 = n2.x, y2 = n2.y;
 
@@ -427,15 +543,21 @@ function drawResistor(n1, n2, label, current, rotation) {
 
   ctx.fillStyle = "black";
   ctx.font = "12px Arial";
-  ctx.fillText(label, mx + px * 40, my + py * 40);
+  const offset = getOptimalTextOffset('resistor');
+  const textX = mx + px * offset;
+  const textY = my + py * offset;
+  ctx.fillText(label, textX, textY);
   if (current != null) {
-    ctx.fillText(current.toFixed(3) + " A", mx + px * 40, my + py * 75);
+    ctx.fillText(current.toFixed(3) + " A", textX, textY + 16);
+  }
+  if (voltageDrop != null) {
+    ctx.fillText(voltageDrop.toFixed(2) + " V", textX, textY + 32);
   }
 
   drawCurrentDot(n1.x, n1.y, n2.x, n2.y, current);
 }
 
-function drawVoltageSource(n1, n2, label, rotation = 0) {
+function drawVoltageSource(n1, n2, voltage, current, voltageDrop, rotation = 0) {
   const x1 = n1.x, y1 = n1.y;
   const x2 = n2.x, y2 = n2.y;
 
@@ -474,17 +596,23 @@ function drawVoltageSource(n1, n2, label, rotation = 0) {
   const py = ux;
   ctx.fillStyle = "purple";
   ctx.font = "12px Arial";
-  ctx.fillText(label, mx + px * 40, my + py * 40);
+  const offset = getOptimalTextOffset('voltage');
+  const textX = mx + px * offset;
+  const textY = my + py * offset;
+  ctx.fillText(voltage + "V", textX, textY);
+  if (current != null) {
+    ctx.fillText(current.toFixed(3) + " A", textX, textY + 16);
+  }
 
   // Draw polarity
-  const offset = 15;
+  const polarityOffset = 15;
   ctx.fillStyle = "purple";
   ctx.font = "12px Arial";
-  ctx.fillText("+", n1.x - ux * offset, n1.y - uy * offset);
-  ctx.fillText("-", n2.x + ux * offset, n2.y + uy * offset);
+  ctx.fillText("+", n1.x - ux * polarityOffset, n1.y - uy * polarityOffset);
+  ctx.fillText("-", n2.x + ux * polarityOffset, n2.y + uy * polarityOffset);
 }
 
-function drawCurrentSource(n1, n2, label, rotation = 0, currentValue) {
+function drawCurrentSource(n1, n2, current, voltage, rotation = 0) {
   const x1 = n1.x, y1 = n1.y;
   const x2 = n2.x, y2 = n2.y;
 
@@ -535,12 +663,18 @@ function drawCurrentSource(n1, n2, label, rotation = 0, currentValue) {
   const py = ux;
   ctx.fillStyle = "green";
   ctx.font = "12px Arial";
-  ctx.fillText(label, mx + px * 40, my + py * 40);
+  const offset = getOptimalTextOffset('current');
+  const textX = mx + px * offset;
+  const textY = my + py * offset;
+  ctx.fillText(current + "A", textX, textY);
+  if (voltage != null) {
+    ctx.fillText(voltage.toFixed(3) + " V", textX, textY + 16);
+  }
 
-  drawCurrentDot(n1.x, n1.y, n2.x, n2.y, currentValue);
+  drawCurrentDot(n1.x, n1.y, n2.x, n2.y, current);
 }
 
-function drawCapacitor(n1, n2, label, current, rotation) {
+function drawCapacitor(n1, n2, label, current, voltageDrop, rotation = 0) {
   const x1 = n1.x, y1 = n1.y;
   const x2 = n2.x, y2 = n2.y;
 
@@ -611,15 +745,21 @@ function drawCapacitor(n1, n2, label, current, rotation) {
 
   ctx.fillStyle = "black";
   ctx.font = "12px Arial";
-  ctx.fillText(label, mx + px * 40, my + py * 40);
+  const offset = getOptimalTextOffset('capacitor');
+  const textX = mx + px * offset;
+  const textY = my + py * offset;
+  ctx.fillText(label, textX, textY);
   if (current != null) {
-    ctx.fillText(current.toFixed(3) + " A", mx + px * 40, my + py * 75);
+    ctx.fillText(current.toFixed(3) + " A", textX, textY + 16);
+  }
+  if (voltageDrop != null) {
+    ctx.fillText(voltageDrop.toFixed(2) + " V", textX, textY + 32);
   }
 
   drawCurrentDot(n1.x, n1.y, n2.x, n2.y, current);
 }
 
-function drawInductor(n1, n2, label, current, rotation) {
+function drawInductor(n1, n2, label, current, voltageDrop, rotation = 0) {
   const x1 = n1.x, y1 = n1.y;
   const x2 = n2.x, y2 = n2.y;
 
@@ -689,9 +829,15 @@ function drawInductor(n1, n2, label, current, rotation) {
 
   ctx.fillStyle = "black";
   ctx.font = "12px Arial";
-  ctx.fillText(label, mx + px * 40, my + py * 40);
+  const offset = getOptimalTextOffset('inductor');
+  const textX = mx + px * offset;
+  const textY = my + py * offset;
+  ctx.fillText(label, textX, textY);
   if (current != null) {
-    ctx.fillText(current.toFixed(3) + " A", mx + px * 40, my + py * 75);
+    ctx.fillText(current.toFixed(3) + " A", textX, textY + 16);
+  }
+  if (voltageDrop != null) {
+    ctx.fillText(voltageDrop.toFixed(2) + " V", textX, textY + 32);
   }
 
   drawCurrentDot(n1.x, n1.y, n2.x, n2.y, current);
@@ -795,9 +941,16 @@ function solveDC(nodes, components) {
     b[n2] += value;
   });
 
-  A[0].fill(0);
-  A[0][0] = 1;
-  b[0] = 0;
+  const ground = components.find(c => c.type === "ground");
+  if (ground && nodes[ground.n1]) {
+    A[ground.n1].fill(0);
+    A[ground.n1][ground.n1] = 1;
+    b[ground.n1] = 0;
+  } else {
+    A[0].fill(0);
+    A[0][0] = 1;
+    b[0] = 0;
+  }
 
   return gaussianSolve(A, b);
 }
@@ -833,14 +986,19 @@ function gaussianSolve(A, b) {
 
 function computeCurrents(components, V) {
   components.forEach(c => {
-    if (c.type === "resistor" || c.type === "inductor") {
+    if (c.type === "resistor" || c.type === "inductor" || c.type === "wire") {
       const R = c.value === 0 ? 1e-9 : c.value;
       c.current = (V[c.n1] - V[c.n2]) / R;
+      c.voltageDrop = V[c.n1] - V[c.n2];
     }
     if (c.type === "capacitor") {
       c.current = 0;
+      c.voltageDrop = V[c.n1] - V[c.n2];
     }
     if (c.type === "current") {
+      c.voltageDrop = V[c.n1] - V[c.n2];
+    }
+    if (c.type === "voltage") {
       c.voltageDrop = V[c.n1] - V[c.n2];
     }
   });
