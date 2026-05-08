@@ -1,0 +1,224 @@
+/* ======================================================
+   GLOBAL LAYOUT
+   ====================================================== */
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 10px;
+  background-color: #fafafa;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.container {
+  display: flex;
+  gap: 10px;
+}
+
+/* ======================================================
+   SIDEBAR
+   ====================================================== */
+
+.sidebar {
+  width: 280px;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.sidebar h3 {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 1em;
+}
+
+.sidebar button {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+/* ======================================================
+   CLASS CHECKBOX LIST
+   ====================================================== */
+
+.class-list {
+  max-height: 350px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 6px;
+  background-color: #fff;
+}
+
+.class-item {
+  display: block;
+  font-size: 0.9em;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+
+/* ======================================================
+   CONFLICT SIDEBAR
+   ====================================================== */
+
+#conflicts {
+  margin-top: 10px;
+  font-size: 0.85em;
+  line-height: 1.3em;
+}
+
+/* ======================================================
+   CALENDAR CONTAINER
+   ====================================================== */
+
+.calendar-container {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: #ffffff;
+}
+
+/* ======================================================
+   FULLCALENDAR BASELINE TWEAKS
+   ====================================================== */
+
+.fc {
+  font-size: 0.85em;
+}
+
+.fc-event {
+  z-index: 10; /* normal class events */
+}
+
+.fc-timegrid-event {
+  border-radius: 4px;
+}
+
+/* ======================================================
+   CONFLICT OVERLAYS — FOREGROUND FLASHING
+   ====================================================== */
+
+/* Pulse animation */
+@keyframes conflictPulse {
+  0%   { opacity: 0.25; }
+  50%  { opacity: 0.8; }
+  100% { opacity: 0.25; }
+}
+
+/*
+  IMPORTANT:
+  FullCalendar v6 paints visible content inside nested elements.
+  Using ::before ensures the overlay is ALWAYS visible
+  regardless of FC internal styles.
+*/
+
+.fc-event.conflict-overlay {
+  position: relative;
+  z-index: 9999 !important;
+  pointer-events: none; /* allow clicking through */
+}
+
+/* Actual visible flashing layer */
+.fc-event.conflict-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-color: red;
+  opacity: 0.4;
+
+  border: 2px solid red;
+  box-sizing: border-box;
+
+  animation: conflictPulse 1.2s infinite ease-in-out;
+
+  pointer-events: none;
+}
+
+/* ======================================================
+   ACCESSIBILITY — RESPECT REDUCED MOTION
+   ====================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .fc-event.conflict-overlay::before {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+/* ======================================================
+   PROGRAM / SEMESTER BUTTONS (ABOVE CALENDAR)
+   ====================================================== */
+.program-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: stretch;
+}
+
+.program-group {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  background: #fafafa;
+  min-width: 220px;
+  box-sizing: border-box;
+}
+
+.program-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 0.95em;
+}
+
+.program-semesters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.program-btn {
+  padding: 6px 8px;
+  font-size: 0.85em;
+  cursor: pointer;
+  border: 1px solid #bbb;
+  background: #fff;
+  border-radius: 4px;
+}
+
+.program-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: #f5f5f5;
+}
+
+.program-btn:hover:not(:disabled) {
+  background: #f0f6ff;
+}
+
+.program-btn.active {
+  background: #2b6cb0;
+  border-color: #2b6cb0;
+  color: #fff;
+}
+
+
+/* ======================================================
+   FOOTER DISCLAIMER (STICKY FOOTER)
+   ====================================================== */
+.disclaimer-footer {
+  margin-top: auto; /* pushes footer to bottom when content is short */
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  font-size: 0.85em;
+  color: #444;
+  text-align: center;
+  background: #fafafa;
+}
