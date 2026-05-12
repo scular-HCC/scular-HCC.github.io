@@ -1,8 +1,10 @@
 /*************************************************
- * HCC Weekly Schedule Planner (clean build)
+ * HCC Weekly Schedule Planner
  * - Tabs above calendar
  * - One calendar instance
  * - Templates loaded from templates.json
+ * - Calendar starts at 8:00 AM
+ * - Calendar header/title/date hidden
  *************************************************/
 
 /********************
@@ -49,6 +51,7 @@ const filterInput = document.getElementById("classFilter");
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".tab-btn");
   if (!btn) return;
+
   const tabId = btn.dataset.tab;
   if (!tabId) return;
 
@@ -99,7 +102,6 @@ loadProgramTemplates().catch(err => {
 
 /********************
  * TEMPLATE BUTTONS (Programs + Faculty)
- * - Enabled after schedule data is loaded
  ********************/
 const templateBtnEls = Array.from(document.querySelectorAll(".template-btn"));
 
@@ -117,14 +119,14 @@ function getTemplateCourses(kind, key1, key2) {
   }
 
   if (kind === "faculty") {
-    // Preferred: PROGRAM_TEMPLATES.Faculty[Topic][Fall|Spring]
+    // PROGRAM_TEMPLATES.Faculty[Topic][Fall|Spring]
     return (PROGRAM_TEMPLATES?.Faculty?.[key1]?.[key2]) || [];
   }
 
   return [];
 }
 
-// Delegated click handler
+// Delegated click handler for ALL template buttons
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".template-btn");
   if (!btn || btn.disabled) return;
@@ -157,7 +159,63 @@ document.addEventListener("click", (e) => {
     .forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
 
-  if (!optimizeBtn.disabled) optimizeBtn.click();
+  
+const runMode = btn.dataset.run || "optimize";
+
+if (runMode === "build") {
+  // Need schedule data loaded
+  if (!groupedClasses || Object.keys(groupedClasses).length === 0) {
+    alert("Load a schedule file first (CSV/XLSX).");
+    return;
+  }
+
+  // Select ALL sections that match the desired course prefixes
+  const desired = desiredClassesTextarea.value
+    .split("\n")
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const sectionsToSelect = new Set();
+
+  desired.forEach(coursePrefix => {
+    // Find every section that starts with "COURSE-XXX-"
+    Object.keys(groupedClasses).forEach(section => {
+      if (section.startsWith(coursePrefix + "-")) {
+        sectionsToSelect.add(section);
+      }
+    });
+  });
+
+  if (sectionsToSelect.size === 0) {
+    alert("No matching sections found for the selected template.");
+    return;
+  }
+
+  // Apply bulk selection to UI/state
+  selectedSections.clear();
+  sectionsToSelect.forEach(sec => selectedSections.add(sec));
+
+  // Re-render list so checkboxes reflect selection
+  const filterEl = document.getElementById("classFilter");
+  populateClassList(filterEl ? filterEl.value : "");
+
+  // Ensure checkboxes are checked
+  document.querySelectorAll('#classList input[type="checkbox"]').forEach(cb => {
+    cb.checked = selectedSections.has(cb.value);
+  });
+
+  // Enable buttons and build immediately
+  buildBtn.disabled = selectedSections.size === 0;
+  resetBtn.disabled = false;
+  loadnewBtn.disabled = false;
+
+  buildSchedule(Array.from(selectedSections));
+  return; // IMPORTANT: do not fall through to optimize
+}
+
+// Default behavior for all other templates:
+if (!optimizeBtn.disabled) optimizeBtn.click();
+
 });
 
 /********************
@@ -544,6 +602,15 @@ function renderCalendar(meetings, conflicts) {
     dayHeaderFormat: { weekday: "short" },
     initialDate: new Date(2024, 0, 1),
     timeZone: "local",
+
+    // Hide top title/date/header
+    headerToolbar: false,
+
+    // Start view at 8 AM
+    slotMinTime: "07:00:00",
+    scrollTime: "08:00:00",
+    slotMaxTime: "23:00:00",
+
     events: [...classEvents, ...conflictOverlays]
   });
 

@@ -48,19 +48,46 @@
     "4": ["CHEM-202", "CHEM-202L", "MATH-260", "PHYS-112", "PHYS-112L"]
   },
 
+  "All Engineering Courses": {
+    "1": ["ENES-100", "ENES-246", "ENES-222", "ENES-271", "ENES-140", "ENES-202", "ENES-120"],
+    "2": ["ENES-100", "ENES-205", "ENES-247", "ENES-171", "ENES-181", "ENES-200", "ENES-130"]
+    },
+
 
   "Faculty": {
     "EE": {  
     "Fall": ["ENES-100", "ENES-246", "ENES-222", "ENES-271"],
-    "Spring": ["ENES-100", "ENES-205", "ENES-247"]
+    "Spring": ["ENES-100", "ENES-205", "ENES-247", "ENES-171"]
     },
     "ME": {
-      "Fall":   ["ME-COURSE-1", "ME-COURSE-2"],
-      "Spring": ["ME-COURSE-3", "ME-COURSE-4"]
+      "Fall":   ["ENES-140", "ENES-100", "ENES-202", "ENES-120"],
+      "Spring": ["ENES-100", "ENES-181", "ENES-200", "ENES-130"]
     },
     "CivE": {
-      "Fall":   ["CIVE-COURSE-1", "CIVE-COURSE-2"],
-      "Spring": ["CIVE-COURSE-3", "CIVE-COURSE-4"]
+      "Fall":   ["ENES-100","CADD-101", "CADD-102","CADD-103", "CADD-109", "CADD-120", "CADD-121"],
+      "Spring": ["ENES-100", "CADD-100", "CADD-101", "CADD-103", "CADD-104", "CADD-105", "CADD-109", "CADD-120", "CADD-121", "CADD-125"]
+    },
+    
+    "Chemistry": {
+      "Fall": ["CHEM-101", "CHEM-101L", "CHEM-135", "CHEM-136", "CHEM-201", "CHEM-201L"],
+      "Spring": ["CHEM-101", "CHEM-101L", "CHEM-135", "CHEM-136", "CHEM-202", "CHEM-202L"]
+    },
+    
+    "Physics": {
+      "Fall": ["PHYS-110", "PHYS-110L", "PHYS-111", "PHYS-111L"],
+      "Spring": ["PHYS-110", "PHYS-110L", "PHYS-112", "PHYS-112L"]
+    },
+  
+    "Biology": {
+      "Fall": ["BIOL-120", "BIOL-121", "BIOL-201", "BIOL-201L"],
+      "Spring": ["BIOL-120", "BIOL-121", "BIOL-202", "BIOL-202L"]
+    },
+    
+    "Mathematics": {
+      "Fall": ["MATH-181", "MATH-182", "MATH-240", "MATH-260", "MATH-250"],
+      "Spring": ["MATH-181", "MATH-182", "MATH-240", "MATH-260", "MATH-250"]
     }
   }
+
+
 }

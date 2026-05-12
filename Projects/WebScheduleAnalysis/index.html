@@ -1,25 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <title>HCC Weekly Schedule Planner</title>
 
-  <!-- FullCalendar (global bundle) -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-
-  <!-- PapaParse (CSV Parsing) -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
-  <!-- PDF Export -->
   <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
-
-  <!-- XLSX Import -->
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 
-  <!-- App Styles -->
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Favicon -->
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
 </head>
 <body>
@@ -27,172 +17,189 @@
 
   <div class="container">
     <div class="sidebar">
-      <h3>Data Source</h3>
-      <label>
-        <input type="radio" name="dataMode" value="csv" checked />
+<h3>Data Source</h3>
+<label>
+<input checked="" name="dataMode" type="radio" value="csv"/>
         Schedule CSV (scraped)
-      </label><br />
-      <label>
-        <input type="radio" name="dataMode" value="xlsx" />
+      </label><br/>
+<label>
+<input name="dataMode" type="radio" value="xlsx"/>
         Enrollment Excel
       </label>
-
-      <hr />
-
-      <h3>Load File</h3>
-      <label>
+<hr/>
+<h3>Load File</h3>
+<label>
         Schedule CSV:
-        <input type="file" id="csvInput" accept=".csv" />
-      </label>
-      <label>
+        <input accept=".csv" id="csvInput" type="file"/>
+</label>
+<label>
         Enrollment Excel:
-        <input type="file" id="excelInput" accept=".xlsx,.xls" disabled />
-      </label>
-
-      <h3>Select Classes</h3>
-      <input
-        type="text"
-        id="classFilter"
-        placeholder="Filter by section (e.g. ENES, 100, -001)"
-        style="width:100%; margin-bottom:6px;"
-      />
-      <div id="classList" class="class-list"></div>
-
-      <button id="buildBtn" disabled>Build Schedule</button>
-      <button id="resetBtn" disabled>Reset/Clear</button>
-      <button id="pdfBtn" disabled>Export PDF</button>
-      <button id="loadnewBtn" disabled>Load New File</button>
-
-      <hr />
-
-      <h3>Desired Classes</h3>
-      <textarea id="desiredClasses" placeholder="Enter class names, one per line (e.g. ENES-100, MATH-101)" rows="4" style="width:100%;"></textarea>
-      <button id="optimizeBtn" disabled>Find Optimal Schedule</button>
-
-      <div id="conflicts"></div>
-    </div>
+        <input accept=".xlsx,.xls" disabled="" id="excelInput" type="file"/>
+</label>
+<h3>Select Classes</h3>
+<input id="classFilter" placeholder="Filter by section (e.g. ENES, 100, -001)" style="width:100%; margin-bottom:6px;" type="text"/>
+<div class="class-list" id="classList"></div>
+<button disabled="" id="buildBtn">Build Schedule</button>
+<button disabled="" id="resetBtn">Reset/Clear</button>
+<button disabled="" id="pdfBtn">Export PDF</button>
+<button disabled="" id="loadnewBtn">Load New File</button>
+<hr/>
+<h3>Desired Classes</h3>
+<textarea id="desiredClasses" placeholder="Enter class names, one per line (e.g. ENES-100, MATH-101)" rows="4" style="width:100%;"></textarea>
+<button disabled="" id="optimizeBtn">Find Optimal Schedule</button>
+<div id="conflicts"></div>
+</div>
 
     <div class="calendar-container">
-      <!-- Tabs (above calendar) -->
       <div class="tabs">
         <button type="button" class="tab-btn active" data-tab="tab-engineering">Engineering</button>
         <button type="button" class="tab-btn" data-tab="tab-chem">Chemistry</button>
         <button type="button" class="tab-btn" data-tab="tab-phys">Physics</button>
         <button type="button" class="tab-btn" data-tab="tab-bio">Biology</button>
+        <button type="button" class="tab-btn" data-tab="tab-math">Mathematics</button>
         <button type="button" class="tab-btn" data-tab="tab-faculty">Faculty</button>
       </div>
 
       <div class="tab-panels">
-        <!-- Engineering tab -->
         <div id="tab-engineering" class="tab-panel active">
-          <div id="programButtons" class="program-buttons">
-            <div class="program-group" data-program="Electrical">
-              <div class="program-title">Electrical</div>
-              <div class="program-semesters">
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Electrical" data-semester="1" disabled>Semester 1</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Electrical" data-semester="2" disabled>Semester 2</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Electrical" data-semester="3" disabled>Semester 3</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Electrical" data-semester="4" disabled>Semester 4</button>
-              </div>
-            </div>
-
-            <div class="program-group" data-program="Mechanical">
-              <div class="program-title">Mechanical</div>
-              <div class="program-semesters">
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Mechanical" data-semester="1" disabled>Semester 1</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Mechanical" data-semester="2" disabled>Semester 2</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Mechanical" data-semester="3" disabled>Semester 3</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Mechanical" data-semester="4" disabled>Semester 4</button>
-              </div>
-            </div>
-
-            <div class="program-group" data-program="Fire Protection">
-              <div class="program-title">Fire Protection</div>
-              <div class="program-semesters">
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Fire Protection" data-semester="1" disabled>Semester 1</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Fire Protection" data-semester="2" disabled>Semester 2</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Fire Protection" data-semester="3" disabled>Semester 3</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Fire Protection" data-semester="4" disabled>Semester 4</button>
-              </div>
-            </div>
-
-            <div class="program-group" data-program="Computer Eng">
-              <div class="program-title">Computer Eng</div>
-              <div class="program-semesters">
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Computer Eng" data-semester="1" disabled>Semester 1</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Computer Eng" data-semester="2" disabled>Semester 2</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Computer Eng" data-semester="3" disabled>Semester 3</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Computer Eng" data-semester="4" disabled>Semester 4</button>
-              </div>
-            </div>
-
-            <div class="program-group" data-program="Civil">
-              <div class="program-title">Civil</div>
-              <div class="program-semesters">
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Civil" data-semester="1" disabled>Semester 1</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Civil" data-semester="2" disabled>Semester 2</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Civil" data-semester="3" disabled>Semester 3</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Civil" data-semester="4" disabled>Semester 4</button>
-              </div>
-            </div>
-
-            <div class="program-group" data-program="Aerospace">
-              <div class="program-title">Aerospace</div>
-              <div class="program-semesters">
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Aerospace" data-semester="1" disabled>Semester 1</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Aerospace" data-semester="2" disabled>Semester 2</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Aerospace" data-semester="3" disabled>Semester 3</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Aerospace" data-semester="4" disabled>Semester 4</button>
-              </div>
-            </div>
-
-            <div class="program-group" data-program="Chem/Bio Eng">
-              <div class="program-title">Chem/Bio Eng</div>
-              <div class="program-semesters">
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Chem/Bio Eng" data-semester="1" disabled>Semester 1</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Chem/Bio Eng" data-semester="2" disabled>Semester 2</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Chem/Bio Eng" data-semester="3" disabled>Semester 3</button>
-                <button type="button" class="template-btn program-btn" data-template-kind="program" data-program="Chem/Bio Eng" data-semester="4" disabled>Semester 4</button>
-              </div>
-            </div>
-          </div>
+          <div class="program-buttons" id="programButtons">
+<div class="program-group" data-program="Electrical">
+<div class="program-title">Electrical</div>
+<div class="program-semesters">
+<button class="template-btn program-btn" data-program="Electrical" data-semester="1" data-template-kind="program" disabled="" type="button">Semester 1</button>
+<button class="template-btn program-btn" data-program="Electrical" data-semester="2" data-template-kind="program" disabled="" type="button">Semester 2</button>
+<button class="template-btn program-btn" data-program="Electrical" data-semester="3" data-template-kind="program" disabled="" type="button">Semester 3</button>
+<button class="template-btn program-btn" data-program="Electrical" data-semester="4" data-template-kind="program" disabled="" type="button">Semester 4</button>
+</div>
+</div>
+<div class="program-group" data-program="Mechanical">
+<div class="program-title">Mechanical</div>
+<div class="program-semesters">
+<button class="template-btn program-btn" data-program="Mechanical" data-semester="1" data-template-kind="program" disabled="" type="button">Semester 1</button>
+<button class="template-btn program-btn" data-program="Mechanical" data-semester="2" data-template-kind="program" disabled="" type="button">Semester 2</button>
+<button class="template-btn program-btn" data-program="Mechanical" data-semester="3" data-template-kind="program" disabled="" type="button">Semester 3</button>
+<button class="template-btn program-btn" data-program="Mechanical" data-semester="4" data-template-kind="program" disabled="" type="button">Semester 4</button>
+</div>
+</div>
+<div class="program-group" data-program="Fire Protection">
+<div class="program-title">Fire Protection</div>
+<div class="program-semesters">
+<button class="template-btn program-btn" data-program="Fire Protection" data-semester="1" data-template-kind="program" disabled="" type="button">Semester 1</button>
+<button class="template-btn program-btn" data-program="Fire Protection" data-semester="2" data-template-kind="program" disabled="" type="button">Semester 2</button>
+<button class="template-btn program-btn" data-program="Fire Protection" data-semester="3" data-template-kind="program" disabled="" type="button">Semester 3</button>
+<button class="template-btn program-btn" data-program="Fire Protection" data-semester="4" data-template-kind="program" disabled="" type="button">Semester 4</button>
+</div>
+</div>
+<div class="program-group" data-program="Computer Eng">
+<div class="program-title">Computer Eng</div>
+<div class="program-semesters">
+<button class="template-btn program-btn" data-program="Computer Eng" data-semester="1" data-template-kind="program" disabled="" type="button">Semester 1</button>
+<button class="template-btn program-btn" data-program="Computer Eng" data-semester="2" data-template-kind="program" disabled="" type="button">Semester 2</button>
+<button class="template-btn program-btn" data-program="Computer Eng" data-semester="3" data-template-kind="program" disabled="" type="button">Semester 3</button>
+<button class="template-btn program-btn" data-program="Computer Eng" data-semester="4" data-template-kind="program" disabled="" type="button">Semester 4</button>
+</div>
+</div>
+<div class="program-group" data-program="Civil">
+<div class="program-title">Civil</div>
+<div class="program-semesters">
+<button class="template-btn program-btn" data-program="Civil" data-semester="1" data-template-kind="program" disabled="" type="button">Semester 1</button>
+<button class="template-btn program-btn" data-program="Civil" data-semester="2" data-template-kind="program" disabled="" type="button">Semester 2</button>
+<button class="template-btn program-btn" data-program="Civil" data-semester="3" data-template-kind="program" disabled="" type="button">Semester 3</button>
+<button class="template-btn program-btn" data-program="Civil" data-semester="4" data-template-kind="program" disabled="" type="button">Semester 4</button>
+</div>
+</div>
+<div class="program-group" data-program="Aerospace">
+<div class="program-title">Aerospace</div>
+<div class="program-semesters">
+<button class="template-btn program-btn" data-program="Aerospace" data-semester="1" data-template-kind="program" disabled="" type="button">Semester 1</button>
+<button class="template-btn program-btn" data-program="Aerospace" data-semester="2" data-template-kind="program" disabled="" type="button">Semester 2</button>
+<button class="template-btn program-btn" data-program="Aerospace" data-semester="3" data-template-kind="program" disabled="" type="button">Semester 3</button>
+<button class="template-btn program-btn" data-program="Aerospace" data-semester="4" data-template-kind="program" disabled="" type="button">Semester 4</button>
+</div>
+</div>
+<div class="program-group" data-program="Chem/Bio Eng">
+<div class="program-title">Chem/Bio Eng</div>
+<div class="program-semesters">
+<button class="template-btn program-btn" data-program="Chem/Bio Eng" data-semester="1" data-template-kind="program" disabled="" type="button">Semester 1</button>
+<button class="template-btn program-btn" data-program="Chem/Bio Eng" data-semester="2" data-template-kind="program" disabled="" type="button">Semester 2</button>
+<button class="template-btn program-btn" data-program="Chem/Bio Eng" data-semester="3" data-template-kind="program" disabled="" type="button">Semester 3</button>
+<button class="template-btn program-btn" data-program="Chem/Bio Eng" data-semester="4" data-template-kind="program" disabled="" type="button">Semester 4</button>
+</div>
+</div>
+<div class="program-group" data-program="All Engineering Courses">
+<div class="program-title">All Engineering Courses</div>
+<div class="program-semesters">
+<button class="template-btn program-btn" data-program="All Engineering Courses" data-run="build" data-semester="1" data-skip-optimize="true" data-template-kind="program" disabled="" type="button">Semester 1</button>
+<button class="template-btn program-btn" data-program="All Engineering Courses" data-run="build" data-semester="2" data-skip-optimize="true" data-template-kind="program" disabled="" type="button">Semester 2</button>
+</div>
+</div>
+</div>
         </div>
 
-        <div id="tab-chem" class="tab-panel"><div class="tab-placeholder">Chemistry content goes here.</div></div>
-        <div id="tab-phys" class="tab-panel"><div class="tab-placeholder">Physics content goes here.</div></div>
-        <div id="tab-bio" class="tab-panel"><div class="tab-placeholder">Biology content goes here.</div></div>
+        <div id="tab-chem" class="tab-panel"><div class="faculty-grid">
+  <div class="faculty-card">
+    <div class="faculty-title">All</div>
+    <div class="faculty-actions">
+      <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="Chemistry" data-term="Fall" data-skip-optimize="true" data-run="build" disabled>Fall</button>
+      <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="Chemistry" data-term="Spring" data-skip-optimize="true" data-run="build" disabled>Spring</button>
+    </div>
+  </div>
+</div></div>
+        <div id="tab-phys" class="tab-panel"><div class="faculty-grid">
+  <div class="faculty-card">
+    <div class="faculty-title">All</div>
+    <div class="faculty-actions">
+      <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="Physics" data-term="Fall" data-skip-optimize="true" data-run="build" disabled>Fall</button>
+      <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="Physics" data-term="Spring" data-skip-optimize="true" data-run="build" disabled>Spring</button>
+    </div>
+  </div>
+</div></div>
+        <div id="tab-bio" class="tab-panel"><div class="faculty-grid">
+  <div class="faculty-card">
+    <div class="faculty-title">All</div>
+    <div class="faculty-actions">
+      <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="Biology" data-term="Fall" data-skip-optimize="true" data-run="build" disabled>Fall</button>
+      <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="Biology" data-term="Spring" data-skip-optimize="true" data-run="build" disabled>Spring</button>
+    </div>
+  </div>
+</div></div>
+        <div id="tab-math" class="tab-panel"><div class="faculty-grid">
+  <div class="faculty-card">
+    <div class="faculty-title">All</div>
+    <div class="faculty-actions">
+      <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="Mathematics" data-term="Fall" data-skip-optimize="true" data-run="build" disabled>Fall</button>
+      <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="Mathematics" data-term="Spring" data-skip-optimize="true" data-run="build" disabled>Spring</button>
+    </div>
+  </div>
+</div></div>
 
-        <!-- Faculty tab -->
         <div id="tab-faculty" class="tab-panel">
-          <div class="faculty-grid">
-            <div class="faculty-card">
-              <div class="faculty-title">EE</div>
-              <div class="faculty-actions">
-                <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="EE" data-term="Fall" disabled>Fall</button>
-                <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="EE" data-term="Spring" disabled>Spring</button>
-              </div>
-            </div>
-
-            <div class="faculty-card">
-              <div class="faculty-title">ME</div>
-              <div class="faculty-actions">
-                <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="ME" data-term="Fall" disabled>Fall</button>
-                <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="ME" data-term="Spring" disabled>Spring</button>
-              </div>
-            </div>
-
-            <div class="faculty-card">
-              <div class="faculty-title">CivE</div>
-              <div class="faculty-actions">
-                <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="CivE" data-term="Fall" disabled>Fall</button>
-                <button type="button" class="template-btn faculty-btn" data-template-kind="faculty" data-topic="CivE" data-term="Spring" disabled>Spring</button>
-              </div>
-            </div>
-          </div>
-        </div>
+<div class="faculty-grid">
+<div class="faculty-card">
+<div class="faculty-title">EE</div>
+<div class="faculty-actions">
+<button class="template-btn faculty-btn" data-template-kind="faculty" data-term="Fall" data-topic="EE" disabled="" type="button">Fall</button>
+<button class="template-btn faculty-btn" data-template-kind="faculty" data-term="Spring" data-topic="EE" disabled="" type="button">Spring</button>
+</div>
+</div>
+<div class="faculty-card">
+<div class="faculty-title">ME</div>
+<div class="faculty-actions">
+<button class="template-btn faculty-btn" data-template-kind="faculty" data-term="Fall" data-topic="ME" disabled="" type="button">Fall</button>
+<button class="template-btn faculty-btn" data-template-kind="faculty" data-term="Spring" data-topic="ME" disabled="" type="button">Spring</button>
+</div>
+</div>
+<div class="faculty-card">
+<div class="faculty-title">CivE</div>
+<div class="faculty-actions">
+<button class="template-btn faculty-btn" data-template-kind="faculty" data-term="Fall" data-topic="CivE" disabled="" type="button">Fall</button>
+<button class="template-btn faculty-btn" data-template-kind="faculty" data-term="Spring" data-topic="CivE" disabled="" type="button">Spring</button>
+</div>
+</div>
+</div>
+</div>
       </div>
 
-      <!-- One calendar only -->
       <div id="calendar"></div>
     </div>
   </div>
@@ -201,7 +208,6 @@
     This page is for informational purposes only and please verify all information prior to use.
   </footer>
 
-  <!-- App Logic (must be last) -->
   <script src="app.js"></script>
 </body>
 </html>
