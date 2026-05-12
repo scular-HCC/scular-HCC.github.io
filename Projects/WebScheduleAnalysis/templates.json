@@ -1,0 +1,66 @@
+{
+  "Electrical": {
+    "1": ["ENES-100", "MATH-181", "ENGL-121", "PHYS-110", "PHYS-110L","CMSY-141"],
+    "2": ["MATH-182", "PHYS-111", "PHYS-111L", "ENES-171"],
+    "3": ["ENES-222", "MATH-240", "ENES-246", "PHYS-112", "PHYS-112L"],
+    "4": ["ENES-247", "ENES-205", "MATH-260"]
+  },
+  
+  "Mechanical": { 
+    "1": ["ENES-100", "MATH-181", "ENGL-121", "PHYS-110", "PHYS-110L"],
+    "2": ["MATH-182", "PHYS-111", "PHYS-111L", "ENES-120"], 
+    "3": ["CHEM-135", "MATH-260", "ENES-140", "CHEM-136", "ENES-271"], 
+    "4": ["ENES-130", "ENES-181", "ENES-200", "PHYS-112", "PHYS-112L"]
+  },
+
+  "Fire Protection": { 
+    "1": ["ENES-100", "MATH-181", "ENGL-121", "PHYS-110", "PHYS-110L"],
+    "2": ["MATH-182", "PHYS-111", "PHYS-111L", "ENES-120"], 
+    "3": ["CHEM-135", "MATH-260", "ENES-181", "CHEM-136", "ENES-271"], 
+    "4": ["ENES-130", "ENES-140", "ENES-200", "ENES-250", "MATH-250"]
+  },
+  
+  "Computer Eng": {
+    "1": ["ENES-100", "MATH-181", "ENGL-121", "PHYS-110", "PHYS-110L"],
+    "2": ["MATH-182", "PHYS-111", "PHYS-111L", "CMSY-141"],
+    "3": ["CHEM-135", "CHEM-136", "ENES-246", "MATH-260", "ENES-171"],
+    "4": ["ENES-247", "ENES-205", "MATH-260"]
+  },
+  
+  "Civil": { 
+    "1": ["ENES-100", "MATH-181", "ENGL-121", "PHYS-110", "PHYS-110L"],
+    "2": ["MATH-182", "PHYS-111", "PHYS-111L", "ENES-120"], 
+    "3": ["CHEM-135", "MATH-240", "ENES-271", "CHEM-136", "GEOL-107"], 
+    "4": ["ENES-130", "ENES-140", "PHYS-112", "PHYS-112L", "MATH-260"]
+  },
+  
+  "Aerospace": { 
+    "1": ["ENES-100", "MATH-181", "ENGL-121", "PHYS-110", "PHYS-110L"],
+    "2": ["MATH-182", "PHYS-111", "PHYS-111L", "ENES-120"], 
+    "3": ["CHEM-135", "MATH-260", "ENES-181", "CHEM-136"], 
+    "4": ["ENES-130", "ENES-140", "ENES-283", "MATH-250"]
+  },
+  
+    "Chem/Bio Eng": {  
+    "1": ["ENES-100", "MATH-181", "ENGL-121", "PHYS-110", "PHYS-110L", "CHEM-101", "CHEM-101L"],
+    "2": ["MATH-182", "PHYS-111", "PHYS-111L", "BIOL-120", "BIOL-121"], 
+    "3": ["ENES-271", "MATH-240", "CHEM-201", "CHEM-201L"], 
+    "4": ["CHEM-202", "CHEM-202L", "MATH-260", "PHYS-112", "PHYS-112L"]
+  },
+
+
+  "Faculty": {
+    "EE": {  
+    "Fall": ["ENES-100", "ENES-246", "ENES-222", "ENES-271"],
+    "Spring": ["ENES-100", "ENES-205", "ENES-247"]
+    },
+    "ME": {
+      "Fall":   ["ME-COURSE-1", "ME-COURSE-2"],
+      "Spring": ["ME-COURSE-3", "ME-COURSE-4"]
+    },
+    "CivE": {
+      "Fall":   ["CIVE-COURSE-1", "CIVE-COURSE-2"],
+      "Spring": ["CIVE-COURSE-3", "CIVE-COURSE-4"]
+    }
+  }
+}
