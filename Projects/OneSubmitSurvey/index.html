@@ -4,96 +4,27 @@
 <meta charset="UTF-8">
 <title>Survey</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f5f7fa;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-    }
-
-    .container {
-        background: white;
-        margin-top: 40px;
-        padding: 25px 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        max-width: 750px;
-        width: 90%;
-    }
-
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #333;
-    }
-
-    iframe {
-        width: 100%;
-        height: 900px;
-        border: none;
-        border-radius: 8px;
-    }
-</style>
 </head>
 
 <body>
-<div class="container">
-    <h1>Survey</h1>
-    <div id="formContainer"></div>
-</div>
 
 <script>
 const REDIRECT_URL = "https://www.howardcc.edu/programs-courses/academics/departments/engineering/";
-const THREE_MONTHS_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
+const THREE_MONTHS_MS = 90 * 24 * 60 * 60 * 1000;
 
-// Check if user submitted before
 const submitted = localStorage.getItem("submittedMSForm") === "true";
 const submittedAt = parseInt(localStorage.getItem("submittedAt") || "0", 10);
 const now = Date.now();
 
-// If submitted and still within 3 months, redirect immediately
 if (submitted && (now - submittedAt) < THREE_MONTHS_MS) {
     window.location.href = REDIRECT_URL;
 }
-
-window.onload = function () {
-    // Insert your Microsoft Form
-    document.getElementById("formContainer").innerHTML = `
-        <iframe id="msForm"
-            width="640px" height="480px"
-            src="https://forms.office.com/r/ETza9fTvdr?embed=true"
-            frameborder="0" marginwidth="0" marginheight="0"
-            style="border: none; max-width:100%; max-height:100vh"
-            allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen>
-        </iframe>
-    `;
-
-    // Watch for redirect inside the iframe
-    const iframe = document.getElementById("msForm");
-
-    const checkRedirect = setInterval(() => {
-        try {
-            const url = iframe.contentWindow.location.href;
-
-            // Microsoft Forms "Thank You" page always contains this
-            if (url.includes("FormResponse")) {
-                localStorage.setItem("submittedMSForm", "true");
-                localStorage.setItem("submittedAt", Date.now().toString());
-                clearInterval(checkRedirect);
-                window.location.href = REDIRECT_URL;
-            }
-        } catch (e) {
-            // Cross-origin access throws errors — ignore them
-        }
-    }, 500);
-};
 </script>
+
+<iframe
+    src="YOUR_FINAL_MICROSOFT_FORMS_URL_WITH_REDIRECT"
+    width="100%" height="900" frameborder="0">
+</iframe>
 
 </body>
 </html>
