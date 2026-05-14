@@ -33,13 +33,6 @@
         color: #333;
     }
 
-    #message {
-        font-size: 1.2rem;
-        text-align: center;
-        color: #444;
-        padding: 20px;
-    }
-
     iframe {
         width: 100%;
         height: 900px;
@@ -52,33 +45,53 @@
 <body>
 <div class="container">
     <h1>Survey</h1>
-    <div id="message"></div>
     <div id="formContainer"></div>
 </div>
 
 <script>
-// Detect Microsoft Forms "Thank You" redirect
-if (window.location.href.includes("FormResponse")) {
-    localStorage.setItem("submittedMSForm", "true");
+const REDIRECT_URL = "https://www.howardcc.edu/programs-courses/academics/departments/engineering/";
+const THREE_MONTHS_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
+
+// Check if user submitted before
+const submitted = localStorage.getItem("submittedMSForm") === "true";
+const submittedAt = parseInt(localStorage.getItem("submittedAt") || "0", 10);
+const now = Date.now();
+
+// If submitted and still within 3 months, redirect immediately
+if (submitted && (now - submittedAt) < THREE_MONTHS_MS) {
+    window.location.href = REDIRECT_URL;
 }
 
-// On page load, decide whether to show the form
 window.onload = function () {
-    const hasSubmitted = localStorage.getItem("submittedMSForm") === "true";
-
-    if (hasSubmitted) {
-        document.getElementById("message").innerText =
-            "Thank you — you have already submitted this form.";
-        return;
-    }
-
-    // Show the Microsoft Form
+    // Insert your Microsoft Form
     document.getElementById("formContainer").innerHTML = `
-        <iframe
-            src="https://forms.office.com/r/ETza9fTvdr?embed=true" </iframe>"
-            allowfullscreen>
+        <iframe id="msForm"
+            width="640px" height="480px"
+            src="https://forms.office.com/r/ETza9fTvdr?embed=true"
+            frameborder="0" marginwidth="0" marginheight="0"
+            style="border: none; max-width:100%; max-height:100vh"
+            allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen>
         </iframe>
     `;
+
+    // Watch for redirect inside the iframe
+    const iframe = document.getElementById("msForm");
+
+    const checkRedirect = setInterval(() => {
+        try {
+            const url = iframe.contentWindow.location.href;
+
+            // Microsoft Forms "Thank You" page always contains this
+            if (url.includes("FormResponse")) {
+                localStorage.setItem("submittedMSForm", "true");
+                localStorage.setItem("submittedAt", Date.now().toString());
+                clearInterval(checkRedirect);
+                window.location.href = REDIRECT_URL;
+            }
+        } catch (e) {
+            // Cross-origin access throws errors — ignore them
+        }
+    }, 500);
 };
 </script>
 
