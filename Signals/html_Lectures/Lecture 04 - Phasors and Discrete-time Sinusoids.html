@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 4 — Phasors &amp; DT Sinusoids</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">04</div>
+    <div class="topic">Phasors &amp;<br/>Discrete-Time Sinusoids</div>
+    <div class="sub">The stationary phasor compresses an entire sinusoid into one complex number. Then we jump from $t$ to $n$ — and time disappears.</div>
+    <div class="reference">Reading · <em>Textbook §1.4 – §1.5</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 04</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Read sinusoids as phasors,<br/>and frequencies as angles per sample.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Write</strong> $A\cos(\omega t + \phi)$ as $\Re\{A e^{j\phi}\, e^{j\omega t}\}$ — the stationary phasor is $A e^{j\phi}$.</li>
+        <li><strong>Add</strong> sinusoids of the same frequency by adding their phasors.</li>
+        <li><strong>Recognise</strong> that DT frequencies $\omega$ and $\omega + 2\pi$, or $\omega$ and $-\omega$, are equivalent — the effective range is $[0, \pi]$.</li>
+        <li><strong>Determine</strong> when a DT sinusoid is periodic: $\omega = (k/N)\,2\pi$.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="03 Stationary Phasor">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Stationary Phasor</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Stationary phasor</div>
+        <h1>One complex number<br/>captures amplitude and phase.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$x(t) \,=\, A\cos(\omega t + \phi) \,=\, \Re\!\left\{ A e^{j\phi} \cdot e^{j\omega t} \right\}$$
+          <div style="height: 14px;"></div>
+          $$\text{Stationary phasor: } \;\; A e^{j\phi}$$
+        </div>
+        <div class="stack gap-item">
+          <p>Think of $A e^{j\phi}$ as a snapshot of the rotating vector $z(t) = A e^{j(\omega t + \phi)}$ at $t = 0$.</p>
+          <p>The full sinusoid is the projection of that rotating vector onto the real axis.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="04 Adding Sinusoids">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Sum of Same-Frequency Sinusoids</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Adding sinusoids</div>
+        <h1>Same frequency in,<br/>same frequency out.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$A_1\cos(\omega t + \phi_1) + A_2\cos(\omega t + \phi_2)$$
+          <div style="height: 10px;"></div>
+          $$= A\cos(\omega t + \phi)$$
+          <div style="height: 10px;"></div>
+          $$\text{where }\; A e^{j\phi} \,=\, A_1 e^{j\phi_1} + A_2 e^{j\phi_2}$$
+        </div>
+        <div class="stack gap-item">
+          <p>Factor out $e^{j\omega t}$ from both terms; the time-dependence drops out and what remains is a sum of phasors.</p>
+          <p>Take the real part at the end. The frequency $\omega$ never enters the algebra.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="05 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Combine via Phasors</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Combine into a single cosine.</h1>
+        $$2.7\cos(15\pi t + 0.6) + 4.1\sin(15\pi t - 1.8)$$
+        <div class="step" style="margin-top: 8px;">
+          <div class="step-label">Step 1 · Convert sine to cosine</div>
+          $$\sin\theta = \cos(\theta - \tfrac{\pi}{2})$$
+          $$4.1\sin(15\pi t - 1.8) = 4.1\cos(15\pi t - 1.8 - \tfrac{\pi}{2})$$
+        </div>
+        <div class="step">
+          <div class="step-label">Step 2 · Sum the phasors</div>
+          $$A e^{j\phi} = 2.7\, e^{j(0.6)} + 4.1\, e^{j(-1.8 - \pi/2)}$$
+        </div>
+        <div class="step">
+          <div class="step-label">Step 3 · Read off polar form</div>
+          $$A \approx 3.0241,\;\; \phi \approx 2.1937$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Where did the sine go?</div>
+          <p style="margin: 0;">It became a phase-shifted cosine. The single phasor $A e^{j\phi}$ absorbed both contributions.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Result</div>
+          $$x(t) \,=\, 3.0241\cos(15\pi t + 2.1937)$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="06 DT Sinusoid">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Discrete-Time Sinusoid</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Discrete-time sinusoid</div>
+        <h1>Index $n$ counts samples.<br/>Time is gone.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$x[n] \,=\, A\cos(\omega n + \phi)$$
+        </div>
+        <div class="stack gap-item">
+          <dl class="kv">
+            <dt>$n$</dt><dd>integer sample index</dd>
+            <dt>$\omega$</dt><dd>radians <em>per sample</em></dd>
+            <dt>$A,\,\phi$</dt><dd>amplitude, initial phase</dd>
+          </dl>
+          <p class="muted" style="font-size: var(--type-small);">Seconds, Hz, periods/sec — none of it appears in this formula.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="07 Frequency Equivalence">
+    <div class="slide-chrome"><span class="left">Convention</span><span class="right">Frequency Equivalence</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Which frequencies are the same?</div>
+        <h1>Mod $2\pi$. And $\omega \leftrightarrow -\omega$<br/>for real-valued signals.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Mod $2\pi$ (complex or real)</div>
+          $$e^{j(\omega + 2\pi)n} = e^{j\omega n}\, e^{j 2\pi n} = e^{j\omega n}$$
+        </div>
+        <div class="defn">
+          <div class="term">Sign flip (real only)</div>
+          $$\cos(\omega n + \phi) = \cos(-\omega n - \phi)$$
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Effective range for real DT sinusoids</div>
+        $$\omega \in [0,\, \pi] \qquad 0 = \text{lowest (DC)},\;\; \pi = \text{highest (alternating)}$$
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Convention</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="08 Worked Equivalence">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Reduce to $[0, 2\pi)$ and $[0, \pi]$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Find the smallest equivalent $\omega$.</h1>
+
+        <div class="step" style="margin-top: 8px;">
+          <div class="step-label">Complex case</div>
+          $$z[n] = e^{j(37\pi/13\, n \,+\, \pi/8)}$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Subtract $2\pi = 26\pi/13$ from the frequency.</p>
+          $$z[n] = e^{j(11\pi/13\, n \,+\, \pi/8)}$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Real case</div>
+          $$x[n] = \cos\!\left(\tfrac{42\pi}{13}\, n - \tfrac{5\pi}{6}\right)$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Reduce mod $2\pi$: $\tfrac{42\pi}{13} - 2\pi = \tfrac{16\pi}{13}$. Then flip sign to land in $[0,\pi]$:</p>
+          $$= \cos\!\left(-\tfrac{16\pi}{13}\, n + \tfrac{5\pi}{6}\right) = \cos\!\left(\tfrac{10\pi}{13}\, n + \tfrac{5\pi}{6}\right)$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Using $\tfrac{16\pi}{13} \equiv -\tfrac{10\pi}{13}\pmod{2\pi}$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="09 Edge Cases">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Endpoints of $[0, \pi]$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>What does $x[n]$ look like<br/>at $\omega = 0$ and $\omega = \pi$?</h1>
+      </div>
+      <ul class="clean">
+        <li>$\omega = 0$ — the lowest frequency. What's the simplest closed-form for $x[n]$?</li>
+        <li>$\omega = \pi$ — the highest. What pattern do consecutive samples follow?</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="10 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Endpoints of $[0, \pi]$</span></div>
+    <div class="cols even" style="margin-top: 28px;">
+      <div class="defn">
+        <div class="term">$\omega = 0$ — DC</div>
+        $$x[n] = A\cos\phi$$
+        <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">A constant sequence. Every sample takes the same value $A\cos\phi$. The signal does not oscillate at all.</p>
+      </div>
+      <div class="defn">
+        <div class="term">$\omega = \pi$ — Nyquist</div>
+        $$x[n] = A\cos(\pi n + \phi) = A(-1)^{n}\cos\phi$$
+        <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Alternating sequence: $+, -, +, -, \ldots$ — the fastest oscillation a DT sinusoid can produce.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="11 DT Periodicity">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Periodicity of $x[n]$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Discrete-time periodicity</div>
+        <h1>Periodic only if $\omega/2\pi$<br/>is rational.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$\omega \,=\, \tfrac{k}{N}\,2\pi$$
+        </div>
+        <div class="stack gap-item">
+          <p>The smallest $N$ for which $\omega N = 2k\pi$ holds for some integer $k$ is the <strong>fundamental period</strong>.</p>
+          <p class="muted" style="font-size: var(--type-small);">If $\omega/2\pi$ is irrational, $x[n]$ is <em>aperiodic</em> — even though it still looks oscillatory.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Beware</div>
+        <p style="margin: 0;">Unlike the continuous case, the DT period is <em>not</em> simply $2\pi/\omega$.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="12 Periodicity Examples">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Fundamental Periods</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Examples</div>
+        <h1>Find $N$, or note aperiodic.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">$\omega = 0$</div>
+          <div class="what">$N = 1$</div>
+          <div class="how">Constant sequence.</div>
+        </div>
+        <div class="cell">
+          <div class="num">$\omega = \pi$</div>
+          <div class="what">$N = 2$</div>
+          <div class="how">Alternates each sample.</div>
+        </div>
+        <div class="cell">
+          <div class="num">$\omega = 1.0$</div>
+          <div class="what">aperiodic</div>
+          <div class="how">$1/(2\pi)$ is irrational.</div>
+        </div>
+        <div class="cell">
+          <div class="num">$\omega = 10\pi/13$</div>
+          <div class="what">$N = 13$</div>
+          <div class="how">$k = 5$, $\omega N = 10\pi$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">$\omega = 11\pi/13$</div>
+          <div class="what">$N = 26$</div>
+          <div class="how">$k = 11$; $11/26$ already in lowest terms.</div>
+        </div>
+        <div class="cell">
+          <div class="num">Rule</div>
+          <div class="what">Reduce $\omega/(2\pi)$ to $k/N$.</div>
+          <div class="how">$N$ is the denominator in lowest terms.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <section data-label="13 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 04</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four facts.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · PHASOR</div>
+          <div class="what">$A\cos(\omega t + \phi) \leftrightarrow A e^{j\phi}$</div>
+          <div class="how">Phasors live on $\mathbb{C}$; add them like vectors.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · DT SINUSOID</div>
+          <div class="what">$x[n] = A\cos(\omega n + \phi)$</div>
+          <div class="how">$\omega$ is radians per sample. No time.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · EQUIVALENCE</div>
+          <div class="what">$\omega \equiv \omega + 2\pi$; $\omega \equiv -\omega$ (real).</div>
+          <div class="how">Effective range: $[0, \pi]$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · PERIODICITY</div>
+          <div class="what">$\omega = (k/N)\, 2\pi$</div>
+          <div class="how">Smallest $N$ is the fundamental period.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L05 Sampling</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

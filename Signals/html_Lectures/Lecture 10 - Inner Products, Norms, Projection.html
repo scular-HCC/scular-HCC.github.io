@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 10 — Inner Products, Norms, Projection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">10</div>
+    <div class="topic">Inner Products, Norms,<br/>Angles &amp; Projection</div>
+    <div class="sub">Geometry returns: length is $\sqrt{\langle a,a\rangle}$, angle comes from the dot product, and projection finds the closest point in a subspace.</div>
+    <div class="reference">Reading · <em>§2.10.1 – §2.10.4, §2.12.1</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 10</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Measure length, angle, and distance<br/>between real vectors.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Compute</strong> the inner product $\langle a,b\rangle = a^{\top}b$ and the norm $\|a\| = \sqrt{\langle a,a\rangle}$.</li>
+        <li><strong>Find</strong> the angle between two vectors via $\cos\theta = \langle a,b\rangle/(\|a\|\|b\|)$.</li>
+        <li><strong>Project</strong> $b$ onto $a$ using $\lambda = \langle a,b\rangle/\|a\|^{2}$.</li>
+        <li><strong>Project</strong> $s$ onto the range of $V$ with orthogonal columns, by summing the per-column projections.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+  <section data-label="03 Inner Product and Norm">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Inner Product · Norm</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Inner product and norm</div>
+        <h1>Length is the inner product<br/>of a vector with itself.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$\langle a,b\rangle \,=\, a^{\top}b \,=\, \sum_{i=1}^{m} a_i b_i$$
+          <div style="height: 14px;"></div>
+          $$\|a\| \,=\, \sqrt{\langle a,a\rangle} \,=\, \sqrt{\textstyle\sum_i a_i^{2}}$$
+        </div>
+        <div class="stack gap-item">
+          <p><strong>Symmetric:</strong> $\langle a,b\rangle = \langle b,a\rangle$.</p>
+          <p><strong>Linear in either slot:</strong> $\langle c_1 a^{(1)} + c_2 a^{(2)},\, b\rangle = c_1\langle a^{(1)},b\rangle + c_2\langle a^{(2)},b\rangle$.</p>
+          <p><strong>Scaling:</strong> $\|ca\| = |c|\,\|a\|$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+  <section data-label="04 Orthogonal and Angle">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Orthogonality &amp; Angle</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Orthogonality and angle</div>
+        <h1>$\langle a,b\rangle = 0$ means perpendicular.<br/>Otherwise it tells you the angle.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Orthogonality</div>
+          $$a \perp b \;\Longleftrightarrow\; \langle a,b\rangle = 0$$
+          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Then $\|a+b\|^{2} = \|a\|^{2} + \|b\|^{2}$ — Pythagoras.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Angle</div>
+          $$\cos\theta \,=\, \frac{\langle a,b\rangle}{\|a\|\,\|b\|},\;\; \theta \in [0,\pi]$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+  <section data-label="05 Projection">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Projection of $b$ onto $a$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Projection</div>
+        <h1>Find $\lambda a$ so that $b - \lambda a$<br/>is perpendicular to $a$.</h1>
+        <div class="bordered-math big-math">
+          $$\lambda \,=\, \frac{\langle a,b\rangle}{\|a\|^{2}}$$
+        </div>
+        <p>Geometrically: $\|b\|\cos\theta = \lambda\,\|a\|$. The projection is the shadow of $b$ along $a$.</p>
+      </div>
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 380" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l10f1-t l10f1-d">
+            <title id="l10f1-t">Projection of vector b onto vector a</title>
+            <desc id="l10f1-d">A two-dimensional sketch with the origin at the lower-left. A solid arrow labeled a extends to the right along the horizontal direction. A second solid arrow labeled b extends up and to the right at an angle theta from a. A dashed line drops perpendicularly from the tip of b onto the line through a, meeting it at a point. The segment from the origin to that point is highlighted and labeled lambda a — the projection.</desc>
+            <defs>
+              <marker id="aL10a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+              <marker id="aL10r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7A1A1A"/></marker>
+            </defs>
+            <!-- baseline -->
+            <line x1="60" y1="300" x2="540" y2="300" stroke="#7A746B" stroke-width="1" stroke-dasharray="3 4"/>
+            <!-- a along x -->
+            <line x1="80" y1="300" x2="380" y2="300" stroke="#1A1A1A" stroke-width="3" marker-end="url(#aL10a)"/>
+            <text x="220" y="334" font-size="22" font-style="italic">a</text>
+            <!-- b at angle -->
+            <line x1="80" y1="300" x2="420" y2="120" stroke="#7A1A1A" stroke-width="3" marker-end="url(#aL10r)"/>
+            <text x="270" y="190" font-size="22" font-style="italic" fill="#7A1A1A">b</text>
+            <!-- projection foot at (420, 300) -->
+            <line x1="420" y1="120" x2="420" y2="300" stroke="#1A1A1A" stroke-width="1.5" stroke-dasharray="6 5"/>
+            <!-- projection (λa) emphasised -->
+            <line x1="80" y1="300" x2="420" y2="300" stroke="#2A4A7A" stroke-width="5"/>
+            <text x="225" y="294" font-size="20" font-style="italic" fill="#2A4A7A">λa</text>
+            <!-- angle arc -->
+            <path d="M 140,300 A 60,60 0 0 0 130,270" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
+            <text x="150" y="282" font-size="20" font-style="italic">θ</text>
+            <circle cx="80" cy="300" r="4" fill="#1A1A1A"/>
+            <text x="55" y="324" font-size="16" fill="#7A746B">0</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · $\lambda a$ is the foot of the perpendicular from $b$ onto the line of $a$.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+  <section data-label="06 Practice">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Norms, Orthogonality, Angle</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Verify the four claims.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Setup</div>
+        $$v^{(1)} = (5, 1, 3, 1)^{\top},\quad v^{(2)} = (1, 3, -1, -5)^{\top},\quad v^{(3)} = (-6, 6, -6, 6)^{\top}$$
+      </div>
+      <ol class="numbered">
+        <li>$\|v^{(1)}\| = \|v^{(2)}\| = \|v^{(3)}\|/2 = 6$.</li>
+        <li>$v^{(1)} \perp v^{(2)}$.</li>
+        <li>The projection of $v^{(3)}$ onto $v^{(1)}$ equals $-v^{(1)}$.</li>
+        <li>The angle between $v^{(1)}$ and $v^{(3)}$ is $2\pi/3$.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+  <section data-label="07 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Norms, Orthogonality, Angle</span></div>
+    <div class="cols even" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">1 · Norms</div>
+          $$\|v^{(1)}\|^{2} = 25+1+9+1 = 36 \Rightarrow \|v^{(1)}\| = 6$$
+          $$\|v^{(2)}\|^{2} = 1+9+1+25 = 36 \Rightarrow \|v^{(2)}\| = 6$$
+          $$\|v^{(3)}\|^{2} = 4(36) = 144 \Rightarrow \|v^{(3)}\| = 12$$
+        </div>
+        <div class="step">
+          <div class="step-label">2 · Orthogonality</div>
+          $$\langle v^{(1)}, v^{(2)}\rangle = 5 + 3 - 3 - 5 = 0\;\checkmark$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">3 · Projection</div>
+          $$\langle v^{(1)}, v^{(3)}\rangle = -30 + 6 - 18 + 6 = -36$$
+          $$\lambda = \frac{-36}{36} = -1,\;\; \text{proj} = -v^{(1)}$$
+        </div>
+        <div class="step">
+          <div class="step-label">4 · Angle</div>
+          $$\cos\theta = \frac{-36}{6 \cdot 12} = -\tfrac{1}{2} \Rightarrow \theta = \tfrac{2\pi}{3}\;\checkmark$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+  <section data-label="08 Range of V">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Range &amp; Projection onto $\mathcal{R}(V)$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Range of a matrix</div>
+        <h1>The image of $V$ is the set<br/>of all linear combinations of its columns.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$\mathcal{R}(V) \,=\, \{V c \,:\, c \in \mathbb{R}^{n}\}$$
+        </div>
+        <div class="stack gap-item">
+          <p>$\mathcal{R}(V)$ is a <strong>linear subspace</strong> of $\mathbb{R}^{m}$ — a flat through the origin (line, plane, hyperplane).</p>
+          <p>If the columns of $V$ are pairwise orthogonal, projection onto $\mathcal{R}(V)$ reduces to summing the one-column projections.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Closest point in $\mathcal{R}(V)$ to $s$</div>
+        $$\hat{s} \,=\, \sum_{j=1}^{n} c_j\, v^{(j)},\;\; c_j \,=\, \frac{\langle v^{(j)},\, s\rangle}{\|v^{(j)}\|^{2}}$$
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+  <section data-label="09 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Projection of $s$ onto $\mathcal{R}(V)$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Two orthogonal columns,<br/>three-dim target $s$.</h1>
+        $$V = \begin{bmatrix}1 & 3 \\ -2 & 4 \\ 1 & 5\end{bmatrix},\;\; \|v^{(1)}\|^{2}=6,\;\; \|v^{(2)}\|^{2}=50$$
+        $$s = (-6,\, 2,\, 7)^{\top}$$
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Per-column coefficients</div>
+          $$c_1 = \frac{-6 - 4 + 7}{6} = -\tfrac{1}{2}$$
+          $$c_2 = \frac{-18 + 8 + 35}{50} = \tfrac{1}{2}$$
+        </div>
+        <div class="step">
+          <div class="step-label">Projection &amp; error</div>
+          $$\hat{s} = -\tfrac{1}{2} v^{(1)} + \tfrac{1}{2} v^{(2)} = (1, 3, 2)^{\top}$$
+          $$s - \hat{s} = (-7, -1, 5)^{\top} \perp v^{(1)},\,v^{(2)}\;\checkmark$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+  <section data-label="10 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 10</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four geometric facts.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · DOT PRODUCT</div>
+          <div class="what">$\langle a,b\rangle = a^{\top}b$</div>
+          <div class="how">Length $\|a\| = \sqrt{\langle a,a\rangle}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · ORTHOGONALITY</div>
+          <div class="what">$a\perp b \Leftrightarrow \langle a,b\rangle = 0$</div>
+          <div class="how">Pythagoras: $\|a+b\|^{2} = \|a\|^{2}+\|b\|^{2}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · PROJECTION</div>
+          <div class="what">$\lambda = \langle a,b\rangle/\|a\|^{2}$</div>
+          <div class="how">Closest point on line through $a$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · ORTHOGONAL BASIS</div>
+          <div class="what">$\hat{s} = \sum_j c_j v^{(j)}$</div>
+          <div class="how">Project onto each column, sum.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L11 Complex Vectors</span><span class="rule"></span><span class="author">ENES-222 · L10</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

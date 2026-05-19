@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 20 — Fourier Series Properties</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">20</div>
+    <div class="topic">Fourier Series<br/>Properties</div>
+    <div class="sub">Conjugates, reversals, shifts, modulation, time scaling — every property of the DFT has a Fourier-series sibling.</div>
+    <div class="reference">Reading · <em>Fourier series — properties</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 20</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Translate signal operations<br/>into coefficient operations.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Use</strong> $x^{*}(t) \leftrightarrow X^{*}_{-k}$ and $x(-t) \leftrightarrow X_{-k}$.</li>
+        <li><strong>Apply</strong> the time-shift rule $x(t - T) \leftrightarrow e^{-j k\Omega_0 T}\, X_k$.</li>
+        <li><strong>Apply</strong> the modulation rule $x(t)\,e^{j K\Omega_0 t} \leftrightarrow X_{k-K}$.</li>
+        <li><strong>Recognise</strong> that <em>time scaling</em> by $\beta > 0$ leaves $X_k$ unchanged.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="03 Conj and Reversal">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Conjugate &amp; Reversal</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Properties 1–3</div>
+        <h1>Conjugation and reversal<br/>act through index negation.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">PROP 1</div>
+          <div class="what">$y(t) = x^{*}(t)$</div>
+          <div class="how">$Y_k = X^{*}_{-k}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">PROP 2</div>
+          <div class="what">$x$ real ⇒ $X_{-k} = X^{*}_{k}$.</div>
+          <div class="how">Conjugate symmetric spectrum.</div>
+        </div>
+        <div class="cell">
+          <div class="num">PROP 3</div>
+          <div class="what">$y(t) = x(-t)$</div>
+          <div class="how">$Y_k = X_{-k}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">CT vs DFT</div>
+          <div class="what">Reversals are <em>not</em> circular here.</div>
+          <div class="how">$k \to -k$ in $\mathbb{Z}$, $t \to -t$ in $\mathbb{R}$.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="04 Even Odd Worked">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Even &amp; Odd Decomposition</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Split $s$ into even + odd parts.</h1>
+        $$x(t) = \tfrac{s(t) + s(-t)}{2},\;\; y(t) = \tfrac{s(t) - s(-t)}{2}$$
+        <p>For real $s$: $X_k$ is purely <strong>real</strong> and symmetric; $Y_k$ is purely <strong>imaginary</strong> and antisymmetric.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Coefficients</div>
+          $$X_k = \tfrac{S_k + S_{-k}}{2} = \mathrm{Re}\{S_k\}$$
+          $$Y_k = \tfrac{S_k - S_{-k}}{2} = j\,\mathrm{Im}\{S_k\}$$
+          <p style="margin: 8px 0 0;" class="muted">Real-and-even ↔ real-and-even. Real-and-odd ↔ imaginary-and-odd.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="05 Time Shift">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Time Shift (Prop 4)</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Time shift</div>
+        <h1>Shift in time ⇒<br/>linear phase ramp in $k$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$y(t) = x(t - T) \,\Rightarrow\, Y_k = e^{-j k \Omega_0 T}\, X_k$$
+        </div>
+        <div class="stack gap-item">
+          <p>$|Y_k| = |X_k|$ — magnitudes preserved.</p>
+          <p>The phase of $Y_k$ tilts linearly in $k$ — exactly the DT analogue of DFT 5.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="06 Shifted Pulse Train">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Asymmetric Pulse Train</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Antisymmetric pulse train.</h1>
+        <p>Two rectangular pulses of width $T_0/6$, centered at $\pm T_0/6$, with opposite signs. The signal is real and <em>odd</em>: $x(-t) = -x(t)$.</p>
+        <p>Apply the time-shift property to the symmetric pulse train of width $T_0/3$.</p>
+      </div>
+      <div class="defn">
+        <div class="term">Coefficients</div>
+        $$X_k \,=\, (e^{-jk\pi/6} - e^{jk\pi/6})\cdot\tfrac{\sin(k\pi/6)}{k\pi}$$
+        $$=\, -j\,\tfrac{2}{k\pi}\sin^{2}\!\big(\tfrac{k\pi}{6}\big)$$
+        <p style="margin: 8px 0 0;" class="muted">Purely imaginary, antisymmetric — as required for a real odd signal.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="07 Modulation">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Modulation (Prop 5)</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Frequency shift / modulation</div>
+        <h1>Multiply by a harmonic in time ⇒<br/>shift the spectrum in $k$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$y(t) = x(t)\, e^{j K \Omega_0 t} \,\Rightarrow\, Y_k = X_{k-K}$$
+        </div>
+        <div class="stack gap-item">
+          <p>Each Fourier coefficient slides $K$ slots to the right.</p>
+          <p>Useful for: half-wave rectified signals, AM modulation, spectral shifting in filters.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="08 Half Wave">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Half-Wave Rectified Sinusoid</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Cosine times a half-duty pulse.</h1>
+        <p>Let $s(t)$ be a symmetric pulse train of unit height, duty $\alpha = 1/2$.</p>
+        $$x(t) = s(t)\cos(\Omega_0 t) = s(t)\,\tfrac{e^{j\Omega_0 t} + e^{-j\Omega_0 t}}{2}$$
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Coefficients</div>
+          $$X_k \,=\, \tfrac{S_{k-1} + S_{k+1}}{2}$$
+          <p style="margin: 8px 0 0;">With $S_k = \sin(k\pi/2)/(k\pi)$ from L19, this simplifies to</p>
+          $$X_k \,=\, \begin{cases} 1/4, & k = \pm 1 \\ (-1)^{k/2}/(\pi(1-k^{2})), & k \text{ even, incl. 0} \\ 0, & \text{else}\end{cases}$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="09 Convolution">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Convolution Duality</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Convolution properties</div>
+        <h1>Pointwise vs convolution<br/>swap between domains.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Time convolution</div>
+          $$s(t) = \tfrac{1}{T_0}\int_{T_0} x(\tau)\, y(t - \tau)\,d\tau$$
+          $$S_k \,=\, X_k\, Y_k$$
+          <p class="muted" style="font-size: var(--type-small); margin: 8px 0 0;">Periodic — analogue of circular convolution.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Coefficient convolution</div>
+          $$S_k \,=\, \sum_{\ell \in \mathbb{Z}} X_{\ell}\, Y_{k - \ell}$$
+          $$s(t) \,=\, x(t)\, y(t)$$
+          <p class="muted" style="font-size: var(--type-small); margin: 8px 0 0;">Not periodic — infinite sum over $\mathbb{Z}$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="10 Time Scaling">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Time Scaling (Prop 6)</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Time scaling</div>
+        <h1>Stretch the signal,<br/>coefficients don't change.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$y(t) = x(\beta t),\;\; \beta > 0 \,\Rightarrow\, Y_k = X_k$$
+        </div>
+        <div class="stack gap-item">
+          <p>Squeezing the time axis squeezes the period too — the harmonics ride along with $\Omega_0 \to \beta\Omega_0$.</p>
+          <p>The coefficient values are unchanged. Only the underlying frequency grid shifts.</p>
+          <p class="muted" style="font-size: var(--type-small);">No DFT analogue — the DFT lives on a fixed grid of size $N$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <section data-label="11 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 20</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>The CT property table.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">CONJ / REV</div>
+          <div class="what">$x^{*}(t) \leftrightarrow X^{*}_{-k}$, $x(-t) \leftrightarrow X_{-k}$</div>
+          <div class="how">Real signals: $X_{-k} = X_{k}^{*}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">SHIFT</div>
+          <div class="what">$x(t-T) \leftrightarrow e^{-jk\Omega_0 T} X_k$</div>
+          <div class="how">Magnitude preserved; phase tilts.</div>
+        </div>
+        <div class="cell">
+          <div class="num">MODULATE</div>
+          <div class="what">$x(t)e^{jK\Omega_0 t} \leftrightarrow X_{k-K}$</div>
+          <div class="how">Slide the spectrum.</div>
+        </div>
+        <div class="cell">
+          <div class="num">CONVOLUTION</div>
+          <div class="what">$x * y \leftrightarrow X_k Y_k$</div>
+          <div class="how">$xy \leftrightarrow X \ast Y$ (over $\mathbb{Z}$).</div>
+        </div>
+        <div class="cell">
+          <div class="num">TIME SCALE</div>
+          <div class="what">$x(\beta t) \leftrightarrow X_k$</div>
+          <div class="how">Coefficients invariant under stretch.</div>
+        </div>
+        <div class="cell">
+          <div class="num">LINKED</div>
+          <div class="what">DT &amp; CT theories mirror each other.</div>
+          <div class="how">Use the table you know.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L21 FIR Filters</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

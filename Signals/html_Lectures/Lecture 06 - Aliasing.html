@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 6 — Aliasing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">06</div>
+    <div class="topic">Aliasing</div>
+    <div class="sub">Two different continuous-time sinusoids can produce identical samples. The fix — the Nyquist rate.</div>
+    <div class="reference">Reading · <em>Textbook §1.6</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 06</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Detect aliases and<br/>choose a safe sampling rate.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Define</strong> aliasing: $f \pm f' = k\,f_s$ for some integer $k$.</li>
+        <li><strong>Enumerate</strong> all aliases of a given frequency at a given sampling rate.</li>
+        <li><strong>Reconstruct</strong> $x(t)$ from $x[n]$ when the original frequency band is known.</li>
+        <li><strong>Apply</strong> the Nyquist rate: $f_s > 2 f_B$ avoids aliasing for a band-limited signal.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="03 Aliasing Definition">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">When are $f$ and $f'$ Aliases?</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Aliasing — the definition</div>
+        <h1>Two frequencies are aliases<br/>if their samples coincide.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$f \pm f' \,=\, k\, f_s$$
+        </div>
+        <div class="stack gap-item">
+          <p>Start from $\Omega = 2\pi f/f_s$ and $\Omega' = 2\pi f'/f_s$, then use the DT equivalence $\Omega' = \pm\Omega + 2k\pi$.</p>
+          <p class="muted" style="font-size: var(--type-small);">The plus and minus give two families of aliases; both must be checked.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="04 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Aliases of 150 Hz</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Aliases of $f = 150$ Hz<br/>at two different rates.</h1>
+        <div class="step" style="margin-top: 8px;">
+          <div class="step-label">$f_s = 400$ samples/sec</div>
+          $$f' \,=\, 150 + 400 k \quad\text{and}\quad f' \,=\, -150 + 400 k$$
+        </div>
+        <div class="step">
+          <div class="step-label">$f_s = 280$ samples/sec</div>
+          $$f' \,=\, 150 + 280 k \quad\text{and}\quad f' \,=\, -150 + 280 k$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Aliases in $[0,\,2000]$ Hz · $f_s = 400$</div>
+          $$150,\;\, 250,\;\, 550,\;\, 650,\;\, 950,\;\, 1050,$$
+          $$1350,\;\, 1450,\;\, 1750,\;\, 1850$$
+        </div>
+        <div class="defn">
+          <div class="term">Aliases in $[0,\,2000]$ Hz · $f_s = 280$</div>
+          $$150,\;\, 130,\;\, 430,\;\, 410,\;\, 690,\;\, 710,$$
+          $$970,\;\, 990,\;\, 1250,\;\, 1270,\;\, 1530,\;\, 1550, \ldots$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="05 Reconstruction">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Reconstruction from Samples</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Reconstructing $x(t)$ from $x[n]$</div>
+        <h1>Pin down the true frequency<br/>using the prior band knowledge.</h1>
+        <p style="margin-top: 6px;">Given the band $f \in [600,\, 800]$ Hz, sampled at $f_s = 400$ samples/sec, we observe</p>
+        $$x[n] \,=\, 4.2\cos(0.75\pi\, n - 0.3)$$
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Step 1 · Bare $f$ from $\Omega$</div>
+          $$2\pi\,\frac{f}{f_s} = 0.75\pi \;\Rightarrow\; f = 150 \text{ Hz}$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Outside the band.</p>
+        </div>
+        <div class="step">
+          <div class="step-label">Step 2 · Pick the alias in band</div>
+          <p style="margin: 0;">The only alias of $150$ Hz in $[600, 800]$ at $f_s = 400$ is $f' = 650$ Hz (from $-150 + 2\cdot 400$).</p>
+        </div>
+        <div class="step">
+          <div class="step-label">Step 3 · Reconstruct</div>
+          $$x(t) \,=\, 4.2\cos(1300\pi\, t + 0.3)$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">The phase flips sign because the alias came from the negative branch ($\Omega \mapsto -\Omega$).</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="06 Ambiguity">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Why Two Components Break</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Why aliasing ruins reconstruction</div>
+        <h1>If two components alias to the same $\Omega$,<br/>$x[n]$ no longer pins down $x(t)$.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Try it</div>
+        <p style="margin: 0;">Suppose the same $x[n] = 4.2\cos(0.75\pi n - 0.3)$ is now claimed to come from <em>two</em> sinusoids — at $150$ Hz and $650$ Hz — sampled at $f_s = 400$. Can you write a unique $x(t)$ for it?</p>
+      </div>
+      <div class="defn">
+        <div class="term">Answer</div>
+        <p style="margin: 0;">No. The two components fold onto the same $\Omega = 0.75\pi$; the samples alone cannot tell you the amplitude and phase split between $150$ Hz and $650$ Hz. <strong>Reconstruction fails.</strong></p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="07 Nyquist">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The Nyquist Rate</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Nyquist rate</div>
+        <h1>Sample faster than twice<br/>the highest frequency.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$f_s \,>\, 2 f_B$$
+        </div>
+        <div class="stack gap-item">
+          <p>If every component of $x(t)$ lies in $[0,\, f_B]$, then $f_s > 2 f_B$ guarantees that no two distinct components alias to each other.</p>
+          <p class="muted" style="font-size: var(--type-small);">$2 f_B$ is the <em>Nyquist rate</em>. You must strictly exceed it — equality is the edge case.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="08 Spectrum Replicas">
+    <div class="slide-chrome"><span class="left">Visual</span><span class="right">Spectrum Replicas &amp; Overlap</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Spectrum replicas</div>
+        <h1>Sampling tiles the frequency axis<br/>with copies of the baseband.</h1>
+        <p>Plot two families of aliases: $f' = f + k f_s$ (top) and $f' = -f + k f_s$ (bottom). Each integer $k$ slides a copy of $[0, f_B]$ along the frequency axis.</p>
+        <p>Aliasing happens whenever two of these bands overlap. As long as the bands stay separated — except right at multiples of $f_s$ — reconstruction is possible.</p>
+        <p class="muted" style="font-size: var(--type-small);">No overlap ⇔ $f_s > 2 f_B$.</p>
+      </div>
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l6f1-t l6f1-d">
+            <title id="l6f1-t">Spectrum replicas created by sampling</title>
+            <desc id="l6f1-d">Two horizontal frequency axes are drawn one above the other. The upper axis shows positive replicas: copies of the baseband zero to f sub B placed at multiples of f sub s. The lower axis shows the negative replicas: reflections of the baseband placed at multiples of f sub s. When f s exceeds twice f sub B, the bands do not overlap. When f s is smaller, adjacent bands overlap, indicating aliasing.</desc>
+            <defs>
+              <marker id="aL6a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+            </defs>
+            <!-- TOP: f' = f + k f_s -->
+            <line x1="30" y1="160" x2="680" y2="160" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL6a)"/>
+            <text x="650" y="185" font-size="18" font-style="italic">f</text>
+            <text x="30" y="60" font-size="20" font-family="Inter, sans-serif" fill="#7A746B">replicas at +f + k·f_s</text>
+
+            <!-- baseband 0 to f_B at center 0..120 -->
+            <rect x="100" y="110" width="120" height="40" fill="#2A4A7A" opacity="0.7"/>
+            <text x="150" y="100" font-size="16" fill="#2A4A7A">[0, f_B]</text>
+
+            <!-- replica at +f_s: assume f_s = 200, so shifted by 200 -->
+            <rect x="300" y="110" width="120" height="40" fill="#2A4A7A" opacity="0.7"/>
+            <text x="335" y="100" font-size="16" fill="#2A4A7A">+f_s</text>
+
+            <!-- replica at +2 f_s -->
+            <rect x="500" y="110" width="120" height="40" fill="#2A4A7A" opacity="0.7"/>
+            <text x="528" y="100" font-size="16" fill="#2A4A7A">+2 f_s</text>
+
+            <!-- BOTTOM: f' = -f + k f_s -->
+            <line x1="30" y1="340" x2="680" y2="340" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL6a)"/>
+            <text x="650" y="365" font-size="18" font-style="italic">f</text>
+            <text x="30" y="430" font-size="20" font-family="Inter, sans-serif" fill="#7A746B">replicas at −f + k·f_s</text>
+
+            <!-- reflected baseband around 0: 0..-120 but we use k=1: -f + f_s shifted so 80..200 -->
+            <rect x="180" y="290" width="120" height="40" fill="#7A1A1A" opacity="0.65"/>
+            <text x="200" y="280" font-size="16" fill="#7A1A1A">reflected at f_s</text>
+
+            <rect x="380" y="290" width="120" height="40" fill="#7A1A1A" opacity="0.65"/>
+            <text x="402" y="280" font-size="16" fill="#7A1A1A">at 2 f_s</text>
+
+            <rect x="580" y="290" width="120" height="40" fill="#7A1A1A" opacity="0.65"/>
+            <text x="608" y="280" font-size="16" fill="#7A1A1A">at 3 f_s</text>
+
+            <!-- bracket showing no overlap region -->
+            <line x1="220" y1="225" x2="300" y2="225" stroke="#1A1A1A" stroke-width="2"/>
+            <text x="225" y="218" font-size="16" font-family="Inter, sans-serif" fill="#1A1A1A">gap = f_s − 2f_B</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · Sampling creates infinite frequency-axis replicas. No-overlap ⇔ Nyquist.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Visual</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="09 Practice">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Just Below Nyquist</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Show aliasing kicks in<br/>as soon as $f_s &lt; 2 f_B$.</h1>
+      </div>
+      <ul class="clean">
+        <li>Let $f_s = 2 f_B - \delta$, with $0 &lt; \delta &lt; f_B$.</li>
+        <li>Find two frequencies in $[0,\, f_B]$ that are aliases of each other at this $f_s$.</li>
+        <li>Hint: use $f + f' = f_s$.</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="10 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">$f_s = 2 f_B - \delta$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>The folded bands meet<br/>at $f_B - \delta/2$.</h1>
+
+        <div class="step" style="margin-top: 8px;">
+          <div class="step-label">Apply $f + f' = f_s$</div>
+          $$f + f' = 2 f_B - \delta$$
+        </div>
+        <div class="step">
+          <div class="step-label">Choose the symmetric pair</div>
+          $$f = f_B - \tfrac{\delta}{2},\;\; f' = f_B - \tfrac{\delta}{2}$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Both equal — they're the same frequency, where the bands first touch.</p>
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-top: 8px;">
+          <div class="step-label">A non-trivial pair</div>
+          $$f = f_B \,-\, \delta,\;\; f' = f_B$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Both in $[0,\, f_B]$; their sum equals $f_s$; therefore aliases.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Why it matters</div>
+          <p style="margin: 0;">Any decrease of $f_s$ below $2 f_B$ — by however small a $\delta$ — already creates ambiguity in the band. The Nyquist criterion is sharp.</p>
+        </div>
+        <div class="defn">
+          <div class="term">In practice</div>
+          <p style="margin: 0;">Real ADC systems include an anti-aliasing low-pass filter <em>before</em> sampling to enforce a known $f_B$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <section data-label="11 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 06</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four facts on aliasing.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · DEFINITION</div>
+          <div class="what">$f \pm f' = k f_s$</div>
+          <div class="how">Both families must be checked.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · CONSEQUENCE</div>
+          <div class="what">Distinct $f$'s produce the same $x[n]$.</div>
+          <div class="how">$x(t)$ no longer recoverable from $x[n]$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · NYQUIST</div>
+          <div class="what">$f_s &gt; 2 f_B$</div>
+          <div class="how">Necessary and sufficient for band $[0,\, f_B]$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · ENGINEERING</div>
+          <div class="what">Anti-aliasing filter first.</div>
+          <div class="how">Enforce $f_B$ before the ADC.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L07 Matrix-Vector Product</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

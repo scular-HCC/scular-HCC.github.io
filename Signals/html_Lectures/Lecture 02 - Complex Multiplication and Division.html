@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 2 — Multiplication &amp; Division</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="lecture-styles.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+      integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+        integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '\\[', right: '\\]', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false}
+          ],
+          throwOnError: false
+        });"></script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- 01 TITLE -->
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">02</div>
+    <div class="topic">Geometry, Multiplication<br/>&amp; Division on $\mathbb{C}$</div>
+    <div class="sub">Lines and circles described by complex equations. Multiplying and dividing complex numbers — and why polar form makes both effortless.</div>
+    <div class="reference">Reading · <em>Textbook §1.3</em></div>
+  </section>
+
+  <!-- 02 OBJECTIVES -->
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 02</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Multiply, divide, and reason<br/>geometrically about $z_1$ and $z_2$.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Recognize</strong> $|z-z_0|=a$ as a circle and $|z-z_1|=|z-z_2|$ as a perpendicular bisector.</li>
+        <li><strong>Multiply</strong> complex numbers in Cartesian form using $j^2=-1$, and in polar form by combining moduli and angles.</li>
+        <li><strong>Divide</strong> by multiplying numerator and denominator by the conjugate.</li>
+        <li><strong>Use</strong> the identities $z\,z^{*}=|z|^{2}$ and $z^{-1}=z^{*}/|z|^{2}$.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 03 GEOMETRIC LOCI -->
+  <section data-label="03 Distance on the plane">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Modulus as Distance</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Modulus as distance</div>
+        <h1>$|z_1 - z_2|$ is the distance<br/>between two points on $\mathbb{C}$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Circle</div>
+          <div class="big-math">$$|z - z_0| = a$$</div>
+          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">All points at fixed distance $a$ from $z_0$.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Perpendicular bisector</div>
+          <div class="big-math">$$|z - z_1| = |z - z_2|$$</div>
+          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">All points equidistant from $z_1$ and $z_2$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 04 PRACTICE: SKETCH -->
+  <section data-label="04 Your Turn (sketch)">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Sketch the curves</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Sketch each curve on $\mathbb{C}$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Curve A</div>
+          <div class="big-math">$$|z - (3 + 4j)| = 5$$</div>
+        </div>
+        <div class="defn">
+          <div class="term">Curve B</div>
+          <div class="big-math">$$|z - 3| = |z + 4j|$$</div>
+        </div>
+      </div>
+      <p class="muted" style="font-size: var(--type-small);">Hint: identify each by its <em>shape</em> first, then locate the centre or the two reference points.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 05 SOLUTION -->
+  <section data-label="05 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Curves A &amp; B</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>One circle,<br/>one line.</h1>
+        <div class="step" style="margin-top: 6px;">
+          <div class="step-label">Curve A · Circle</div>
+          <p style="margin:0;">Centre at $z_0 = 3 + 4j$, radius $a = 5$. The circle passes through the origin since $|3 + 4j| = 5$.</p>
+        </div>
+        <div class="step">
+          <div class="step-label">Curve B · Perpendicular bisector</div>
+          <p style="margin:0;">Equidistant set of $z_1 = 3$ and $z_2 = -4j$. The bisector passes through their midpoint $(1.5,\, -2)$ and is perpendicular to the segment from $3$ to $-4j$.</p>
+        </div>
+      </div>
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l2f1-t l2f1-d">
+            <title id="l2f1-t">Circle and perpendicular bisector on the complex plane</title>
+            <desc id="l2f1-d">A complex plane with real and imaginary axes. A blue circle of radius five is centered at the point three plus four j and passes through the origin. A red straight line passes through the midpoint of the points three and negative four j, perpendicular to the segment connecting them, illustrating the perpendicular bisector.</desc>
+            <defs>
+              <marker id="aL2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+            </defs>
+            <line x1="30" y1="320" x2="570" y2="320" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL2a)"/>
+            <line x1="180" y1="470" x2="180" y2="30" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL2a)"/>
+            <text x="555" y="342" font-size="20" font-style="italic">Re</text>
+            <text x="192" y="44" font-size="20" font-style="italic">Im</text>
+            <text x="168" y="342" font-size="18" fill="#7A746B">0</text>
+            <!-- Scale: 30 px per unit, origin at (180, 320). z0=(3,4) -> (180+90, 320-120)=(270, 200). r=5 -> 150 -->
+            <circle cx="270" cy="200" r="150" fill="none" stroke="#2A4A7A" stroke-width="3"/>
+            <circle cx="270" cy="200" r="5" fill="#2A4A7A"/>
+            <text x="280" y="195" font-size="22" font-style="italic" fill="#2A4A7A">3 + 4j</text>
+            <text x="295" y="80" font-size="22" font-style="italic" fill="#2A4A7A">|z − (3+4j)| = 5</text>
+
+            <!-- z1=3 -> (270, 320); z2=-4j -> (180, 440). midpoint=(225,380). segment slope (440-320)/(180-270)=120/-90 = -4/3. Perp slope = 3/4 -->
+            <circle cx="270" cy="320" r="6" fill="#7A1A1A"/>
+            <text x="278" y="345" font-size="20" font-style="italic" fill="#7A1A1A">z₁ = 3</text>
+            <circle cx="180" cy="440" r="6" fill="#7A1A1A"/>
+            <text x="100" y="455" font-size="20" font-style="italic" fill="#7A1A1A">z₂ = −4j</text>
+
+            <!-- Perp bisector: through (225,380), slope 3/4 in math; in svg y inverts so slope = -3/4 -->
+            <!-- parametrize: (225 + 200t, 380 - 150t) for t in [-1.2, 1.2] -->
+            <line x1="-15" y1="560" x2="465" y2="200" stroke="#7A1A1A" stroke-width="3" stroke-dasharray="0"/>
+            <text x="400" y="220" font-size="20" font-style="italic" fill="#7A1A1A">|z − 3| = |z + 4j|</text>
+            <circle cx="225" cy="380" r="5" fill="#7A1A1A"/>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · Curve A (circle, blue) and curve B (bisector, red).</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 06 CARTESIAN MULTIPLICATION -->
+  <section data-label="06 Multiplication Cartesian">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Multiplication · Cartesian</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Cartesian product</div>
+        <h1>Distribute, then collapse $j^{2} = -1$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$z \,=\, x + jy, \qquad j^{2} = -1$$
+        </div>
+        <div class="stack gap-item">
+          <p>Just like with real polynomials, FOIL through the product and collect real and imaginary parts.</p>
+          <p class="muted" style="font-size: var(--type-small);">Every $j^{2}$ becomes $-1$ — that's the only new rule.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Example</div>
+        $$(5 - 2j)(3 - 4j) \;=\; 15 \;-\; 20j \;-\; 6j \;+\; 8j^{2} \;=\; 7 \;-\; 26j$$
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 07 POLAR MULTIPLICATION -->
+  <section data-label="07 Multiplication Polar">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Multiplication · Polar</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Polar product</div>
+        <h1>Multiply moduli.<br/>Add angles.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$|z_1 z_2| \,=\, |z_1|\,|z_2|$$
+          <div style="height: 14px;"></div>
+          $$\angle (z_1 z_2) \,=\, \angle z_1 + \angle z_2$$
+        </div>
+        <div class="stack gap-item">
+          <p>The angle-sum identities for $\cos$ and $\sin$ collapse the product of two polar forms into a single one.</p>
+          <p>Multiplying by a complex number of modulus $1$ is therefore <strong>a pure rotation</strong> of the plane.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 08 WORKED EXAMPLE -->
+  <section data-label="08 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Two ways to the same product</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Multiply $z_1 = 5 - 2j$ and $z_2 = 3 - 4j$.</h1>
+        <div class="step" style="margin-top: 8px;">
+          <div class="step-label">Cartesian</div>
+          $$z_1 z_2 \,=\, 7 - 26j$$
+        </div>
+        <div class="step">
+          <div class="step-label">Polar inputs</div>
+          $$|z_1| = \sqrt{29},\;\; \angle z_1 = -0.3805$$
+          $$|z_2| = 5,\;\;\;\;\; \angle z_2 = -0.9273$$
+        </div>
+        <div class="step">
+          <div class="step-label">Polar product</div>
+          $$|z_1 z_2| = 5\sqrt{29},\;\; \angle (z_1 z_2) = -1.3078$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-top: 4px;">
+          <div class="step-label">Back to Cartesian</div>
+          $$5\sqrt{29}\,(\cos(-1.3078) + j\sin(-1.3078)) = 7 - 26j$$
+        </div>
+        <div class="defn">
+          <div class="term">Takeaway</div>
+          <p style="margin: 0;">Cartesian and polar agree — pick whichever is less work. For sums use Cartesian; for products and powers use polar.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Powers, the polar way</div>
+          $$\big|z_1^{5}\,z_2^{2}\big| \,=\, 29^{5/2}\cdot 5^{2} \;\approx\; 1.13\times 10^{5}$$
+          $$\angle\!\big(z_1^{5}\,z_2^{2}\big) \,=\, 5(-0.3805) + 2(-0.9273) \,=\, -3.7571$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 09 CONJUGATE & |z|^2 -->
+  <section data-label="09 Conjugate">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Conjugate &amp; Modulus²</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">The conjugate</div>
+        <h1>$z^{*}$ flips the imaginary part —<br/>and the angle.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$z\,z^{*} \,=\, |z|^{2}$$
+        </div>
+        <div class="stack gap-item">
+          <p>If $z = x + jy$, then $z^{*} = x - jy$.</p>
+          <p>In polar form, $|z^{*}| = |z|$ and $\angle z^{*} = -\angle z$ — reflection across the real axis.</p>
+          <p>The product $z\,z^{*}$ is therefore <strong>real and non-negative</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 10 DIVISION -->
+  <section data-label="10 Division">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Division</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Division — Cartesian</div>
+        <h1>Multiply top and bottom<br/>by the denominator's conjugate.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$\frac{z_1}{z_2} \,=\, \frac{z_1\,z_2^{*}}{|z_2|^{2}}$$
+        </div>
+        <div class="stack gap-item">
+          <p>The denominator becomes real, so the rest is just real-division on the real and imaginary parts of the numerator.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Example</div>
+        $$\frac{5 - 2j}{3 - 4j} \,=\, \frac{(5 - 2j)(3 + 4j)}{3^{2} + 4^{2}} \,=\, \frac{23}{25} \,+\, j\,\frac{14}{25}$$
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 11 INVERSE -->
+  <section data-label="11 Inverse">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Inverse $z^{-1}$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Inverse in polar form</div>
+        <h1>Invert the modulus.<br/>Negate the angle.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$z^{-1} \,=\, \frac{z^{*}}{|z|^{2}}$$
+          <div style="height: 14px;"></div>
+          $$|z^{-1}| = |z|^{-1},\;\; \angle z^{-1} = -\angle z$$
+        </div>
+        <div class="stack gap-item">
+          <p>For division in polar form:</p>
+          $$\left|\frac{z_1}{z_2}\right| = \frac{|z_1|}{|z_2|}, \qquad \angle\!\frac{z_1}{z_2} = \angle z_1 - \angle z_2.$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 12 PRACTICE -->
+  <section data-label="12 Your Turn (plot)">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Plot $z$, $z^{*}$, $z^{-1}$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>For $z = 3 - 4j$,<br/>plot $z$, $z^{*}$, and $z^{-1}$.</h1>
+      </div>
+      <ul class="clean">
+        <li>Compute $|z|$ and $\angle z$ first.</li>
+        <li>Use the polar rules: $z^{*}$ shares $|z|$, opposite angle. $z^{-1}$ has modulus $1/|z|$, also opposite angle to $z$.</li>
+        <li>Check your answer in Cartesian: $z^{-1} = z^{*}/|z|^{2}$.</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 13 SOLUTION -->
+  <section data-label="13 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">$z = 3 - 4j$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>One point, two reflections.</h1>
+
+        <div class="step" style="margin-top: 6px;">
+          <div class="step-label">Polar form of $z$</div>
+          $$|z| = \sqrt{3^{2} + 4^{2}} = 5,\;\; \angle z = -0.9273$$
+        </div>
+        <div class="step">
+          <div class="step-label">Conjugate</div>
+          $$z^{*} = 3 + 4j,\;\; |z^{*}| = 5,\;\; \angle z^{*} = +0.9273$$
+        </div>
+        <div class="step">
+          <div class="step-label">Inverse</div>
+          $$z^{-1} = \frac{z^{*}}{|z|^{2}} = \frac{3 + 4j}{25} = 0.12 + 0.16\,j$$
+          $$|z^{-1}| = \tfrac{1}{5},\;\; \angle z^{-1} = +0.9273$$
+        </div>
+      </div>
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l2f2-t l2f2-d">
+            <title id="l2f2-t">Plot of z, z conjugate, and z inverse on the complex plane</title>
+            <desc id="l2f2-d">A complex plane with light grid. The point z is plotted in the lower-right quadrant at three, negative four. Its conjugate z star is plotted in the upper-right quadrant at three, positive four — a reflection across the real axis. The inverse z to the minus one is plotted close to the origin in the upper-right quadrant at approximately zero point one two, zero point one six, with the same angle as the conjugate but much smaller modulus.</desc>
+            <defs>
+              <marker id="aL2b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+            </defs>
+            <g stroke="#E4DDC9" stroke-width="1">
+              <line x1="50" y1="40" x2="50" y2="560"/><line x1="150" y1="40" x2="150" y2="560"/>
+              <line x1="250" y1="40" x2="250" y2="560"/><line x1="350" y1="40" x2="350" y2="560"/>
+              <line x1="450" y1="40" x2="450" y2="560"/><line x1="550" y1="40" x2="550" y2="560"/>
+              <line x1="40" y1="50" x2="560" y2="50"/><line x1="40" y1="150" x2="560" y2="150"/>
+              <line x1="40" y1="250" x2="560" y2="250"/><line x1="40" y1="350" x2="560" y2="350"/>
+              <line x1="40" y1="450" x2="560" y2="450"/><line x1="40" y1="550" x2="560" y2="550"/>
+            </g>
+            <line x1="30" y1="300" x2="570" y2="300" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL2b)"/>
+            <line x1="300" y1="570" x2="300" y2="30" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL2b)"/>
+            <text x="555" y="324" font-size="20" font-style="italic">Re</text>
+            <text x="312" y="44" font-size="20" font-style="italic">Im</text>
+            <text x="270" y="324" font-size="18" fill="#7A746B">0</text>
+            <text x="395" y="324" font-size="18" fill="#7A746B">3</text>
+            <text x="308" y="206" font-size="18" fill="#7A746B">4</text>
+            <text x="308" y="406" font-size="18" fill="#7A746B">−4</text>
+
+            <!-- Scale: 50 px per unit. z=(3,-4) -> (450, 500). z* = (3,4) -> (450, 100). z^-1 = (0.12, 0.16) -> (306, 292) -->
+            <line x1="300" y1="300" x2="450" y2="500" stroke="#7A1A1A" stroke-width="2.5"/>
+            <circle cx="450" cy="500" r="8" fill="#7A1A1A"/>
+            <text x="460" y="510" font-size="24" font-style="italic" fill="#7A1A1A">z</text>
+
+            <line x1="300" y1="300" x2="450" y2="100" stroke="#1A1A1A" stroke-width="2.5"/>
+            <circle cx="450" cy="100" r="8" fill="#1A1A1A"/>
+            <text x="460" y="95" font-size="24" font-style="italic">z*</text>
+
+            <line x1="300" y1="300" x2="306" y2="292" stroke="#2A4A7A" stroke-width="3"/>
+            <circle cx="306" cy="292" r="7" fill="#2A4A7A"/>
+            <text x="316" y="285" font-size="22" font-style="italic" fill="#2A4A7A">z⁻¹</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · $z^{*}$ reflects across Re; $z^{-1}$ shares the same angle but lies inside the unit circle.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- 14 SUMMARY -->
+  <section data-label="14 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 02</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four rules for $z_1$ and $z_2$.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · GEOMETRY</div>
+          <div class="what">$|z-z_0|=a$ is a circle.</div>
+          <div class="how">$|z-z_1|=|z-z_2|$ is the perpendicular bisector.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · MULTIPLY</div>
+          <div class="what">Cartesian: FOIL, use $j^{2} = -1$.</div>
+          <div class="how">Polar: multiply moduli, add angles.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · CONJUGATE</div>
+          <div class="what">$z\,z^{*} = |z|^{2}$ — always real.</div>
+          <div class="how">$z^{*}$ flips the imaginary part and the angle.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · DIVIDE / INVERT</div>
+          <div class="what">$z^{-1} = z^{*}/|z|^{2}$</div>
+          <div class="how">In polar: divide moduli, subtract angles.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L03 Complex Exponentials</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+</deck-stage>
+
+<script src="deck-stage.js"></script>
+
+</body>
+</html>

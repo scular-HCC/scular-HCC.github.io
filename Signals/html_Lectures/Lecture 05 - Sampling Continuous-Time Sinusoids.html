@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 5 — Sampling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">05</div>
+    <div class="topic">Sampling<br/>Continuous-Time Sinusoids</div>
+    <div class="sub">Every $T_s$ seconds, we read off one value of $x(t)$. The resulting sequence is a DT sinusoid whose frequency is set by the ratio of the two periods.</div>
+    <div class="reference">Reading · <em>Textbook §1.6</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 05</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Sample a sinusoid and<br/>predict the discrete result.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Apply</strong> the sampling formula $x[n] = x(n T_s)$.</li>
+        <li><strong>Compute</strong> the resulting DT angular frequency $\Omega = \omega T_s = 2\pi\, f/f_s$.</li>
+        <li><strong>List</strong> the sampling periods that produce the same DT signal: $T_s \pm T_s' = kT$.</li>
+        <li><strong>Detect</strong> when high-rate sampling tracks $x(t)$ faithfully versus when it does not.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+  <section data-label="03 Sampling Formula">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The Sampling Formula</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">From continuous to discrete</div>
+        <h1>Read $x(t)$ every $T_s$ seconds.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$x[n] \,=\, x(n T_s)$$
+        </div>
+        <div class="stack gap-item">
+          <dl class="kv">
+            <dt>$T_s$</dt><dd>sampling period (sec)</dd>
+            <dt>$f_s = 1/T_s$</dt><dd>sampling rate (samples/sec)</dd>
+            <dt>$n$</dt><dd>integer sample index</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Sampling a CT sinusoid</div>
+        $$x(t) = \cos(\omega t + \phi) \;\;\Longrightarrow\;\; x[n] = \cos(\omega T_s\, n + \phi)$$
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+  <section data-label="04 DT Frequency">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">DT Frequency from Sampling</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Discrete-time frequency</div>
+        <h1>$\Omega$ is set by the ratio<br/>of the two periods.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$\Omega \,=\, \omega T_s \,=\, 2\pi\,\frac{f}{f_s} \,=\, 2\pi\,\frac{T_s}{T}$$
+        </div>
+        <div class="stack gap-item">
+          <p>Three equivalent forms of the same statement: how many <em>radians of phase advance</em> happen between samples.</p>
+          <p class="muted" style="font-size: var(--type-small);">Small $T_s/T$ ⇒ small $\Omega$ ⇒ samples densely track $x(t)$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+  <section data-label="05 Sampling Diagram">
+    <div class="slide-chrome"><span class="left">Visual</span><span class="right">Two Sampling Rates</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Same sinusoid, two rates</div>
+        <h1>Different $T_s$ produces different $\Omega$.</h1>
+
+        <p>The continuous sinusoid below is</p>
+        $$x(t) = \cos\!\left(\tfrac{400\pi}{3}\, t - \tfrac{\pi}{8}\right)$$
+        <p>so $f = 200/3$ Hz and $T = 15$ ms.</p>
+
+        <div class="step" style="margin-top: 6px;">
+          <div class="step-label">Sample at $T_s = 3.0$ ms</div>
+          $$x_1[n] \,=\, \cos\!\left(\tfrac{2\pi}{5}\, n - \tfrac{\pi}{8}\right),\;\; \Omega = \tfrac{2\pi}{5}$$
+        </div>
+        <div class="step">
+          <div class="step-label">Sample at $T_s = 5.0$ ms</div>
+          $$x_2[n] \,=\, \cos\!\left(\tfrac{2\pi}{3}\, n - \tfrac{\pi}{8}\right),\;\; \Omega = \tfrac{2\pi}{3}$$
+        </div>
+      </div>
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 700 480" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l5f1-t l5f1-d">
+            <title id="l5f1-t">A continuous sinusoid sampled at two different rates</title>
+            <desc id="l5f1-d">A continuous-time sinusoid is drawn as a smooth curve oscillating around the horizontal time axis. Two sets of sample markers are overlaid: blue circles at a closer spacing of three milliseconds, and red squares at a wider spacing of five milliseconds. The denser blue samples follow the curve closely while the sparser red samples skip across larger portions of each cycle.</desc>
+            <defs>
+              <marker id="aL5a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+            </defs>
+            <!-- axes -->
+            <line x1="30" y1="240" x2="670" y2="240" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL5a)"/>
+            <text x="640" y="265" font-size="18">t</text>
+            <!-- continuous curve: cos(400pi/3 * t - pi/8); plot over t in [0, 0.045]. amplitude=100, baseline=240; map t->x: 0..640 => 50..650 -->
+            <path d="M 50,140 Q 70,340 130,140 Q 190,-60 250,140 Q 310,340 370,140 Q 430,-60 490,140 Q 550,340 610,140"
+                  fill="none" stroke="#1A1A1A" stroke-width="2"/>
+            <!-- Smooth approximation; we'll show two rounds of samples -->
+
+            <!-- T_s = 3 ms samples (blue): n=0,1,2,...; t = 0, 3, 6, 9, 12, 15... ms; x-positions every 40px -->
+            <g fill="#2A4A7A">
+              <circle cx="50" cy="184" r="6"/>
+              <circle cx="90" cy="320" r="6"/>
+              <circle cx="130" cy="140" r="6"/>
+              <circle cx="170" cy="280" r="6"/>
+              <circle cx="210" cy="40" r="6"/>
+              <circle cx="250" cy="200" r="6"/>
+              <circle cx="290" cy="300" r="6"/>
+              <circle cx="330" cy="100" r="6"/>
+              <circle cx="370" cy="240" r="6"/>
+              <circle cx="410" cy="50" r="6"/>
+              <circle cx="450" cy="180" r="6"/>
+              <circle cx="490" cy="320" r="6"/>
+              <circle cx="530" cy="140" r="6"/>
+              <circle cx="570" cy="280" r="6"/>
+              <circle cx="610" cy="40" r="6"/>
+            </g>
+            <text x="50" y="450" font-size="20" fill="#2A4A7A">● $T_s$ = 3.0 ms (denser)</text>
+
+            <!-- T_s = 5 ms samples (red squares): every 66.6px -->
+            <g fill="#7A1A1A">
+              <rect x="44" y="178" width="12" height="12"/>
+              <rect x="111" y="282" width="12" height="12"/>
+              <rect x="178" y="48" width="12" height="12"/>
+              <rect x="244" y="270" width="12" height="12"/>
+              <rect x="311" y="110" width="12" height="12"/>
+              <rect x="378" y="244" width="12" height="12"/>
+              <rect x="444" y="60" width="12" height="12"/>
+              <rect x="511" y="288" width="12" height="12"/>
+              <rect x="578" y="98" width="12" height="12"/>
+            </g>
+            <text x="340" y="450" font-size="20" fill="#7A1A1A">■ $T_s$ = 5.0 ms (sparser)</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · Same $x(t)$, two different sampling periods.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Visual</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+  <section data-label="06 Practice (questions)">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Special Sampling Periods</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Use $\Omega = 2\pi T_s/T$<br/>to answer four questions.</h1>
+      </div>
+      <ol class="numbered">
+        <li>For what values of $T_s$ is $x[n]$ <strong>constant</strong> in $n$?</li>
+        <li>For what values of $T_s$ does $x[n]$ alternate sign every sample, $\ldots,a,-a,a,-a,\ldots$?</li>
+        <li>When is the resulting DT sinusoid <strong>periodic</strong> in $n$?</li>
+        <li>What is the analogous condition on $T_s/T$?</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+  <section data-label="07 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Special $T_s$</span></div>
+    <div class="cols even" style="margin-top: 28px;">
+      <div class="defn">
+        <div class="term">$x[n]$ constant</div>
+        $$\Omega = 0 \;\Leftrightarrow\; T_s = kT$$
+        <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Sampling at integer multiples of the CT period — you keep landing at the same phase.</p>
+      </div>
+      <div class="defn">
+        <div class="term">$x[n]$ alternates</div>
+        $$\Omega = \pi \;\Leftrightarrow\; T_s = (k + \tfrac{1}{2})\,T$$
+        <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Sampling exactly between zero crossings flips the sign every sample.</p>
+      </div>
+      <div class="defn">
+        <div class="term">Periodic in $n$</div>
+        $$\frac{T_s}{T} = \frac{k}{N} \;\;\text{(rational)}$$
+        <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">$\Omega/(2\pi)$ must be rational. The fundamental period is the denominator in lowest terms.</p>
+      </div>
+      <div class="defn">
+        <div class="term">Equivalent rates</div>
+        $$T_s \pm T_s' = kT$$
+        <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Two sampling periods producing the same DT signal differ by an integer multiple of $T$.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+  <section data-label="08 Equivalent Rates">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Equivalent Sampling Rates</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Equivalent sampling periods</div>
+        <h1>Infinitely many $T_s$<br/>produce the same $\Omega$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$\Omega' \,=\, \pm \Omega + 2k\pi \;\;\Longleftrightarrow\;\; T_s \pm T_s' \,=\, k\,T$$
+        </div>
+        <div class="stack gap-item">
+          <p>Combine the $2\pi$ equivalence and the $\Omega \leftrightarrow -\Omega$ symmetry from L04, then translate back into sampling periods.</p>
+          <p class="muted" style="font-size: var(--type-small);">This is exactly why undersampling causes ambiguity — and is the door to aliasing in the next lecture.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+  <section data-label="09 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">All $T_s$ producing $x_1$ and $x_3$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>List the sampling periods.</h1>
+        <p>Continuous sinusoid (same as before):</p>
+        $$x(t) \,=\, \cos\!\left(\tfrac{400\pi}{3}\, t - \tfrac{\pi}{8}\right)$$
+        <p>so $T = 15.0$ ms and $f = 200/3$ Hz.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">$x_1[n] = \cos(\tfrac{2\pi}{5}n - \tfrac{\pi}{8})$</div>
+          $$T_s \,=\, \frac{\Omega}{\omega} \,=\, \frac{2\pi/5}{400\pi/3} \,=\, 3.0\ \text{ms}$$
+          $$T_s = 3.0 + 15.0\,k\ \text{ms},\;\; k=0,1,\ldots$$
+        </div>
+        <div class="defn">
+          <div class="term">$x_3[n] = \cos(\tfrac{2\pi}{5}n + \tfrac{\pi}{8})$</div>
+          <p style="margin: 0;">Use $\cos(-\mu) = \cos\mu$ to flip the sign of the frequency. Negative $T_s$ is illegal, so shift by integer $T$:</p>
+          $$T_s = 12.0 + 15.0\,k\ \text{ms},\;\; k=1,2,\ldots$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+  <section data-label="10 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 05</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four facts about $x[n] = x(n T_s)$.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · FORMULA</div>
+          <div class="what">$x[n] = x(n T_s)$</div>
+          <div class="how">Read $x(t)$ every $T_s$ seconds.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · FREQUENCY</div>
+          <div class="what">$\Omega = \omega T_s = 2\pi\, f/f_s$</div>
+          <div class="how">DT frequency = phase advance per sample.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · EQUIVALENCE</div>
+          <div class="what">$T_s \pm T_s' = kT$</div>
+          <div class="how">Different rates can give the same $x[n]$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · WHY IT MATTERS</div>
+          <div class="what">$f_s$ too small ⇒ ambiguity.</div>
+          <div class="how">Next lecture: aliasing.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L06 Aliasing</span><span class="rule"></span><span class="author">ENES-222 · L05</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

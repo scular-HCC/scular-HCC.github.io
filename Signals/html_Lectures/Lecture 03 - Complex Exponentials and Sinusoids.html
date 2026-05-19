@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 3 — Complex Exponentials &amp; Sinusoids</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- 01 TITLE -->
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">03</div>
+    <div class="topic">Complex Exponentials,<br/>Roots &amp; Sinusoids</div>
+    <div class="sub">Euler's formula unifies polar form, multiplication, and sinusoids. Then we find all $n$ roots of a complex number — and meet continuous-time sinusoids properly.</div>
+    <div class="reference">Reading · <em>Textbook §1.3 – §1.4</em></div>
+  </section>
+
+  <!-- 02 OBJECTIVES -->
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 03</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Use $e^{j\theta}$ as the lingua franca<br/>of polar form and sinusoids.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Convert</strong> between $r(\cos\theta + j\sin\theta)$ and $re^{j\theta}$ at sight.</li>
+        <li><strong>Express</strong> $\cos\theta$ and $\sin\theta$ in terms of $e^{j\theta}$ and $e^{-j\theta}$.</li>
+        <li><strong>Find</strong> all $n$ roots of $z^{n} = v$ on a circle of radius $|v|^{1/n}$.</li>
+        <li><strong>Read off</strong> amplitude $A$, angular frequency $\omega$, period $T$, frequency $f$, and phase $\phi$ from a continuous-time sinusoid.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 03 EULER -->
+  <section data-label="03 Eulers Formula">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Euler's Formula</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Euler's formula</div>
+        <h1>$e^{j\theta}$ is just polar form<br/>written differently.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$e^{j\theta} \,=\, \cos\theta + j\sin\theta$$
+          <div style="height: 14px;"></div>
+          $$z \,=\, r e^{j\theta}$$
+        </div>
+        <div class="stack gap-item">
+          <p>Substitute $t = j\theta$ into the Taylor series for $e^{t}$, separate real and imaginary terms, and recognise the series for $\cos\theta$ and $\sin\theta$.</p>
+          <p class="muted" style="font-size: var(--type-small);">This is the single most useful identity in the course.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 04 ARITHMETIC IN EXPONENTIAL FORM -->
+  <section data-label="04 Arithmetic in e^jt">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Why $e^{j\theta}$ Wins</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Multiplication and division</div>
+        <h1>Polar rules become<br/>plain exponent arithmetic.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$r_1 e^{j\theta_1} \cdot r_2 e^{j\theta_2} \,=\, r_1 r_2\, e^{j(\theta_1+\theta_2)}$$
+          <div style="height: 18px;"></div>
+          $$\frac{r_1 e^{j\theta_1}}{r_2 e^{j\theta_2}} \,=\, \frac{r_1}{r_2}\, e^{j(\theta_1-\theta_2)}$$
+        </div>
+        <div class="stack gap-item">
+          <p>The identity $e^{a+b} = e^{a} e^{b}$ does all the work — no angle-sum formulas needed.</p>
+          <div class="defn">
+            <div class="term">Quick question</div>
+            <p style="margin: 0;">If $z = r e^{j\theta}$, what is $z^{*}$ in exponential form?</p>
+            <p class="muted" style="font-size: var(--type-small); margin: 6px 0 0;">$z^{*} = r\,e^{-j\theta}$ — same modulus, opposite angle.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 05 WORKED: convert -->
+  <section data-label="05 Worked Convert">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">To Exponential Form</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Worked example</div>
+        <h1>Write $z_1$ and $z_2$ as $re^{j\theta}$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">$z_1 = -1 + j$</div>
+          $$|z_1| = \sqrt{2},\;\; \angle z_1 = \tfrac{3\pi}{4}$$
+          $$z_1 \,=\, \sqrt{2}\, e^{j\,3\pi/4}$$
+        </div>
+        <div class="defn">
+          <div class="term">$z_2 = 1 + j\sqrt{3}$</div>
+          $$|z_2| = 2,\;\; \angle z_2 = \tfrac{\pi}{3}$$
+          $$z_2 \,=\, 2\, e^{j\,\pi/3}$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 06 COS/SIN AS EXPONENTIALS -->
+  <section data-label="06 cos and sin">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Inverse Euler</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Cosine and sine, rebuilt</div>
+        <h1>Add and subtract<br/>$e^{j\theta}$ with $e^{-j\theta}$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$\cos\theta \,=\, \frac{e^{j\theta} + e^{-j\theta}}{2}$$
+          <div style="height: 14px;"></div>
+          $$\sin\theta \,=\, \frac{e^{j\theta} - e^{-j\theta}}{2j}$$
+        </div>
+        <div class="stack gap-item">
+          <p>From $e^{j\theta} = \cos\theta + j\sin\theta$ and $e^{-j\theta} = \cos\theta - j\sin\theta$.</p>
+          <p>Add to isolate $\cos\theta$. Subtract to isolate $\sin\theta$.</p>
+          <p class="muted" style="font-size: var(--type-small);">These will reappear constantly in phasor and Fourier analysis.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 07 N-th ROOTS -->
+  <section data-label="07 N-th roots">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">$n$-th Roots</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Roots of $z^{n} = v$</div>
+        <h1>$n$ equally spaced points<br/>on a circle of radius $|v|^{1/n}$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$z_k \,=\, |v|^{1/n}\, e^{j\,\theta_k}$$
+          <div style="height: 6px;"></div>
+          $$\theta_k \,=\, \frac{\angle v + 2k\pi}{n},\;\; k = 0,1,\ldots, n-1$$
+        </div>
+        <div class="stack gap-item">
+          <p>All $n$ roots share the same modulus $|v|^{1/n}$.</p>
+          <p>Their angles are equally spaced by $2\pi/n$ around the circle.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Example</div>
+        <p style="margin: 0 0 8px;">The four roots of $z^{4} = j$:</p>
+        $$z_k \,=\, e^{j\pi/8},\;\; e^{j\,5\pi/8},\;\; e^{j\,9\pi/8},\;\; e^{j\,13\pi/8}$$
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 08 PRACTICE: z^3 = -8 -->
+  <section data-label="08 Your Turn (roots)">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Cube Roots of $-8$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Find and sketch the<br/>three roots of $z^{3} = -8$.</h1>
+      </div>
+      <ul class="clean">
+        <li>Step 1. Write $-8$ in exponential form. What is $|-8|$? What is $\angle (-8)$?</li>
+        <li>Step 2. The roots all have modulus $|{-8}|^{1/3} = 2$. They lie on a circle of radius $2$.</li>
+        <li>Step 3. Their angles are $\theta_k = (\pi + 2k\pi)/3$ for $k = 0, 1, 2$.</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 09 SOLUTION -->
+  <section data-label="09 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">$z^{3} = -8$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>Three points<br/>on a circle of radius $2$.</h1>
+        <div class="step" style="margin-top: 8px;">
+          <div class="step-label">Set up</div>
+          $$-8 = 8\, e^{j\pi}, \;\; |{-8}|^{1/3} = 2$$
+        </div>
+        <div class="step">
+          <div class="step-label">Angles</div>
+          $$\theta_0 = \tfrac{\pi}{3},\;\; \theta_1 = \pi,\;\; \theta_2 = \tfrac{5\pi}{3}$$
+        </div>
+        <div class="step">
+          <div class="step-label">In Cartesian</div>
+          $$z_0 = 1 + j\sqrt{3},\;\; z_1 = -2,\;\; z_2 = 1 - j\sqrt{3}$$
+        </div>
+      </div>
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l3f1-t l3f1-d">
+            <title id="l3f1-t">Three cube roots of negative eight on the complex plane</title>
+            <desc id="l3f1-d">A complex plane with a circle of radius two centered at the origin. Three points are marked on the circle at angles pi over three, pi, and five pi over three from the positive real axis, equally spaced by two pi over three. The points correspond to one plus j root three, negative two, and one minus j root three.</desc>
+            <defs>
+              <marker id="aL3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+            </defs>
+            <circle cx="260" cy="260" r="180" fill="none" stroke="#7A746B" stroke-width="1.5" stroke-dasharray="5 5"/>
+            <line x1="30" y1="260" x2="490" y2="260" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL3a)"/>
+            <line x1="260" y1="490" x2="260" y2="30" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL3a)"/>
+            <text x="475" y="282" font-size="20" font-style="italic">Re</text>
+            <text x="272" y="44" font-size="20" font-style="italic">Im</text>
+            <!-- scale: r=2 => 180px; z0=(1, sqrt3) angle pi/3, z1=(-2,0), z2=(1,-sqrt3) -->
+            <!-- z0: (260 + 180 cos(60), 260 - 180 sin(60)) = (260+90, 260-156)=(350, 104) -->
+            <line x1="260" y1="260" x2="350" y2="104" stroke="#7A1A1A" stroke-width="2.5"/>
+            <circle cx="350" cy="104" r="8" fill="#7A1A1A"/>
+            <text x="362" y="100" font-size="22" font-style="italic" fill="#7A1A1A">z₀ = 1 + j√3</text>
+            <!-- z1: (-2,0) -> (80, 260) -->
+            <line x1="260" y1="260" x2="80" y2="260" stroke="#7A1A1A" stroke-width="2.5"/>
+            <circle cx="80" cy="260" r="8" fill="#7A1A1A"/>
+            <text x="18" y="282" font-size="22" font-style="italic" fill="#7A1A1A">z₁ = −2</text>
+            <!-- z2: (1, -sqrt3) -> (350, 416) -->
+            <line x1="260" y1="260" x2="350" y2="416" stroke="#7A1A1A" stroke-width="2.5"/>
+            <circle cx="350" cy="416" r="8" fill="#7A1A1A"/>
+            <text x="362" y="426" font-size="22" font-style="italic" fill="#7A1A1A">z₂ = 1 − j√3</text>
+            <text x="430" y="220" font-size="20" fill="#7A746B">|z| = 2</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · Three cube roots equally spaced by $2\pi/3$.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 10 PERIODICITY -->
+  <section data-label="10 Periodicity">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Periodicity &amp; Symmetry</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">$\cos$ and $\sin$</div>
+        <h1>Periodic with $2\pi$.<br/>Even and odd. Quarter-shifted.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Periodicity</div>
+          $$\cos(\theta + 2\pi) = \cos\theta,\;\; \sin(\theta + 2\pi) = \sin\theta$$
+        </div>
+        <div class="defn">
+          <div class="term">Symmetry</div>
+          $$\cos(-\theta) = \cos\theta\;\; (\text{even})$$
+          $$\sin(-\theta) = -\sin\theta\;\; (\text{odd})$$
+        </div>
+        <div class="defn">
+          <div class="term">Quarter-shift</div>
+          $$\sin\theta = \cos(\theta - \tfrac{\pi}{2})$$
+        </div>
+        <div class="defn">
+          <div class="term">Half-shift</div>
+          $$\cos(\theta + \pi) = -\cos\theta$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 11 CT SINUSOID -->
+  <section data-label="11 CT Sinusoid">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Continuous-Time Sinusoid</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">The generic CT sinusoid</div>
+        <h1>Three numbers describe it.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$x(t) \,=\, A\cos(\omega t + \phi)$$
+        </div>
+        <div class="stack gap-item">
+          <dl class="kv">
+            <dt>$A > 0$</dt><dd>amplitude</dd>
+            <dt>$\omega$</dt><dd>angular frequency (rad/sec)</dd>
+            <dt>$\phi$</dt><dd>initial phase (rad)</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Period</div>
+          $$T \,=\, \frac{2\pi}{\omega} \text{ seconds}$$
+        </div>
+        <div class="defn">
+          <div class="term">Cyclic frequency</div>
+          $$f \,=\, \frac{1}{T} \,=\, \frac{\omega}{2\pi} \text{ Hz}$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 12 WORKED EXAMPLE: solve for A, omega, phi -->
+  <section data-label="12 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Recover $A$, $\omega$, $\phi$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Three clues, three unknowns.</h1>
+        <ul class="clean" style="margin-top: 0;">
+          <li>$x(t) \geq 1.50$ for $23\%$ of its period.</li>
+          <li>It takes $0.02$ s to drop from $1.50$ to $0$.</li>
+          <li>$x(0) = -0.3$, with $x'(0) > 0$.</li>
+        </ul>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Amplitude</div>
+          $$\cos^{-1}\!\left(\tfrac{1.5}{A}\right) = 0.23\pi \;\Rightarrow\; A = \tfrac{1.5}{\cos(0.23\pi)} = 2.0$$
+        </div>
+        <div class="step">
+          <div class="step-label">Angular frequency</div>
+          $$\omega = \frac{0.5\pi - 0.23\pi}{0.02} = 13.5\pi \text{ rad/s}$$
+          $$f = 6.75 \text{ Hz},\;\; T = 0.148 \text{ s}$$
+        </div>
+        <div class="step">
+          <div class="step-label">Phase</div>
+          $$\phi = -\cos^{-1}\!\left(\tfrac{-0.3}{2.0}\right) = -1.721 \text{ rad}$$
+          <p class="muted" style="font-size: 24px; margin: 4px 0 0;">Negative branch chosen because $x'(0) > 0$ forces $\sin\phi < 0$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+  <!-- 13 SUMMARY -->
+  <section data-label="13 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 03</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>One identity, three consequences.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · EULER</div>
+          <div class="what">$e^{j\theta} = \cos\theta + j\sin\theta$</div>
+          <div class="how">Polar form becomes $z = r e^{j\theta}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · COS / SIN</div>
+          <div class="what">$\cos\theta = \tfrac{e^{j\theta}+e^{-j\theta}}{2}$</div>
+          <div class="how">$\sin\theta = \tfrac{e^{j\theta}-e^{-j\theta}}{2j}$</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · ROOTS</div>
+          <div class="what">$n$ roots of $z^{n} = v$.</div>
+          <div class="how">Modulus $|v|^{1/n}$; angles spaced by $2\pi/n$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · SINUSOID</div>
+          <div class="what">$x(t) = A\cos(\omega t + \phi)$</div>
+          <div class="how">$T = 2\pi/\omega$, $f = 1/T$.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L04 Phasors</span><span class="rule"></span><span class="author">ENES-222 · L03</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

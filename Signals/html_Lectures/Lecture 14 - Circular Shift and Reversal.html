@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 14 — Circular Shift &amp; Reversal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">14</div>
+    <div class="topic">Circular Shift,<br/>Reversal &amp; Modulation</div>
+    <div class="sub">Three matrices — $P$, $R$, $F$ — let us move samples around. Combined with $V$'s symmetry, they generate the core DFT properties.</div>
+    <div class="reference">Reading · <em>§3.2.2, §3.3.2, §3.4</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 14</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Build any rearrangement of $x$<br/>from $P$, $R$, and $F$.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Recognise</strong> $P$, $R$, $F$ and use $P^{N} = I$, $R^{2} = I$.</li>
+        <li><strong>Use</strong> the symmetry $V^{*} = V R = R V$, so $W = V R$.</li>
+        <li><strong>Apply</strong> DFT 3 — conjugation: $x^{*} \leftrightarrow R X^{*}$.</li>
+        <li><strong>Apply</strong> DFT 4 — circular reversal: $R x \leftrightarrow R X$.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+  <section data-label="03 P R F">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Three Matrices</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">$P$, $R$, $F$</div>
+        <h1>Shift, reverse, modulate.</h1>
+      </div>
+      <div class="cols" style="grid-template-columns: 1fr 1fr 1fr; gap: 40px;">
+        <div class="defn">
+          <div class="term">$P$ · Circular shift</div>
+          <p style="margin: 0;">$Px$ moves each entry down one slot, wrapping the last to the top.</p>
+          $$P^{m}: \text{shift by } m;\;\; P^{N} = I$$
+        </div>
+        <div class="defn">
+          <div class="term">$R$ · Circular reversal</div>
+          <p style="margin: 0;">$Rx$ keeps index $0$ in place and reverses the rest.</p>
+          $$R^{2} = I,\;\; R^{\top} = R$$
+        </div>
+        <div class="defn">
+          <div class="term">$F$ · Modulation</div>
+          <p style="margin: 0;">$F = \mathrm{diag}(v^{(1)})$ where $v = e^{j 2\pi/N}$.</p>
+          $$y = F^{k} x:\;\; y[n] = e^{j k(2\pi/N) n}\,x[n]$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+  <section data-label="04 Practice with P R F">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Build $x^{(1)}$ – $x^{(6)}$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Express each $x^{(i)}$ using $P$, $R$, $F$ and $x$.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Setup</div>
+        $$x = (0, 1, 2, 3, 4, 5)^{\top},\;\; N = 6$$
+      </div>
+      <div class="cols even" style="margin-top: 18px;">
+        <ul class="clean">
+          <li>$x^{(1)} = (4,5,0,1,2,3)^{\top}$</li>
+          <li>$x^{(2)} = (4,3,2,1,0,5)^{\top}$</li>
+          <li>$x^{(3)} = (0,6,6,6,6,6)^{\top}$</li>
+        </ul>
+        <ul class="clean">
+          <li>$x^{(4)} = (0,-4,-2,0,2,4)^{\top}$</li>
+          <li>$x^{(5)} = (0,-1,2,-3,4,-5)^{\top}$</li>
+          <li>$x^{(6)} = (0,2,0,6,0,10)^{\top}$</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+  <section data-label="05 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Decompositions</span></div>
+    <div class="cols even" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">$x^{(1)}$ — shift up by 4 (down by $-4 \equiv 2$)</div>
+          $$x^{(1)} = P^{-4} x = P^{2} x$$
+        </div>
+        <div class="step">
+          <div class="step-label">$x^{(2)}$ — reflect about index 3</div>
+          $$x^{(2)} = R\,P^{-1} x \;\; (\text{or}\;\; P\,R\,x)$$
+        </div>
+        <div class="step">
+          <div class="step-label">$x^{(3)}$ — circularly reversed plus $x$</div>
+          $$x^{(3)} = R x + x \;\; (\text{check: } R x = (0,5,4,3,2,1)^{\top})$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">$x^{(4)}$ — $x - R x$</div>
+          $$x^{(4)} = x - R x$$
+        </div>
+        <div class="step">
+          <div class="step-label">$x^{(5)}$ — sign-flip alternate entries</div>
+          $$x^{(5)} = F^{N/2} x = F^{3} x$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Since $F^{3}$ has diagonal $1, -1, 1, -1, \ldots$ for $N=6$.</p>
+        </div>
+        <div class="step">
+          <div class="step-label">$x^{(6)}$ — zero out even slots, double the odd ones</div>
+          $$x^{(6)} = x - F^{3} x$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">$F^{3}$ has diagonal $(1,-1,1,-1,1,-1)$, so $x - F^{3} x = x\,(1-(-1)^{n})$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+  <section data-label="06 V Symmetry">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Symmetry of $V$ and $W$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Circular conjugate symmetry of $V$</div>
+        <h1>$V^{*} = V R = R V$,<br/>so $W = V R$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$V^{*} \,=\, V R \,=\, R V$$
+          <div style="height: 8px;"></div>
+          $$W \,=\, V^{*},\;\; V \,=\, W R \,=\, R W$$
+        </div>
+        <div class="stack gap-item">
+          <p>The $k$-th and $(N-k)$-th columns of $V$ are conjugates — exactly the same property real signals exhibit in their DFTs.</p>
+          <p>$V$ is symmetric (so rows and columns share the same symmetry).</p>
+        </div>
+      </div>
+      <p class="muted" style="font-size: var(--type-small);">Useful identities follow: $R V R = V$ and $R W R = W$.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+  <section data-label="07 DFT 3 conjugation">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">DFT 3 — Conjugation</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">DFT 3</div>
+        <h1>$x^{*} \,\leftrightarrow\, R X^{*}$</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$y = x^{*} \;\Longrightarrow\; Y = R X^{*}$$
+        </div>
+        <div class="stack gap-item">
+          <p>Plug into the analysis equation:</p>
+          $$Y = W y = W x^{*} = R W^{*} x^{*} = R X^{*}$$
+          <p class="muted" style="font-size: var(--type-small);">Used $W = R W^{*}$ from the conjugate symmetry of $W$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+  <section data-label="08 DFT 4 reversal">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">DFT 4 — Reversal</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">DFT 4</div>
+        <h1>$R x \,\leftrightarrow\, R X$</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$y = R x \;\Longrightarrow\; Y = R X$$
+        </div>
+        <div class="stack gap-item">
+          <p>Same idea, easier:</p>
+          $$Y = W R x = R W x = R X$$
+          <p class="muted" style="font-size: var(--type-small);">Reverse in time ⇔ reverse in frequency. No conjugates.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="left">Concept</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+  <section data-label="09 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Use DFT 3 and DFT 4</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>One known pair, two free.</h1>
+        <div class="defn">
+          <div class="term">Given</div>
+          $$x = (1,\, j,\, -2,\, 2j)^{\top}$$
+          $$X = (-1+3j,\, 2,\, -1-3j,\, 4)^{\top}$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Conjugate $x$</div>
+          $$x^{*} = (1, -j, -2, -2j)^{\top}$$
+          $$\Rightarrow Y = R X^{*} = (-1-3j,\, 4,\, -1+3j,\, 2)^{\top}$$
+        </div>
+        <div class="step">
+          <div class="step-label">Reverse $x$</div>
+          $$R x = (1,\, 2j,\, -2,\, j)^{\top}$$
+          $$\Rightarrow Y = R X = (-1+3j,\, 4,\, -1-3j,\, 2)^{\top}$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+  <section data-label="10 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 14</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four facts.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · $P$, $R$, $F$</div>
+          <div class="what">Shift, reverse, modulate.</div>
+          <div class="how">$P^{N} = R^{2} = I$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · SYMMETRY</div>
+          <div class="what">$V^{*} = V R = R V$</div>
+          <div class="how">Conjugate columns are mirrored.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · DFT 3</div>
+          <div class="what">$x^{*} \leftrightarrow R X^{*}$</div>
+          <div class="how">Conjugate + reverse.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · DFT 4</div>
+          <div class="what">$R x \leftrightarrow R X$</div>
+          <div class="how">Reverse in both domains.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L15 Shift, Modulation, Duality</span><span class="rule"></span><span class="author">ENES-222 · L14</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

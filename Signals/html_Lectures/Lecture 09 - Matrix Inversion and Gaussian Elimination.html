@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 9 — Inversion &amp; Gaussian Elimination</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">09</div>
+    <div class="topic">Matrix Inversion &amp;<br/>Gaussian Elimination</div>
+    <div class="sub">Solve $A\mathbf{x} = \mathbf{b}$ for any $\mathbf{b}$. Triangular matrices invert by substitution; general matrices reduce to triangular by elimination.</div>
+    <div class="reference">Reading · <em>Textbook §2.4 – §2.6</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 09</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Decide whether $A$ is nonsingular,<br/>and solve $A\mathbf{x} = \mathbf{b}$.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Distinguish</strong> singular from nonsingular $n\times n$ matrices.</li>
+        <li><strong>Use</strong> the identities $A A^{-1} = I$, $(A^{\top})^{-1} = (A^{-1})^{\top}$, $(AB)^{-1} = B^{-1}A^{-1}$.</li>
+        <li><strong>Invert</strong> triangular matrices by forward or backward substitution.</li>
+        <li><strong>Apply</strong> Gaussian elimination — forward elimination, then back substitution — to a general $n\times n$ system.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="03 The Question">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">When Does $A\mathbf{x}=\mathbf{b}$ Have a Unique Solution?</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">The shape of $A$ decides</div>
+        <h1>Three cases for $A\,(m \times n)$.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">$m &lt; n$ · Under-determined</div>
+          <div class="what">A solution almost always exists.</div>
+          <div class="how">But it is not unique — input cannot be recovered.</div>
+        </div>
+        <div class="cell">
+          <div class="num">$m &gt; n$ · Over-determined</div>
+          <div class="what">A random $\mathbf{b}$ almost certainly has no solution.</div>
+          <div class="how">Most outputs are unreachable.</div>
+        </div>
+        <div class="cell">
+          <div class="num">$m = n$ · Square</div>
+          <div class="what">Almost certainly: every $\mathbf{b}$ has a unique $\mathbf{x}$.</div>
+          <div class="how">$A$ is nonsingular and $\mathbf{x} = A^{-1}\mathbf{b}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">Exception</div>
+          <div class="what">Singular square matrices.</div>
+          <div class="how">Some $\mathbf{b}$ have no solution; others have many.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="04 Nonsingular">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Nonsingular &amp; the Inverse</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Definition</div>
+        <h1>$A$ is nonsingular iff $A\mathbf{x} = \mathbf{b}$<br/>has a unique solution for every $\mathbf{b}$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$A\mathbf{x} = \mathbf{b}\;\Leftrightarrow\;\mathbf{x} = A^{-1}\mathbf{b}$$
+          <div style="height: 10px;"></div>
+          $$A\,A^{-1} \,=\, A^{-1}\,A \,=\, I$$
+        </div>
+        <div class="stack gap-item">
+          <p>The mapping $\mathbf{b} \mapsto \mathbf{x}$ is itself linear, so it has its own matrix — that's $A^{-1}$.</p>
+        </div>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Useful identities</div>
+          $$(A^{-1})^{-1} = A$$
+          $$(A^{\top})^{-1} = (A^{-1})^{\top}$$
+          $$(AB)^{-1} = B^{-1}A^{-1}$$
+        </div>
+        <div class="defn">
+          <div class="term">Permutation matrices</div>
+          $$P^{-1} \,=\, P^{\top}$$
+          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">From last lecture: $P^{\top}P = I$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="05 Diagonal and Triangular">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Diagonal &amp; Triangular Inverses</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Easy cases</div>
+        <h1>Diagonals invert entry-by-entry.<br/>Triangles invert by substitution.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Diagonal</div>
+          $$D = \mathrm{diag}(\alpha,\beta,\gamma),\;\; \alpha\beta\gamma \neq 0$$
+          $$D^{-1} = \mathrm{diag}\!\left(\tfrac{1}{\alpha},\tfrac{1}{\beta},\tfrac{1}{\gamma}\right)$$
+        </div>
+        <div class="defn">
+          <div class="term">Triangular</div>
+          <p style="margin: 0;">Lower triangular $L$ is nonsingular iff every diagonal entry is nonzero.</p>
+          <p style="margin: 8px 0 0;">Solve $L\mathbf{x} = \mathbf{b}$ by <strong>forward substitution</strong>: $x_1 \to x_2 \to \cdots \to x_n$.</p>
+          <p style="margin: 8px 0 0;">Upper triangular $U$: <strong>backward substitution</strong>: $x_n \to x_{n-1} \to \cdots \to x_1$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="06 Forward Sub Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Forward Substitution</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Invert $L$ via forward substitution.</h1>
+        $$L = \begin{bmatrix}2 & 0 & 0 \\ 5 & -1 & 0 \\ 1 & -2 & 3\end{bmatrix}$$
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Row 1</div>
+          $$2 x_1 = b_1 \;\Rightarrow\; x_1 = \tfrac{1}{2} b_1$$
+        </div>
+        <div class="step">
+          <div class="step-label">Row 2</div>
+          $$5 x_1 - x_2 = b_2 \;\Rightarrow\; x_2 = \tfrac{5}{2} b_1 - b_2$$
+        </div>
+        <div class="step">
+          <div class="step-label">Row 3</div>
+          $$x_1 - 2 x_2 + 3 x_3 = b_3 \;\Rightarrow\; x_3 = \tfrac{3}{2} b_1 - \tfrac{2}{3} b_2 + \tfrac{1}{3} b_3$$
+        </div>
+        <div class="defn">
+          <div class="term">Stack into a matrix</div>
+          $$L^{-1} = \begin{bmatrix}\tfrac{1}{2} & 0 & 0 \\ \tfrac{5}{2} & -1 & 0 \\ \tfrac{3}{2} & -\tfrac{2}{3} & \tfrac{1}{3}\end{bmatrix}$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="07 Gaussian Idea">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Gaussian Elimination</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">The principle</div>
+        <h1>Reduce to triangular,<br/>then back-substitute.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$A\mathbf{x} = \mathbf{b}\;\Leftrightarrow\;(MA)\mathbf{x} = M\mathbf{b}$$
+          <p class="muted" style="font-size: var(--type-small); text-align: center; margin: 14px 0 0;">for any nonsingular $M$</p>
+        </div>
+        <div class="stack gap-item">
+          <p>Multiply by row-operation matrices until the system becomes upper triangular $U\mathbf{x} = \mathbf{c}$. Then solve by backward substitution.</p>
+        </div>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Phase 1 · Forward elimination</div>
+          <p style="margin: 0;">In step $j$, use the $j$-th equation to zero out the $j$-th column below the diagonal. The denominators are the diagonal entries — the <strong>pivots</strong>.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Phase 2 · Backward substitution</div>
+          <p style="margin: 0;">Solve the resulting upper-triangular system from the bottom row up.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="08 Worked GE">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Solve $3\times 3$ by Elimination</span></div>
+    <div class="stack" style="margin-top: 28px; gap: 22px;">
+      <div class="cols" style="grid-template-columns: 1fr 1.1fr; gap: 60px; align-items: center;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 12px;">Worked example</div>
+          <h1 style="font-size: 52px;">Forward elimination,<br/>then back-substitute.</h1>
+        </div>
+        <div style="font-size: 28px;">
+          $$\begin{bmatrix}2 & 1 & -1 \\ 4 & 0 & -1 \\ -8 & 2 & 3\end{bmatrix}\!\mathbf{x} = \begin{bmatrix}6 \\ 6 \\ -10\end{bmatrix}$$
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; font-size: 24px;">
+        <div class="step" style="margin: 0;">
+          <div class="step-label">Step 1 · Kill $x_1$</div>
+          <p style="margin: 4px 0 0; font-size: 22px;" class="muted">Pivot $= 2$. Multipliers $m_{21} = -2$, $m_{31} = 4$.</p>
+          $$\begin{bmatrix}2 & 1 & -1 \\ 0 & -2 & 1 \\ 0 & 6 & -1\end{bmatrix}\!\mathbf{x} = \begin{bmatrix}6 \\ -6 \\ 14\end{bmatrix}$$
+        </div>
+        <div class="step" style="margin: 0;">
+          <div class="step-label">Step 2 · Kill $x_2$</div>
+          <p style="margin: 4px 0 0; font-size: 22px;" class="muted">Pivot $= -2$. Multiplier $m_{32} = 3$.</p>
+          $$\begin{bmatrix}2 & 1 & -1 \\ 0 & -2 & 1 \\ 0 & 0 & 2\end{bmatrix}\!\mathbf{x} = \begin{bmatrix}6 \\ -6 \\ -4\end{bmatrix}$$
+        </div>
+        <div class="step" style="margin: 0;">
+          <div class="step-label">Back-sub → $\mathbf{x}$</div>
+          $$2 x_3 = -4 \Rightarrow x_3 = -2$$
+          $$-2 x_2 + x_3 = -6 \Rightarrow x_2 = 2$$
+          $$2 x_1 + x_2 - x_3 = 6 \Rightarrow x_1 = 1$$
+          <p style="margin: 12px 0 0; font-size: 26px;">$\mathbf{x} = (1,\,2,\,-2)^{\top}$</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="09 Pivots">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Pivots Decide Singularity</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Reading the pivots</div>
+        <h1>One nonzero pivot per step.<br/>That is the test.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Nonsingular</div>
+          <p style="margin: 0;">Every forward-elimination step finds a nonzero pivot (after a row swap if needed), and the last equation's $x_n$ coefficient is nonzero.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Singular</div>
+          <p style="margin: 0;">At some step every remaining equation has a zero coefficient for the current variable — or the final $x_n$ coefficient is zero.</p>
+        </div>
+      </div>
+      <p class="muted" style="font-size: var(--type-small);">In code: partial pivoting (swap in the largest-magnitude available pivot) keeps the procedure numerically stable even when the matrix is far from singular.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="10 Practice (singular)">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Find the Failure</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>For each $A$, find a $\mathbf{b}$<br/>with no solution.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">$A_1$</div>
+          $$\begin{bmatrix}0 & 0 \\ 0 & 0\end{bmatrix}$$
+        </div>
+        <div class="defn">
+          <div class="term">$A_2$</div>
+          $$\begin{bmatrix}1 & 0 \\ 0 & 0\end{bmatrix}$$
+        </div>
+        <div class="defn">
+          <div class="term">$A_3$</div>
+          $$\begin{bmatrix}1 & 3 \\ 2 & 6\end{bmatrix}$$
+        </div>
+      </div>
+      <p class="muted" style="font-size: var(--type-small);">Also: show that $A_i \mathbf{x} = \mathbf{0}$ has more than one solution in each case.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="11 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Three Singular $A$'s</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>Each $A$ has a dependent column.</h1>
+
+        <div class="step" style="margin-top: 8px;">
+          <div class="step-label">$A_1 = 0$</div>
+          <p style="margin: 0;">Every $A_1 \mathbf{x} = \mathbf{0}$. Any $\mathbf{b} \neq \mathbf{0}$ has no solution. And $\mathbf{x} = \mathbf{0}$ is one solution to $A_1\mathbf{x} = \mathbf{0}$ — but so is <em>every other</em> $\mathbf{x}$.</p>
+        </div>
+        <div class="step">
+          <div class="step-label">$A_2$</div>
+          <p style="margin: 0;">Image is the horizontal axis. $\mathbf{b} = (0, 1)$ has no solution. The null space includes $\mathbf{x} = (0, c)$ for every $c$.</p>
+        </div>
+        <div class="step">
+          <div class="step-label">$A_3$</div>
+          <p style="margin: 0;">Row 2 is twice row 1, so the image is the line through $(1, 2)$. $\mathbf{b} = (1, 0)$ has no solution. The null space includes $\mathbf{x} = (3, -1)\,c$.</p>
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Pattern</div>
+          <p style="margin: 0;">When the columns of $A$ are linearly dependent, the image is a proper subset of $\mathbb{R}^{n}$: some $\mathbf{b}$ are unreachable, and the null space is non-trivial.</p>
+        </div>
+        <div class="defn">
+          <div class="term">In elimination</div>
+          <p style="margin: 0;">Each of $A_1, A_2, A_3$ produces a zero pivot in forward elimination with no row swap able to fix it. That's the algorithmic signature of singularity.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+  <section data-label="12 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 09</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Five facts about solving $A\mathbf{x}=\mathbf{b}$.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · NONSINGULAR</div>
+          <div class="what">Unique $\mathbf{x}$ for every $\mathbf{b}$.</div>
+          <div class="how">$A^{-1}$ exists; $\mathbf{x} = A^{-1}\mathbf{b}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · INVERSE RULES</div>
+          <div class="what">$(AB)^{-1} = B^{-1}A^{-1}$</div>
+          <div class="how">$(A^{\top})^{-1} = (A^{-1})^{\top}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · TRIANGULAR</div>
+          <div class="what">Nonsingular iff all diagonal entries $\neq 0$.</div>
+          <div class="how">Solve by forward / backward substitution.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · GAUSSIAN ELIMINATION</div>
+          <div class="what">Forward elimination → $U\mathbf{x}=\mathbf{c}$.</div>
+          <div class="how">Back-substitute to recover $\mathbf{x}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">05 · PIVOTS</div>
+          <div class="what">Exactly one nonzero pivot per step.</div>
+          <div class="how">Otherwise $A$ is singular.</div>
+        </div>
+        <div class="cell">
+          <div class="num">06 · WHEN STUCK</div>
+          <div class="what">Row swap.</div>
+          <div class="how">Records as a permutation $P$.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">End of unit · ENES-222</span><span class="rule"></span><span class="author">ENES-222 · L09</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

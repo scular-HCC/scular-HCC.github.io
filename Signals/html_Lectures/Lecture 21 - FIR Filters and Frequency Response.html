@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 21 — FIR Filters &amp; Frequency Response</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">21</div>
+    <div class="topic">FIR Filters &amp;<br/>Frequency Response</div>
+    <div class="sub">A few coefficients $b_0, \ldots, b_M$ define an LTI system. Feed it a sinusoid — out comes the same sinusoid, scaled and phase-shifted by $H(e^{j\omega})$.</div>
+    <div class="reference">Reading · <em>§4.2.2, §4.3, §4.4</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 21</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Read off the frequency response<br/>of an FIR filter.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Recognise</strong> the FIR input-output relationship $y[n] = \sum_{k=0}^{M} b_k\, x[n-k]$.</li>
+        <li><strong>Derive</strong> the frequency response $H(e^{j\omega}) = \sum_k b_k\, e^{-j\omega k}$.</li>
+        <li><strong>Extract</strong> amplitude $|H(e^{j\omega})|$ and phase $\angle H(e^{j\omega})$, especially for symmetric $b$.</li>
+        <li><strong>Compute</strong> $H$ at $N$ uniformly spaced frequencies by taking <code>fft(b, N)</code>.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="03 FIR IO">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">FIR Input-Output</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">FIR filter</div>
+        <h1>A weighted moving sum<br/>over $M+1$ recent samples.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$y[n] \,=\, \sum_{k=0}^{M} b_k\, x[n-k]$$
+        </div>
+        <div class="stack gap-item">
+          <p>$b = (b_0, b_1, \ldots, b_M)^{\top}$ — the <strong>coefficient vector</strong>.</p>
+          <p><strong>Linear</strong>: superposition holds.<br/><strong>Time-invariant</strong>: delay in ⇒ same delay out.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="04 Eigen Property">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Complex Exponentials Are Eigenfunctions</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Sinusoid in, sinusoid out</div>
+        <h1>$x[n] = e^{j\omega n} \,\Rightarrow\, y[n] = H(e^{j\omega})\, e^{j\omega n}$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$H(e^{j\omega}) \,=\, b_0 + b_1\, e^{-j\omega} + \cdots + b_M\, e^{-j M\omega}$$
+        </div>
+        <div class="stack gap-item">
+          <p>The output is the same complex sinusoid, scaled by the complex factor $H(e^{j\omega})$.</p>
+          <p>$H$ depends on $\omega$ only — that's the entire fingerprint of the filter at sinusoidal inputs.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">System function — anywhere in $\mathbb{C}$</div>
+        $$H(z) \,=\, b_0 + b_1\, z^{-1} + \cdots + b_M\, z^{-M}$$
+        <p style="margin: 6px 0 0; font-size: var(--type-small);" class="muted">$H(e^{j\omega})$ is just $H(z)$ restricted to the unit circle.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="05 Worked b 1221">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">$b = (1, 2, 2, 1)^{\top}$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Symmetric coefficients ⇒<br/>linear phase.</h1>
+        <p>Factor out $e^{-j 3\omega/2}$:</p>
+        $$H(e^{j\omega}) \,=\, e^{-j 3\omega/2}\big(4\cos(\omega/2) + 2\cos(3\omega/2)\big)$$
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Amplitude response</div>
+          $$|H(e^{j\omega})| \,=\, |4\cos(\omega/2) + 2\cos(3\omega/2)|$$
+          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Symmetric about $\omega = \pi$. Three zeros in $[0, 2\pi)$: at $2\pi/3$, $\pi$, $4\pi/3$.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Phase response</div>
+          $$\angle H(e^{j\omega}) \,=\, -\tfrac{3\omega}{2} + (0 \text{ or } \pi)$$
+          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Piecewise linear with $\pi$ jumps wherever the real factor changes sign.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="06 Diagram">
+    <div class="slide-chrome"><span class="left">Visual</span><span class="right">Amplitude &amp; Phase Response</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Reading the plot</div>
+        <h1>Three nulls,<br/>linear phase ramp.</h1>
+        <p>Zeros of $|H|$ at $\omega = 2\pi/3,\, \pi,\, 4\pi/3$. Any input frequency at these values is completely killed by the filter.</p>
+        <p>The phase line has slope $-3/2$ — group delay $1.5$ samples for every component in the passband.</p>
+      </div>
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l21f1-t l21f1-d">
+            <title id="l21f1-t">Amplitude and phase response of the b equals one two two one filter</title>
+            <desc id="l21f1-d">Top panel — amplitude response: a curve that starts high at omega equals zero, dips to zero at two pi over three, rises slightly, dips to zero again at pi, then mirrors symmetrically. Bottom panel — phase response: a piecewise-linear staircase with constant negative slope and three pi-radian jumps at the three nulls.</desc>
+            <!-- Top: amplitude -->
+            <text x="20" y="32" font-size="16" font-family="Inter, sans-serif" font-weight="600">|H(e^{jω})|</text>
+            <line x1="40" y1="160" x2="580" y2="160" stroke="#1A1A1A" stroke-width="1.2"/>
+            <path d="M 40,50 Q 90,80 140,130 Q 180,160 220,160 Q 260,160 290,140 Q 310,160 350,160 Q 390,160 420,130 Q 470,80 520,50 L 580,40"
+                  fill="none" stroke="#7A1A1A" stroke-width="2.5"/>
+            <text x="200" y="180" font-size="13" fill="#7A746B">2π/3</text>
+            <text x="290" y="180" font-size="13" fill="#7A746B">π</text>
+            <text x="370" y="180" font-size="13" fill="#7A746B">4π/3</text>
+
+            <!-- Bottom: phase -->
+            <text x="20" y="212" font-size="16" font-family="Inter, sans-serif" font-weight="600">∠H(e^{jω})</text>
+            <line x1="40" y1="330" x2="580" y2="330" stroke="#1A1A1A" stroke-width="1.2"/>
+            <line x1="40" y1="230" x2="220" y2="320" stroke="#2A4A7A" stroke-width="2.5"/>
+            <line x1="220" y1="240" x2="300" y2="290" stroke="#2A4A7A" stroke-width="2.5"/>
+            <line x1="300" y1="260" x2="380" y2="305" stroke="#2A4A7A" stroke-width="2.5"/>
+            <line x1="380" y1="240" x2="580" y2="345" stroke="#2A4A7A" stroke-width="2.5"/>
+            <!-- jump markers -->
+            <circle cx="220" cy="320" r="3" fill="#2A4A7A"/>
+            <circle cx="220" cy="240" r="3" fill="#2A4A7A"/>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · Amplitude (top, red) and phase (bottom, blue) responses.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Visual</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="07 Real Coefficients Symmetry">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Symmetry of $H$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Real coefficients</div>
+        <h1>$|H|$ even, $\angle H$ odd<br/>about $\omega = 0$ and $\pi$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$H(e^{-j\omega}) \,=\, H^{*}(e^{j\omega})$$
+        </div>
+        <div class="stack gap-item">
+          <p>Just like the DFT of a real signal. So we only need to plot $H$ over $[0, \pi]$.</p>
+          <p>And $H(e^{j(\omega + 2\pi)}) = H(e^{j\omega})$ — period $2\pi$, automatic.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="08 Frequency Response via DFT">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Sample $H$ via FFT</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Computing $H$ on a grid</div>
+        <h1>$\mathtt{fft(b, N)}$ samples $H(e^{j\omega})$<br/>at $N$ equally spaced frequencies.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$H(e^{j\,2\pi k/N}) \,=\, [\mathrm{DFT}\ \text{of}\ (b;\, 0_{N-M-1})][k]$$
+        </div>
+        <div class="stack gap-item">
+          <p>Pad $b$ with zeros to length $N \geq M+1$, then DFT.</p>
+          <p>For smooth plots, take $N \gg M$ — zero-padding is interpolation here too.</p>
+          <p class="muted" style="font-size: var(--type-small); font-family: 'JetBrains Mono', monospace;">H = fft(b, 512);<br/>A = abs(H); q = angle(H);</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="09 Practice">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Exponential Inputs</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Verify three input–output pairs.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Filter</div>
+        $$H(z) = 1 + 2z^{-1} + 2z^{-2} + z^{-3}$$
+      </div>
+      <ul class="clean">
+        <li>$x[n] = 3^{n} \;\Rightarrow\; y[n] = ?\,\cdot 3^{n}$</li>
+        <li>$x[n] = (-3)^{n} \;\Rightarrow\; y[n] = ?\,\cdot (-3)^{n}$</li>
+        <li>$x[n] = (1/3)^{n} \;\Rightarrow\; y[n] = ?\,\cdot (1/3)^{n}$</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="10 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Just Evaluate $H(z)$</span></div>
+    <div class="cols even" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">$z = 3$</div>
+          $$H(3) = 1 + \tfrac{2}{3} + \tfrac{2}{9} + \tfrac{1}{27} = \tfrac{52}{27}$$
+          $$y[n] = \tfrac{52}{27}\cdot 3^{n}$$
+        </div>
+        <div class="step">
+          <div class="step-label">$z = -3$</div>
+          $$H(-3) = 1 - \tfrac{2}{3} + \tfrac{2}{9} - \tfrac{1}{27} = \tfrac{14}{27}$$
+          $$y[n] = \tfrac{14}{27}\cdot (-3)^{n}$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">$z = 1/3$</div>
+          $$H(1/3) = 1 + 6 + 18 + 27 = 52$$
+          $$y[n] = 52\cdot (1/3)^{n}$$
+        </div>
+        <div class="defn">
+          <div class="term">Lesson</div>
+          <p style="margin: 0;">$H(z)$ delivers the response to <em>any</em> exponential — real or complex, growing or decaying. Plug in $z$, multiply.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <section data-label="11 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 21</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four facts.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · FIR I/O</div>
+          <div class="what">$y[n] = \sum_k b_k\, x[n-k]$</div>
+          <div class="how">Linear, time-invariant.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · EIGEN</div>
+          <div class="what">$e^{j\omega n}$ passes through scaled by $H(e^{j\omega})$.</div>
+          <div class="how">More generally: $z^{n} \to H(z)\,z^{n}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · SYMMETRY</div>
+          <div class="what">$|H|$ even, $\angle H$ odd.</div>
+          <div class="how">For real $b$. Period $2\pi$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · COMPUTE</div>
+          <div class="what">$\mathtt{fft(b, N)}$</div>
+          <div class="how">Zero-pad, DFT, plot.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L22 FIR Filters for Periodic Inputs</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

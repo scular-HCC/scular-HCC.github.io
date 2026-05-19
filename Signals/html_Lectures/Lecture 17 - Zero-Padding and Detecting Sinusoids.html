@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 17 — Zero-Padding &amp; Detecting Sinusoids</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">17</div>
+    <div class="topic">Zero-Padding &amp;<br/>Detecting Sinusoids</div>
+    <div class="sub">Zero-pad to interpolate the spectrum. Then locate the peak in $|S|$ — that's the frequency of the dominant sinusoid.</div>
+    <div class="reference">Reading · <em>§3.7 – §3.8</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 17</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Zero-pad, plot, peak-pick,<br/>and decode.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Compute</strong> $Y$ from $S$ when $y$ is $s$ zero-padded to $N = ML$: $Y[kM] = S[k]$.</li>
+        <li><strong>Use</strong> zero-padding as <em>spectral interpolation</em>: more $N$ ⇒ denser frequency samples.</li>
+        <li><strong>Detect</strong> the frequency of a noisy sinusoid as a peak in the amplitude spectrum.</li>
+        <li><strong>Derive</strong> $|\langle v(\omega), s\rangle| = |\sin(L(\omega - \omega_0)/2) / \sin((\omega - \omega_0)/2)|$ — the spectral mainlobe.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+  <section data-label="03 Zero Pad Pair">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Zero-Padding Pair</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Zero-padding</div>
+        <h1>Pad $s$ with $N - L$ zeros<br/>to get a length-$N$ vector $y$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$y = [s; 0_{N-L}]$$
+          <div style="height: 12px;"></div>
+          $$\text{If } N = ML: \;\; S[k] = Y[kM]$$
+        </div>
+        <div class="stack gap-item">
+          <p>Take every $M$-th entry of $Y$ to recover $S$. The other entries are <em>extra</em> — samples of a denser frequency grid.</p>
+          <p class="muted" style="font-size: var(--type-small);">Inner product with the $kM$-th Fourier sinusoid of length $ML$ matches inner product with the $k$-th Fourier sinusoid of length $L$ — because $s$ is nonzero only on indices $0\!:\!L-1$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+  <section data-label="04 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">$L=3$, $N=12$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Two extracted DFTs.</h1>
+        <div class="defn">
+          <div class="term">Setup</div>
+          $$y = (a, b, c, 0, 0, 0, 0, 0, 0, 0, 0, 0)^{\top}$$
+          $$Y = (Y_0, Y_1, \ldots, Y_{11})^{\top}$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Length-3 DFT</div>
+          $$(a, b, c)^{\top} \,\leftrightarrow\, (Y_0,\, Y_4,\, Y_8)^{\top}$$
+        </div>
+        <div class="defn">
+          <div class="term">Length-4 DFT</div>
+          $$(a, b, c, 0)^{\top} \,\leftrightarrow\, (Y_0,\, Y_3,\, Y_6,\, Y_9)^{\top}$$
+        </div>
+        <p class="muted" style="font-size: var(--type-small);">Each "sub-DFT" lives at a stride determined by the ratio $N/L$.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+  <section data-label="05 Spectral Interpolation">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Spectral Interpolation</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Why zero-pad</div>
+        <h1>More $N$ ⇒ denser frequency samples.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$\omega_k \,=\, k\,\tfrac{2\pi}{N}$$
+        </div>
+        <div class="stack gap-item">
+          <p>Zero-padding does not add information — it interpolates the existing spectrum onto a finer grid.</p>
+          <p>For $N \gg L$, the amplitude spectrum looks almost continuous when plotted against $\omega$.</p>
+          <p class="muted" style="font-size: var(--type-small);">Use it to <em>look</em> at the spectrum, not to gain resolution from new data.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+  <section data-label="06 Detect Sinusoid">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Detecting a Sinusoid</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Detecting a sinusoid</div>
+        <h1>Peak in $|S|$ ⇒ frequency of $s$.</h1>
+      </div>
+      <p>Sample a continuous sinusoid: $s[n] = A\cos(\omega_0 n + \phi) + \epsilon[n]$.</p>
+      <ul class="clean">
+        <li>The two prominent peaks of $|S|$ sit at indices $k_0$ and $L - k_0$ — the symmetric DT frequency pair.</li>
+        <li>$A$ and $\phi$ follow from the amplitude and phase at the peak.</li>
+        <li>Noise scatters into a flat floor; if SNR is decent, the peaks stick out.</li>
+      </ul>
+      <p class="muted" style="font-size: var(--type-small);">Aliasing concern: $\omega_0$ must be in $[0, \pi]$ for the sampled signal to faithfully represent the continuous one (L06).</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+  <section data-label="07 Spectral Mainlobe">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Spectral Mainlobe</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">When $\omega_0$ is not a Fourier frequency</div>
+        <h1>The DFT samples a continuous mainlobe.</h1>
+      </div>
+      <div class="bordered-math big-math">
+        $$\langle v(\omega), s\rangle \,=\, \sum_{n=0}^{L-1} e^{j(\omega_0 - \omega)n} \,=\, e^{-j(L-1)(\omega-\omega_0)/2}\,\frac{\sin(L(\omega-\omega_0)/2)}{\sin((\omega-\omega_0)/2)}$$
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Modulus</div>
+          $$|\langle v(\omega),s\rangle| \,=\, \left|\frac{\sin(L(\omega-\omega_0)/2)}{\sin((\omega-\omega_0)/2)}\right|$$
+        </div>
+        <div class="stack gap-item">
+          <p>Max value $L$, reached at $\omega = \omega_0$.</p>
+          <p>Width of the mainlobe shrinks like $\sim 2\pi/L$ — longer sample, sharper peak.</p>
+          <p class="muted" style="font-size: var(--type-small);">This is the <em>Dirichlet kernel</em> in disguise.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+  <section data-label="08 Practice">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Locate $\omega_0$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Detect $\omega_0$ from samples of<br/>a complex sinusoid.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Setup</div>
+        $$s[n] = e^{j(0.317)(2\pi)\,n},\;\; n = 0, 1, \ldots, 19,\;\; L = 20$$
+      </div>
+      <ul class="clean">
+        <li>Compute the length-$L$ DFT. Where is the peak?</li>
+        <li>Zero-pad to $N = 1000$. Where is the peak now?</li>
+        <li>Compare the two peak positions to $\omega_0/2\pi$.</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+  <section data-label="09 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Better Resolution from Padding</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>Padding sharpens the read-out.</h1>
+        <div class="step" style="margin-top: 6px;">
+          <div class="step-label">Length-20 DFT</div>
+          <p style="margin: 0;">Fourier frequencies $f_k = k/20$ for $k = 0, \ldots, 19$. The nearest to $0.317$ is $6/20 = 0.30$ (or $7/20 = 0.35$). The peak appears at $k = 6$ — off by $0.017$.</p>
+        </div>
+        <div class="step">
+          <div class="step-label">Zero-padded to 1000</div>
+          <p style="margin: 0;">Now $f_k = k/1000$. The peak lands at $k = 317$ — i.e. $f = 0.317$, the exact $\omega_0/2\pi$.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Why</div>
+        <p style="margin: 0;">The length-20 DFT samples the continuous mainlobe at 20 points, missing the peak. Zero-padding samples it at 1000 points — close enough to find the maximum.</p>
+        <p style="margin: 8px 0 0;" class="muted">Mainlobe width is fixed by $L = 20$ — padding doesn't narrow it, just locates the maximum more precisely.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+  <section data-label="10 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 17</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four facts.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · PAD PAIR</div>
+          <div class="what">$y = [s; 0]$, $N = ML$</div>
+          <div class="how">$S[k] = Y[kM]$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · INTERPOLATION</div>
+          <div class="what">Larger $N$ ⇒ denser $\omega_k$.</div>
+          <div class="how">Spectrum becomes near-continuous.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · DETECT</div>
+          <div class="what">Peaks of $|S|$ — sinusoidal frequencies.</div>
+          <div class="how">$A$ and $\phi$ from magnitude / phase.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · MAINLOBE</div>
+          <div class="what">Dirichlet kernel, width $\sim 2\pi/L$.</div>
+          <div class="how">Long samples → sharp peaks.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L18 Fourier Series</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

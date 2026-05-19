@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 16 — Circular Convolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">16</div>
+    <div class="topic">Multiplication &amp;<br/>Circular Convolution</div>
+    <div class="sub">Pointwise product in one domain ⇔ circular convolution in the other. And periodic extension by $M$ copies turns a length-$L$ spectrum into a sparse length-$ML$ one.</div>
+    <div class="reference">Reading · <em>§3.6 – §3.7</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 16</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Convolve circularly,<br/>and read off the dual.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Define</strong> $(a \circledast b)[n] = a^{\top} P^{n} R\, b$.</li>
+        <li><strong>Apply</strong> DFT 8: $x \odot y \leftrightarrow \tfrac{1}{N}\, X \circledast Y$.</li>
+        <li><strong>Apply</strong> DFT 9: $x \circledast y \leftrightarrow X \odot Y$.</li>
+        <li><strong>Predict</strong> the spectrum of a vector formed by concatenating $M$ copies of a length-$L$ vector.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="03 Pointwise Product">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Pointwise Product · DFT 8</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">DFT 8</div>
+        <h1>Pointwise in time ⇔<br/>$\tfrac{1}{N}$ circular convolution in frequency.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$x \odot y \,\leftrightarrow\, \tfrac{1}{N}\, X \circledast Y$$
+        </div>
+        <div class="stack gap-item">
+          <p>The pointwise product is $(x \odot y)[n] = x[n]\, y[n]$.</p>
+          <p>So multiplying two signals in time mixes their spectra — circularly.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="04 Circular Convolution Defn">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Circular Convolution</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Definition</div>
+        <h1>Reverse, shift, dot.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$(a \circledast b)[n] \,=\, a^{\top}\,P^{n}\,R\,b$$
+          <div style="height: 10px;"></div>
+          $$=\, \sum_{m=0}^{N-1} a[m]\, b[(n-m) \bmod N]$$
+        </div>
+        <div class="stack gap-item">
+          <p><strong>Commutative:</strong> $a \circledast b = b \circledast a$. Inherited from pointwise multiplication in the other domain.</p>
+          <p>Compute all $N$ outputs in one matrix-vector product: build the circulant matrix whose rows are $P^{n} R\, b$, multiply by $a$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="05 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Circular Convolution · $N=4$</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>One matrix–vector product<br/>computes all four outputs.</h1>
+        $$a = (\alpha, \beta, \gamma, \delta)^{\top}$$
+        $$b = (1, 2, 3, -2)^{\top}$$
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Circulant of $b$</div>
+          $$a \circledast b \,=\, \begin{bmatrix}1 & -2 & 3 & 2 \\ 2 & 1 & -2 & 3 \\ 3 & 2 & 1 & -2 \\ -2 & 3 & 2 & 1\end{bmatrix}\!a$$
+        </div>
+        <div class="step">
+          <div class="step-label">Read off the entries</div>
+          $$(a \circledast b)[0] = \alpha - 2\beta + 3\gamma + 2\delta$$
+          $$(a \circledast b)[1] = 2\alpha + \beta - 2\gamma + 3\delta$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Each row is the previous one circularly shifted by one position.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="06 DFT 9">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">DFT 9 — Time Convolution</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">DFT 9 · Dual of DFT 8</div>
+        <h1>Circular convolution in time ⇔<br/>pointwise multiplication in frequency.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$x \circledast y \,\leftrightarrow\, X \odot Y$$
+        </div>
+        <div class="stack gap-item">
+          <p>The workhorse identity of digital filtering. Convolve in time → multiply DFTs in frequency → inverse-DFT to recover the result.</p>
+          <p class="muted" style="font-size: var(--type-small);">Derived from DFT 8 + duality DFT 7.</p>
+        </div>
+      </div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 24px;" class="muted">X = fft(x); Y = fft(y); s = ifft(X.*Y);</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="07 Polynomial Connection">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Polynomial Multiplication</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Why convolution multiplies polynomials</div>
+        <h1>$a[n]\, t^{n}$ encodes a polynomial.<br/>$\circledast$ then multiplies them.</h1>
+        <p>If $a = (1, -2, 3, 0, 0, 0)^{\top}$ and $b = (2, 1, -1, 2, 0, 0)^{\top}$, zero-padded to length 6, then $a \circledast b$ holds the coefficients of</p>
+        $$(1 - 2t + 3t^{2})(2 + t - t^{2} + 2t^{3}).$$
+      </div>
+      <div class="defn">
+        <div class="term">Result</div>
+        $$a \circledast b = (2,\, -3,\, 3,\, 7,\, -7,\, 6)^{\top}$$
+        <p style="margin: 8px 0 0;">i.e.</p>
+        $$(1-2t+3t^{2})(2+t-t^{2}+2t^{3}) = 2 - 3t + 3t^{2} + 7t^{3} - 7t^{4} + 6t^{5}.$$
+        <p class="muted" style="font-size: var(--type-small); margin: 8px 0 0;">Zero-padding makes the circular convolution behave like ordinary (non-circular) convolution — preview of L23.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="08 Periodic Extension">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Periodic Extension by $M$ Copies</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Periodic extension</div>
+        <h1>$M$ copies of $s$ in time ⇒<br/>$S$ with $M-1$ zeros inserted between bins.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$x = \underbrace{[s; s; \ldots; s]}_{M \text{ copies}}$$
+          <div style="height: 10px;"></div>
+          $$X = M\,[S[0], 0_{M-1}, S[1], 0_{M-1}, \ldots, S[L-1], 0_{M-1}]^{\top}$$
+        </div>
+        <div class="stack gap-item">
+          <p>When $N = ML$, the $kM$-th Fourier sinusoid of length $N$ is just the $k$-th Fourier sinusoid of length $L$, periodically repeated. So only those bins fire.</p>
+          <p>Scaling factor $M$ because there are $M$ overlapping contributions.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="09 Practice">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Length-3 → Length-12 Spectrum</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>$L = 3$, $M = 4$.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Given</div>
+        $$s = (a, b, c)^{\top} \,\leftrightarrow\, S = (A, B, C)^{\top}$$
+      </div>
+      <ul class="clean">
+        <li>Build $x$ by repeating $s$ four times.</li>
+        <li>What is the length-12 DFT $X$?</li>
+        <li>Which bins are nonzero? What multiplier?</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="10 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Sparse Length-12 Spectrum</span></div>
+    <div class="cols even" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>Four-times higher peaks,<br/>three of them, evenly spaced.</h1>
+        <div class="step" style="margin-top: 6px;">
+          <div class="step-label">$x$</div>
+          $$x = (a,b,c,a,b,c,a,b,c,a,b,c)^{\top}$$
+        </div>
+        <div class="step">
+          <div class="step-label">$X$</div>
+          $$X = (4A,\, 0,\, 0,\, 0,\, 4B,\, 0,\, 0,\, 0,\, 4C,\, 0,\, 0,\, 0)^{\top}$$
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Reading the spectrum</div>
+        <p style="margin: 0;">Only the bins $0, M, 2M = 0, 4, 8$ are populated — exactly the bins whose length-12 frequency $\omega_k = k\,2\pi/12$ coincides with a length-3 Fourier frequency.</p>
+        <p style="margin: 8px 0 0;" class="muted">Each peak is scaled by $M = 4$.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <section data-label="11 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 16</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Two property pairs.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">DFT 8</div>
+          <div class="what">$x \odot y \leftrightarrow \tfrac{1}{N}\, X \circledast Y$</div>
+          <div class="how">Pointwise time ⇔ scaled circular freq.</div>
+        </div>
+        <div class="cell">
+          <div class="num">DFT 9</div>
+          <div class="what">$x \circledast y \leftrightarrow X \odot Y$</div>
+          <div class="how">Circular time ⇔ pointwise freq.</div>
+        </div>
+        <div class="cell">
+          <div class="num">CONV DEF</div>
+          <div class="what">$(a \circledast b)[n] = a^{\top} P^{n} R b$</div>
+          <div class="how">Or sum over $m$ mod $N$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">PERIODIC EXT</div>
+          <div class="what">$M$ copies → bins $0, M, 2M, \ldots$</div>
+          <div class="how">Spectrum scaled by $M$.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L17 Zero-Padding</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

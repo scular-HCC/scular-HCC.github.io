@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 8 — Cascaded Transformations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">08</div>
+    <div class="topic">Cascaded Transformations,<br/>Permutations &amp; Transpose</div>
+    <div class="sub">$AB$ means "first $B$, then $A$." Order matters. Permutation matrices reorder rows or columns — and undo themselves with a transpose.</div>
+    <div class="reference">Reading · <em>Textbook §2.2.3, §2.3</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 08</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Compose, transpose, and permute<br/>with confidence.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Interpret</strong> $AB$ as the cascade $B \to A$ acting on $\mathbf{x}$.</li>
+        <li><strong>Use</strong> associativity $(AB)C = A(BC)$ and recognise that $AB \neq BA$ in general.</li>
+        <li><strong>Select</strong> rows and columns via $\mathbf{e}^{(j)}$ — and reorder them with a permutation matrix $P$.</li>
+        <li><strong>Apply</strong> $(AB)^{\top} = B^{\top} A^{\top}$ and $P^{\top} P = I$.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="03 Cascade">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">$AB$ as Cascade</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Cascade interpretation</div>
+        <h1>$AB$ means first $B$,<br/>then $A$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$\mathbf{y} \,=\, (AB)\,\mathbf{x} \,=\, A\,(B\mathbf{x})$$
+        </div>
+        <div class="stack gap-item">
+          <p>Read right-to-left: $\mathbf{x}$ enters $B$, comes out as $B\mathbf{x}$, then enters $A$, comes out as $\mathbf{y}$.</p>
+          <p class="muted" style="font-size: var(--type-small);">The "downstream" system in the diagram is the one written on the <em>left</em>.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Associativity</div>
+        $$(AB)\,C \,=\, A\,(BC) \,\stackrel{\text{def}}{=}\, ABC$$
+        <p style="margin: 6px 0 0; font-size: var(--type-small);" class="muted">Extends to any number of factors. Parentheses don't matter — order does.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="04 Non-commutativity">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">$AB \neq BA$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Non-commutativity</div>
+        <h1>Matrix multiplication<br/>is not commutative.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$AB \,\neq\, BA$$
+        </div>
+        <div class="stack gap-item">
+          <p>True even when both products are defined and the same size — which only happens when $A$ and $B$ are square of the same dimension.</p>
+          <p class="muted" style="font-size: var(--type-small);">Exceptions exist (diagonal matrices, scalar multiples of $I$, …) but they are the exception.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="05 Practice (project vs rotate)">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Project ⨯ Rotate</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Show $AB \neq BA$ for<br/>projection and rotation.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">$A$</div>
+          <p style="margin:0;">Projection onto the horizontal axis.</p>
+          $$A = \begin{bmatrix}1 & 0 \\ 0 & 0\end{bmatrix}$$
+        </div>
+        <div class="defn">
+          <div class="term">$B$</div>
+          <p style="margin:0;">CCW rotation by $\pi/6$.</p>
+          $$B = \begin{bmatrix}\tfrac{\sqrt{3}}{2} & -\tfrac{1}{2} \\ \tfrac{1}{2} & \tfrac{\sqrt{3}}{2}\end{bmatrix}$$
+        </div>
+      </div>
+      <p class="muted" style="font-size: var(--type-small);">Try both products algebraically — and also picture each on a single unit vector geometrically.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="06 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">$AB \neq BA$</span></div>
+    <div style="display: grid; grid-template-columns: 1fr 1.05fr; gap: 60px; margin-top: 28px; align-items: start;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Algebraic</div>
+        <div class="step" style="margin-top: 6px;">
+          <div class="step-label">$AB$ — rotate, then project</div>
+          $$AB \,=\, \begin{bmatrix}\tfrac{\sqrt{3}}{2} & -\tfrac{1}{2} \\ 0 & 0\end{bmatrix}$$
+        </div>
+        <div class="step">
+          <div class="step-label">$BA$ — project, then rotate</div>
+          $$BA \,=\, \begin{bmatrix}\tfrac{\sqrt{3}}{2} & 0 \\ \tfrac{1}{2} & 0\end{bmatrix}$$
+        </div>
+        <p class="muted" style="font-size: var(--type-small);">Same first column, different second column — non-commutative.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="eyebrow">Geometric · follow $\mathbf{x}=(1,0)$</div>
+        <div class="diagram-wrap" style="padding: 14px;">
+          <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l8f1-t l8f1-d">
+            <title id="l8f1-t">Two compositions applied to the unit vector $(1,0)$</title>
+            <desc id="l8f1-d">Two side-by-side coordinate axes. On the left, the path AB is shown: the unit vector pointing along the positive x-axis is first rotated counter-clockwise by thirty degrees up and to the right, then projected straight down onto the x-axis, ending at root three over two on the x-axis. On the right, the path BA is shown: the unit vector along the x-axis is unchanged by the horizontal projection, then rotated counter-clockwise by thirty degrees, ending at root three over two horizontally and one half vertically. The two endpoints are different.</desc>
+            <defs>
+              <marker id="aL8a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+              <marker id="aL8r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7A1A1A"/></marker>
+              <marker id="aL8b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2A4A7A"/></marker>
+            </defs>
+
+            <!-- Left: AB (rotate then project). Origin (90, 250). 130 px / unit. x=(1,0)->(220,250). rotated:(90+0.866*130, 250-0.5*130)=(202, 185). projected back: (90+0.866*130, 250)=(202, 250) -->
+            <text x="32" y="40" font-size="22" font-family="Inter, sans-serif" font-weight="600">AB · rotate, then project</text>
+            <line x1="30" y1="250" x2="330" y2="250" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL8a)"/>
+            <line x1="90" y1="340" x2="90" y2="60" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL8a)"/>
+            <text x="310" y="272" font-size="16" font-style="italic">x</text>
+            <text x="96" y="72" font-size="16" font-style="italic">y</text>
+
+            <!-- starting x=(1,0) faded -->
+            <line x1="90" y1="250" x2="220" y2="250" stroke="#7A746B" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#aL8a)"/>
+            <text x="144" y="275" font-size="14" fill="#7A746B">start (1,0)</text>
+
+            <!-- after B: rotated -->
+            <line x1="90" y1="250" x2="202" y2="185" stroke="#7A1A1A" stroke-width="3" marker-end="url(#aL8r)"/>
+            <text x="112" y="178" font-size="15" fill="#7A1A1A">1) B·x</text>
+
+            <!-- projection drop -->
+            <line x1="202" y1="185" x2="202" y2="250" stroke="#1A1A1A" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <text x="208" y="222" font-size="14" fill="#1A1A1A">2) A drops y</text>
+
+            <!-- final AB x -->
+            <line x1="90" y1="250" x2="202" y2="250" stroke="#7A1A1A" stroke-width="4"/>
+            <circle cx="202" cy="250" r="6" fill="#7A1A1A"/>
+            <text x="180" y="310" font-size="15" fill="#7A1A1A">end (√3/2, 0)</text>
+
+            <!-- Right: BA (project then rotate). Origin (470, 250). same scale -->
+            <text x="410" y="40" font-size="22" font-family="Inter, sans-serif" font-weight="600">BA · project, then rotate</text>
+            <line x1="410" y1="250" x2="700" y2="250" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL8a)"/>
+            <line x1="470" y1="340" x2="470" y2="60" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL8a)"/>
+            <text x="680" y="272" font-size="16" font-style="italic">x</text>
+            <text x="476" y="72" font-size="16" font-style="italic">y</text>
+
+            <!-- starting x=(1,0) faded -->
+            <line x1="470" y1="250" x2="600" y2="250" stroke="#7A746B" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#aL8a)"/>
+            <text x="524" y="275" font-size="14" fill="#7A746B">start (1,0)</text>
+
+            <!-- after A: no change -->
+            <text x="500" y="235" font-size="14" fill="#1A1A1A">1) A leaves it</text>
+
+            <!-- after B: rotate to (sqrt3/2, 1/2) -> (470 + 113, 250 - 65) = (583, 185) -->
+            <line x1="470" y1="250" x2="583" y2="185" stroke="#2A4A7A" stroke-width="4" marker-end="url(#aL8b)"/>
+            <circle cx="583" cy="185" r="6" fill="#2A4A7A"/>
+            <text x="548" y="175" font-size="15" fill="#2A4A7A">end (√3/2, 1/2)</text>
+            <text x="515" y="220" font-size="14" fill="#2A4A7A">2) B rotates</text>
+
+            <!-- arc for the rotation -->
+            <path d="M 530,250 A 60,60 0 0 0 522,220" fill="none" stroke="#2A4A7A" stroke-width="1.5"/>
+            <text x="532" y="240" font-size="13" fill="#2A4A7A">π/6</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · Same input. Different endpoints — the two products land elsewhere.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="07 Column Selection">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Column Selection</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Column selection</div>
+        <h1>Right-multiply by $\mathbf{e}^{(j)}$<br/>to pull column $j$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$A\,\mathbf{e}^{(j)} \,=\, \text{column } j \text{ of } A$$
+        </div>
+        <div class="stack gap-item">
+          <p>Follows directly from the column-combination view of $A\mathbf{x}$: only the $j$-th column contributes.</p>
+          <p>To pick multiple columns or reorder them, right-multiply by a matrix whose columns are the $\mathbf{e}^{(j)}$'s in the chosen order.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="08 Permutation">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Permutation Matrices</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Permutation matrix</div>
+        <h1>One $1$ per row and per column.<br/>Everything else is $0$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="defn">
+          <div class="term">Definition</div>
+          <p style="margin: 0;">A square matrix $P$ whose columns are the standard unit vectors in some order. Equivalently, its rows are the standard unit vectors in some order.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Effect</div>
+          <p style="margin: 0;">$AP$ — reorders the <strong>columns</strong> of $A$.</p>
+          <p style="margin: 6px 0 0;">$PA$ — reorders the <strong>rows</strong> of $A$.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Example</div>
+        $$\begin{bmatrix}\alpha & \beta & \gamma & \delta \\ \epsilon & \zeta & \eta & \kappa \\ \mu & \nu & \xi & \pi\end{bmatrix}\!\begin{bmatrix}0&0&1&0\\0&0&0&1\\1&0&0&0\\0&1&0&0\end{bmatrix} \,=\, \begin{bmatrix}\gamma & \delta & \alpha & \beta \\ \eta & \kappa & \epsilon & \zeta \\ \xi & \pi & \mu & \nu\end{bmatrix}$$
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="09 Transpose">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Transpose</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Transpose</div>
+        <h1>Swap rows and columns.<br/>Product reverses.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$(A^{\top})_{ij} \,=\, A_{ji}$$
+          <div style="height: 14px;"></div>
+          $$(AB)^{\top} \,=\, B^{\top} A^{\top}$$
+        </div>
+        <div class="stack gap-item">
+          <p>If $A = A^{\top}$, the matrix is <strong>symmetric</strong> — its $i$-th row equals its $i$-th column.</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Examples</div>
+        $$\begin{bmatrix}a & b & c\end{bmatrix}^{\top} = \begin{bmatrix}a\\b\\c\end{bmatrix}, \;\; \begin{bmatrix}5 & 1 \\ 2 & 4 \\ 6 & 7\end{bmatrix}^{\top} = \begin{bmatrix}5 & 2 & 6 \\ 1 & 4 & 7\end{bmatrix}$$
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="10 P transpose P">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">$P^{\top}P = I$</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Inverse of a permutation</div>
+        <h1>$P^{\top}$ undoes $P$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$P^{\top} P \,=\, I$$
+        </div>
+        <div class="stack gap-item">
+          <p>The $(i,j)$ entry of $P^{\top}P$ is the dot product of columns $i$ and $j$ of $P$. Columns of $P$ are <em>distinct</em> standard unit vectors:</p>
+          <ul class="clean" style="margin-top: 12px;">
+            <li>Same column dotted with itself ⇒ $1$.</li>
+            <li>Different columns ⇒ $0$.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Question</div>
+        <p style="margin: 0;">If $n = m$ and $AP$ reorders the columns of $A$, what $Q$ produces the same reordering applied to <em>rows</em>?</p>
+        <p style="margin: 8px 0 0;" class="muted">Answer: $Q = P^{\top}$. Left-multiplication permutes rows in the inverse pattern of right-multiplication.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+  <section data-label="11 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 08</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Five facts about products.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · CASCADE</div>
+          <div class="what">$AB\mathbf{x} = A(B\mathbf{x})$</div>
+          <div class="how">Right-to-left composition.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · ORDER</div>
+          <div class="what">$AB \neq BA$ in general.</div>
+          <div class="how">Associative, not commutative.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · SELECT</div>
+          <div class="what">$A\mathbf{e}^{(j)} = \mathbf{a}^{(j)}$</div>
+          <div class="how">Use $\mathbf{e}^{(i)\top}\!A$ for row $i$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · TRANSPOSE</div>
+          <div class="what">$(AB)^{\top} = B^{\top} A^{\top}$</div>
+          <div class="how">Order flips on transpose.</div>
+        </div>
+        <div class="cell">
+          <div class="num">05 · PERMUTATION</div>
+          <div class="what">$P^{\top} P = I$</div>
+          <div class="how">Inverse of $P$ is just $P^{\top}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">06 · USE</div>
+          <div class="what">$AP$ — column perm.</div>
+          <div class="how">$PA$ — row perm.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L09 Matrix Inversion</span><span class="rule"></span><span class="author">ENES-222 · L08</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

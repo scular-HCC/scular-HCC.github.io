@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 24 — Z-Transform &amp; Frequency-Selective Filters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">24</div>
+    <div class="topic">Z-Transform &amp;<br/>Frequency-Selective Filters</div>
+    <div class="sub">Convolution in time becomes multiplication of polynomials in $z^{-1}$. Ideal filters live only on paper — but FIR designs approximate them, at the cost of delay.</div>
+    <div class="reference">Reading · <em>§4.5, §4.6.5</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 24</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Use $z$-transforms<br/>and read a real filter spec.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Define</strong> $X(z) = \sum_{n} x[n]\, z^{-n}$, and use $Y(z) = H(z)\, X(z)$.</li>
+        <li><strong>Multiply</strong> polynomials in $z^{-1}$ instead of convolving — same result.</li>
+        <li><strong>Identify</strong> why ideal piecewise-constant amplitude responses are unattainable.</li>
+        <li><strong>Read</strong> a practical filter spec: passband ripple, stopband attenuation, transition band, delay.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="03 Z-Transform">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The Z-Transform</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Definition</div>
+        <h1>A power series in $z^{-1}$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$X(z) \,\stackrel{\text{def}}{=}\, \sum_{n=-\infty}^{\infty} x[n]\, z^{-n}$$
+        </div>
+        <div class="stack gap-item">
+          <p>For finite-duration $x$, always well-defined.</p>
+          <p>For infinite-duration $x$, convergence depends on $|z|$ — that's the <em>region of convergence</em>.</p>
+          <p class="muted" style="font-size: var(--type-small);">$X(e^{j\omega})$ is the $z$-transform restricted to the unit circle — the DTFT.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="04 Convolution Theorem">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Convolution → Multiplication</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Convolution theorem</div>
+        <h1>$y = h * x \;\Leftrightarrow\; Y(z) = H(z)\, X(z)$</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$Y(z) \,=\, H(z)\, X(z)$$
+        </div>
+        <div class="stack gap-item">
+          <p>Cascade interpretation: pass $\delta$ through $H_1$ then $H_2$. Output is $h^{(1)} * h^{(2)}$, with $z$-transform $H_1(z)\, H_2(z)$.</p>
+          <p>For FIR filters: multiply two polynomials in $z^{-1}$ — that's all.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="05 Worked Polynomial">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Convolution by Polynomial Multiplication</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>$z$-transform shortcut.</h1>
+        $$b = (2, -1, 1, -2)^{\top},\;\; s = (1, 2, 3, -1)^{\top}$$
+        <p>Already computed (L23) — let's recover the same answer through polynomials.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Polynomial forms</div>
+          $$B(z) = 2 - z^{-1} + z^{-2} - 2 z^{-3}$$
+          $$S(z) = 1 + 2 z^{-1} + 3 z^{-2} - z^{-3}$$
+        </div>
+        <div class="defn">
+          <div class="term">Product</div>
+          $$B(z)\, S(z) = 2 + 3 z^{-1} + 5 z^{-2} - 5 z^{-3} + 0\, z^{-4} - 7 z^{-5} + 2 z^{-6}$$
+          $$\Rightarrow b * s = (2, 3, 5, -5, 0, -7, 2)^{\top}\;\checkmark$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="06 Ideal Filter">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Ideal Filters</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Ideal lowpass filter</div>
+        <h1>Piecewise constant<br/>— and unbuildable.</h1>
+      </div>
+      <div class="cols" style="grid-template-columns: 1fr 1.2fr; gap: 60px;">
+        <div class="stack gap-item">
+          <p>$H(e^{j\omega}) = 1$ for $|\omega| \leq \omega_c$, $0$ otherwise.</p>
+          <p>A finite sum of cosines is smooth — no flat sections, no discontinuities. So no FIR filter (and in fact, <em>no</em> realisable filter) can achieve this exactly.</p>
+        </div>
+        <div>
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l24f1-t l24f1-d">
+              <title id="l24f1-t">Ideal lowpass filter magnitude response</title>
+              <desc id="l24f1-d">A piecewise constant rectangle: the response is the constant value A from minus omega-c to plus omega-c, and zero outside that interval, plotted against omega from minus pi to pi. The corners at plus and minus omega-c are sharp.</desc>
+              <line x1="30" y1="220" x2="510" y2="220" stroke="#1A1A1A" stroke-width="1.5"/>
+              <line x1="270" y1="240" x2="270" y2="40" stroke="#1A1A1A" stroke-width="1.5"/>
+              <text x="490" y="240" font-size="16" font-style="italic">ω</text>
+              <text x="278" y="56" font-size="14" font-family="Inter, sans-serif">|H(e^{jω})|</text>
+              <!-- ideal rectangle -->
+              <path d="M 90,220 L 190,220 L 190,80 L 350,80 L 350,220 L 450,220" fill="none" stroke="#7A1A1A" stroke-width="3"/>
+              <line x1="190" y1="220" x2="190" y2="80" stroke="#7A1A1A" stroke-width="3" stroke-dasharray="3 3"/>
+              <line x1="350" y1="220" x2="350" y2="80" stroke="#7A1A1A" stroke-width="3" stroke-dasharray="3 3"/>
+              <text x="172" y="244" font-size="14" fill="#7A746B">−ω_c</text>
+              <text x="334" y="244" font-size="14" fill="#7A746B">ω_c</text>
+              <text x="60" y="244" font-size="14" fill="#7A746B">−π</text>
+              <text x="448" y="244" font-size="14" fill="#7A746B">π</text>
+              <text x="200" y="75" font-size="14" fill="#7A1A1A">A</text>
+            </svg>
+          </div>
+          <div class="diagram-caption">FIG. · Ideal lowpass — the brick wall.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="07 Realistic Spec">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">A Realistic Filter Spec</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">What real filters look like</div>
+        <h1>Pass + transition + stop.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">PASSBAND</div>
+          <div class="what">$[0,\, \omega_p]$</div>
+          <div class="how">$|H| \in [A(1-\delta),\, A(1+\delta)]$. $\delta$ = ripple.</div>
+        </div>
+        <div class="cell">
+          <div class="num">STOPBAND</div>
+          <div class="what">$[\omega_s,\, \pi]$</div>
+          <div class="how">$|H| \leq A\,\epsilon$. $1/\epsilon$ = attenuation.</div>
+        </div>
+        <div class="cell">
+          <div class="num">TRANSITION</div>
+          <div class="what">$[\omega_p,\, \omega_s]$</div>
+          <div class="how">$|H|$ drops from $A(1-\delta)$ to $A\,\epsilon$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">DELAY</div>
+          <div class="what">$M/2$ samples</div>
+          <div class="how">Linear phase across the passband.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="08 Symmetric Coefficients">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Symmetric Coefficients</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Symmetric $b$</div>
+        <h1>$b_n = b_{M-n}$<br/>buys linear phase + cosine sum.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$H(e^{j\omega}) \,=\, e^{-j\omega M/2}\,F(\omega)$$
+        </div>
+        <div class="stack gap-item">
+          <p>$F(\omega)$ is a real-valued sum of cosines — its sign and magnitude do all the spectral shaping.</p>
+          <p>Phase response in the passband is exactly $-M\omega/2$: uniform delay of $M/2$ samples.</p>
+          <p class="muted" style="font-size: var(--type-small);">Bigger $M$ ⇒ better approximation, longer delay. The trade-off.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="09 LP to HP">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Lowpass ⇄ Highpass</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Modulation trick</div>
+        <h1>Multiply $b_n$ by $(-1)^{n}$<br/>to flip lowpass into highpass.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math big-math">
+          $$\tilde{b}_n = (-1)^{n}\, b_n$$
+          <div style="height: 10px;"></div>
+          $$\tilde{H}(e^{j\omega}) \,=\, H(e^{j(\omega - \pi)})$$
+        </div>
+        <div class="stack gap-item">
+          <p>Multiplication by $(-1)^{n}$ is modulation by the highest discrete-time frequency $\pi$ — shifts the spectrum by $\pi$ radians per sample.</p>
+          <p>A lowpass response centered at $0$ becomes a highpass response centered at $\pi$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="10 Practice">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Squared Amplitude</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Express $|H(e^{j\omega})|^{2}$<br/>as a sum of cosines.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Filter</div>
+        $$b = (1, 2)^{\top},\;\; H(z) = 1 + 2 z^{-1}$$
+      </div>
+      <ul class="clean">
+        <li>Use $|H|^{2} = H(e^{j\omega})\,H^{*}(e^{j\omega}) = H(e^{j\omega})\,H(e^{-j\omega})$.</li>
+        <li>Expand the product and collect.</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="11 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">$|H|^{2} = 5 + 4\cos\omega$</span></div>
+    <div class="cols even" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Product</div>
+          $$H(e^{j\omega})\,H(e^{-j\omega}) \,=\, (1 + 2 e^{-j\omega})(1 + 2 e^{j\omega})$$
+        </div>
+        <div class="step">
+          <div class="step-label">Expand</div>
+          $$=\, 1 + 2 e^{j\omega} + 2 e^{-j\omega} + 4$$
+          $$=\, 5 + 4\cos\omega$$
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Sanity check</div>
+        <p style="margin: 0;">At $\omega = 0$: $|H|^{2} = 5 + 4 = 9 = 3^{2}$. And $H(1) = 1 + 2 = 3$. $\checkmark$</p>
+        <p style="margin: 8px 0 0;">At $\omega = \pi$: $|H|^{2} = 5 - 4 = 1 = 1^{2}$. And $H(-1) = 1 - 2 = -1$. $\checkmark$</p>
+        <p style="margin: 8px 0 0;" class="muted">$|H|^{2}$ as a finite cosine sum: always available, always real, no quadrant issues.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+  <section data-label="12 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 24</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Course wrap-up.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · Z-TRANSFORM</div>
+          <div class="what">$X(z) = \sum_{n} x[n]\, z^{-n}$</div>
+          <div class="how">DTFT = restriction to unit circle.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · CONV THEOREM</div>
+          <div class="what">$Y(z) = H(z)\, X(z)$</div>
+          <div class="how">Multiplication of polynomials in $z^{-1}$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · IDEAL FILTERS</div>
+          <div class="what">Brick walls don't exist.</div>
+          <div class="how">FIR with bigger $M$ ⇒ better approximation.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · REAL SPEC</div>
+          <div class="what">Ripple, transition, attenuation, delay.</div>
+          <div class="how">Trade-offs you sign for.</div>
+        </div>
+        <div class="cell">
+          <div class="num">05 · TRICK</div>
+          <div class="what">$(-1)^{n}\,b_n$</div>
+          <div class="how">Lowpass ↔ highpass.</div>
+        </div>
+        <div class="cell">
+          <div class="num">06 · WHERE NEXT</div>
+          <div class="what">IIR filters, $z$-transform poles, …</div>
+          <div class="how">A whole next semester.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">End of unit · ENES-222</span><span class="rule"></span><span class="author">ENES-222 · L24</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

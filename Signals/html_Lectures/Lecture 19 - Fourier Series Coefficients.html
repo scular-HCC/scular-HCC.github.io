@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 19 — Fourier Series Coefficients</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">19</div>
+    <div class="topic">Computing Fourier<br/>Series Coefficients</div>
+    <div class="sub">The inner product is an integral. Project onto each harmonic to extract its coefficient.</div>
+    <div class="reference">Reading · <em>Fourier-series analysis equation</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 19</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Take the analysis integral<br/>and read off $S_k$.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Define</strong> the inner product $\langle f, g\rangle = \tfrac{1}{T_0}\int_{T_0} f^{*}(t) g(t)\,dt$.</li>
+        <li><strong>Verify</strong> orthonormality of the harmonics: $\langle v^{(k)}, v^{(\ell)}\rangle = \delta_{k\ell}$.</li>
+        <li><strong>Apply</strong> the analysis equation $S_k = \tfrac{1}{T_0}\int_{T_0} s(t) e^{-j k \Omega_0 t}\,dt$.</li>
+        <li><strong>Compute</strong> the Fourier coefficients of a rectangular pulse train.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <section data-label="03 Inner Product">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Continuous-Time Inner Product</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Inner product</div>
+        <h1>Sum becomes integral —<br/>average over one period.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$\langle f, g\rangle \,\stackrel{\text{def}}{=}\, \tfrac{1}{T_0}\,\int_{T_0} f^{*}(t)\, g(t)\,dt$$
+        </div>
+        <div class="stack gap-item">
+          <p>Same axioms as the vector version: conjugate symmetric, sesquilinear, $\langle f, f\rangle \geq 0$.</p>
+          <p>Integral may be taken over <em>any</em> interval of length $T_0$ — the integrand is periodic.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <section data-label="04 Orthonormality">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Orthonormal Harmonics</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Orthonormality</div>
+        <h1>The harmonics are<br/>pairwise orthonormal.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$\langle v^{(k)}, v^{(\ell)}\rangle \,=\, \delta_{k\ell}$$
+        </div>
+        <div class="stack gap-item">
+          <p>For $k = \ell$, the integrand is $1$, average over the period is $1$.</p>
+          <p>For $k \neq \ell$, the integrand is a complex sinusoid with nonzero integer frequency $(\ell - k)\Omega_0$ — averages to zero over one full period.</p>
+          <p class="muted" style="font-size: var(--type-small);">DFT analogue: $V^{H}V = N\,I$. Here we get $I$ directly because the inner product is normalised.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <section data-label="05 Analysis Eq">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Analysis Equation</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Analysis equation</div>
+        <h1>Project $s$ onto each harmonic.</h1>
+      </div>
+      <div class="bordered-math huge-math">
+        $$S_k \,=\, \langle v^{(k)}, s\rangle \,=\, \tfrac{1}{T_0}\,\int_{T_0} s(t)\, e^{-j k \Omega_0 t}\,dt$$
+      </div>
+      <p>Take inner products of both sides of the synthesis equation with $v^{(k)}$. Orthonormality kills all but the $k$-th term, leaving $S_k$.</p>
+      <p class="muted" style="font-size: var(--type-small);">Any interval of length $T_0$ — pick the one that makes the integral easiest.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <section data-label="06 Worked Pulse Train">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Rectangular Pulse Train</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Pulse train of width $\alpha T_0$,<br/>height $1$.</h1>
+        <p>The signal is $1$ for $|t| < \alpha T_0/2$ and $0$ elsewhere within one period.</p>
+
+        <div class="step" style="margin-top: 6px;">
+          <div class="step-label">DC offset</div>
+          $$S_0 \,=\, \tfrac{1}{T_0}\,\int_{-\alpha T_0/2}^{\alpha T_0/2} dt \,=\, \alpha$$
+        </div>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">For $k \neq 0$</div>
+          $$S_k \,=\, \tfrac{1}{T_0}\,\int_{-\alpha T_0/2}^{\alpha T_0/2} e^{-j k \Omega_0 t}\,dt$$
+        </div>
+        <div class="step">
+          <div class="step-label">Integrate and simplify</div>
+          $$S_k \,=\, \tfrac{2\sin(k\alpha\Omega_0 T_0 /2)}{k\Omega_0 T_0} \,=\, \tfrac{\sin(k\alpha\pi)}{k\pi}$$
+        </div>
+        <div class="defn">
+          <div class="term">Note</div>
+          <p style="margin: 0;">$S_k$ is real and even in $k$ — because the pulse train is real and symmetric.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <section data-label="07 Sinc Picture">
+    <div class="slide-chrome"><span class="left">Visual</span><span class="right">Sinc Envelope</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Reading the coefficients</div>
+        <h1>$S_k = \mathrm{sinc}(k\alpha)$<br/>up to normalization.</h1>
+        <p>Width $\alpha$ controls the envelope. As $\alpha \to 1$, the pulse fills the period and only $S_0$ is nonzero. As $\alpha \to 0$, the spectrum spreads out — many harmonics.</p>
+        <p>The first zero of $S_k$ is at $k = 1/\alpha$ — the "narrower the pulse, the wider the spectrum".</p>
+      </div>
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="l19f1-t l19f1-d">
+            <title id="l19f1-t">Fourier coefficients of a rectangular pulse train follow a sinc envelope</title>
+            <desc id="l19f1-d">A horizontal axis labeled k with positive and negative integer tick marks. Vertical lines stand for the Fourier series coefficients S sub k. A continuous curve traces the sinc envelope from which the discrete stems are sampled. The envelope peaks at k equals zero and crosses zero at integer multiples of one over alpha.</desc>
+            <line x1="30" y1="180" x2="570" y2="180" stroke="#1A1A1A" stroke-width="1.5"/>
+            <text x="555" y="202" font-size="18" font-style="italic">k</text>
+            <!-- sinc-like envelope (manual path) -->
+            <path d="M 30,170 Q 80,160 130,180 Q 180,200 230,165 Q 280,90 300,70 Q 320,90 370,165 Q 420,200 470,180 Q 520,160 570,170"
+                  fill="none" stroke="#7A746B" stroke-width="2" stroke-dasharray="3 4"/>
+            <!-- stems -->
+            <g stroke="#7A1A1A" stroke-width="3">
+              <line x1="60" y1="180" x2="60" y2="172"/>
+              <line x1="100" y1="180" x2="100" y2="172"/>
+              <line x1="140" y1="180" x2="140" y2="178"/>
+              <line x1="180" y1="180" x2="180" y2="185"/>
+              <line x1="220" y1="180" x2="220" y2="170"/>
+              <line x1="260" y1="180" x2="260" y2="130"/>
+              <line x1="300" y1="180" x2="300" y2="70"/>
+              <line x1="340" y1="180" x2="340" y2="130"/>
+              <line x1="380" y1="180" x2="380" y2="170"/>
+              <line x1="420" y1="180" x2="420" y2="185"/>
+              <line x1="460" y1="180" x2="460" y2="178"/>
+              <line x1="500" y1="180" x2="500" y2="172"/>
+              <line x1="540" y1="180" x2="540" y2="172"/>
+            </g>
+            <g fill="#7A1A1A">
+              <circle cx="60" cy="172" r="4"/><circle cx="100" cy="172" r="4"/><circle cx="140" cy="178" r="4"/>
+              <circle cx="180" cy="185" r="4"/><circle cx="220" cy="170" r="4"/><circle cx="260" cy="130" r="4"/>
+              <circle cx="300" cy="70" r="5"/><circle cx="340" cy="130" r="4"/><circle cx="380" cy="170" r="4"/>
+              <circle cx="420" cy="185" r="4"/><circle cx="460" cy="178" r="4"/><circle cx="500" cy="172" r="4"/>
+              <circle cx="540" cy="172" r="4"/>
+            </g>
+            <text x="290" y="60" font-size="18" fill="#1A1A1A">$\alpha$</text>
+            <text x="40" y="220" font-size="16" fill="#7A746B" font-family="Inter, sans-serif">envelope $\propto \mathrm{sinc}(k\alpha)$</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · Stems are $S_k$; envelope is the sinc.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Visual</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <section data-label="08 Practice">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Piecewise-Constant Signal</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Compute $X_0$ and $X_k$<br/>for $k \neq 0$.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Signal</div>
+        <p style="margin: 0;">Period $T_0 = 6$. On $[-3,3)$: takes value $3$ for $|t| < 1$; value $2$ for $1 \leq |t| < 2$; value $0$ otherwise.</p>
+      </div>
+      <ul class="clean">
+        <li>Decompose as a sum of two pulse trains plus a constant.</li>
+        <li>Use linearity of the analysis equation.</li>
+        <li>The pulse-train formula from the worked example does the rest.</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <section data-label="09 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Add Two Sincs</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>Stack a tall inner pulse<br/>on a shorter outer one.</h1>
+        <div class="step" style="margin-top: 6px;">
+          <div class="step-label">Decomposition</div>
+          <p style="margin: 0;">Write $x(t) = 2\,p_{2}(t) + p_{1}(t)$ where $p_w$ is a pulse train of width $w$ inside period $T_0=6$.</p>
+        </div>
+        <div class="step">
+          <div class="step-label">$X_0$</div>
+          $$X_0 \,=\, 2 \cdot \tfrac{2}{3} + 1 \cdot \tfrac{1}{3} \cdot 2 + 2 = \tfrac{10}{3}$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">(Mean of the piecewise-constant signal over one period.)</p>
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">For $k \neq 0$</div>
+        <p style="margin: 0;">Each pulse contributes a sinc-like term. With $\alpha_1 = 1/3$ and $\alpha_2 = 2/3$:</p>
+        $$X_k \,=\, \frac{\sin(2k\pi/3)}{k\pi} \,+\, \frac{2\sin(k\pi/3)}{k\pi}$$
+        <p style="margin: 8px 0 0;" class="muted">Linearity does all the heavy lifting — never integrate twice if a known pair will do.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <section data-label="10 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 19</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Three things.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · INNER PRODUCT</div>
+          <div class="what">$\langle f, g\rangle = \tfrac{1}{T_0}\int_{T_0} f^{*} g\, dt$</div>
+          <div class="how">Integral version of the DFT inner product.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · ORTHONORMALITY</div>
+          <div class="what">$\langle v^{(k)}, v^{(\ell)}\rangle = \delta_{k\ell}$</div>
+          <div class="how">Harmonics form an orthonormal basis.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · ANALYSIS</div>
+          <div class="what">$S_k = \tfrac{1}{T_0}\int_{T_0} s(t) e^{-jk\Omega_0 t}\, dt$</div>
+          <div class="how">Project on each harmonic.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · USE LINEARITY</div>
+          <div class="what">Build $S_k$ from known pairs.</div>
+          <div class="how">Pulses, shifts, scales — all linear.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L20 Fourier Series Properties</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

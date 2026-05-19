@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture Decks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAF7F1;
+    --ink: #1A1A1A;
+    --ink-2: #4A4641;
+    --ink-3: #7A746B;
+    --accent: #7A1A1A;
+  }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: 'Source Serif 4', Georgia, serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 96px 80px 120px; }
+  .course { font-family: 'Inter', sans-serif; font-size: 18px; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600; margin-bottom: 24px; }
+  h1 { font-family: 'Inter', sans-serif; font-size: 76px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 28px; line-height: 1.05; }
+  .lede { font-size: 24px; color: var(--ink-2); max-width: 740px; margin-bottom: 64px; }
+  .list { list-style: none; padding: 0; margin: 0; border-top: 1.5px solid var(--ink); }
+  .list li {
+    border-bottom: 1.5px solid var(--ink);
+    padding: 0;
+  }
+  .list a {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 28px;
+    align-items: baseline;
+    padding: 28px 4px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: padding-left 200ms ease;
+  }
+  .list a:hover { padding-left: 16px; background: rgba(122,26,26,0.04); }
+  .list .num {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+  .list .title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -0.005em;
+  }
+  .list .sub {
+    display: block;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--ink-3);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+  .list .ref {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .foot {
+    margin-top: 80px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="course">ENES-222 · Signals &amp; Systems</div>
+  <h1>Unit One · Foundations.</h1>
+  <p class="lede">Nine lectures on the complex plane, sinusoids, sampling, and linear algebra — built on Chapter 1 of the textbook. Click any title to open its deck.</p>
+
+  <ol class="list">
+    <li><a href="Lecture%2001%20-%20Complex%20Numbers.html">
+      <span class="num">01</span>
+      <span class="title">Complex Numbers
+        <span class="sub">The complex plane; Cartesian and polar form; coordinate conversions.</span>
+      </span>
+      <span class="ref">§1.3</span>
+    </a></li>
+    <li><a href="Lecture%2002%20-%20Complex%20Multiplication%20and%20Division.html">
+      <span class="num">02</span>
+      <span class="title">Geometry, Multiplication &amp; Division
+        <span class="sub">Lines and circles on $\mathbb{C}$; conjugate; products and quotients in Cartesian and polar.</span>
+      </span>
+      <span class="ref">§1.3</span>
+    </a></li>
+    <li><a href="Lecture%2003%20-%20Complex%20Exponentials%20and%20Sinusoids.html">
+      <span class="num">03</span>
+      <span class="title">Complex Exponentials, Roots &amp; CT Sinusoids
+        <span class="sub">Euler's formula; the $n$ roots of $z^n = v$; amplitude, frequency, phase.</span>
+      </span>
+      <span class="ref">§1.3 – §1.4</span>
+    </a></li>
+    <li><a href="Lecture%2004%20-%20Phasors%20and%20Discrete-time%20Sinusoids.html">
+      <span class="num">04</span>
+      <span class="title">Phasors &amp; Discrete-Time Sinusoids
+        <span class="sub">Stationary phasor $Ae^{j\phi}$; DT frequency equivalence; periodicity.</span>
+      </span>
+      <span class="ref">§1.4 – §1.5</span>
+    </a></li>
+    <li><a href="Lecture%2005%20-%20Sampling%20Continuous-Time%20Sinusoids.html">
+      <span class="num">05</span>
+      <span class="title">Sampling Continuous-Time Sinusoids
+        <span class="sub">The sampling formula; $\Omega = \omega T_s$; equivalent sampling rates.</span>
+      </span>
+      <span class="ref">§1.6</span>
+    </a></li>
+    <li><a href="Lecture%2006%20-%20Aliasing.html">
+      <span class="num">06</span>
+      <span class="title">Aliasing
+        <span class="sub">$f \pm f' = k\,f_s$; reconstruction from samples; the Nyquist rate.</span>
+      </span>
+      <span class="ref">§1.6</span>
+    </a></li>
+    <li><a href="Lecture%2007%20-%20Matrix-Vector%20and%20Matrix-Matrix%20Products.html">
+      <span class="num">07</span>
+      <span class="title">Matrix–Vector &amp; Matrix–Matrix Products
+        <span class="sub">Two views of $A\mathbf{x}$; linearity; building the matrix from $A(\mathbf{e}^{(j)})$.</span>
+      </span>
+      <span class="ref">§2.1 – §2.2.2</span>
+    </a></li>
+    <li><a href="Lecture%2008%20-%20Cascaded%20Transformations%20and%20Permutations.html">
+      <span class="num">08</span>
+      <span class="title">Cascaded Transformations &amp; Permutations
+        <span class="sub">$AB$ as composition; $AB \neq BA$; selecting and reordering with $\mathbf{e}^{(j)}$ and $P$.</span>
+      </span>
+      <span class="ref">§2.2.3, §2.3</span>
+    </a></li>
+    <li><a href="Lecture%2009%20-%20Matrix%20Inversion%20and%20Gaussian%20Elimination.html">
+      <span class="num">09</span>
+      <span class="title">Matrix Inversion &amp; Gaussian Elimination
+        <span class="sub">Nonsingularity; triangular inverses by substitution; forward elimination + back-sub.</span>
+      </span>
+      <span class="ref">§2.4 – §2.6</span>
+    </a></li>
+  </ol>
+
+  <p class="foot">Use ← / → to navigate within each deck. Press P to print.</p>
+</div>
+</body>
+</html>

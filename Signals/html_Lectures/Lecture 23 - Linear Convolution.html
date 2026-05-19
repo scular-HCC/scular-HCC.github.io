@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 23 — Linear Convolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">23</div>
+    <div class="topic">Linear Convolution<br/>&amp; Impulse Response</div>
+    <div class="sub">The impulse response $h[n]$ characterises an LTI system completely. The output is $y = h * x$ — a true (non-circular) convolution sum.</div>
+    <div class="reference">Reading · <em>§4.6, §4.7</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 23</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Convolve sequences,<br/>and implement it with DFTs.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Recognise</strong> $h[n]$ as the response to $\delta[n]$, and use $y = h * x$.</li>
+        <li><strong>Compute</strong> the linear convolution of two finite-duration vectors of lengths $K$ and $L$.</li>
+        <li><strong>Implement</strong> linear convolution via zero-padded circular convolution (DFT-multiply-IDFT).</li>
+        <li><strong>Block-process</strong> a long input by splitting it into chunks and adding overlapping outputs.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="03 Impulse Response">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Impulse Response</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Universal characterization</div>
+        <h1>One signal — $h[n]$ — defines<br/>the entire LTI system.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$x[n] = \delta[n] \;\Rightarrow\; y[n] = h[n]$$
+          <div style="height: 10px;"></div>
+          $$y[n] \,=\, \sum_{k=-\infty}^{\infty} h[k]\, x[n-k] \,=\, (h * x)[n]$$
+        </div>
+        <div class="stack gap-item">
+          <p>For an FIR filter with coefficients $b_0, \ldots, b_M$, $h[n] = b_n$ for $n = 0:M$, zero otherwise.</p>
+          <p>Convolution is <strong>commutative</strong>: $h * x = x * h$.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="04 Mechanics">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Flip, Shift, Dot</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Computing one output sample</div>
+        <h1>$y[n]$ = dot product of $h$<br/>with a flipped &amp; shifted $x$.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Reverse</strong> $x$ in time: $\tilde{x}[k] = x[-k]$.</li>
+        <li><strong>Delay</strong> by $n$: $\tilde{x}[k - n] = x[n - k]$.</li>
+        <li><strong>Dot-product</strong> with $h$: $y[n] = \sum_k h[k]\, x[n-k]$.</li>
+      </ol>
+      <p class="muted" style="font-size: var(--type-small);">Repeat for every $n$.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="05 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Linear Convolution Table</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>$b * x$ for length-4 vectors.</h1>
+        $$b = (2, -1, 1, -2)^{\top}$$
+        $$x = (1, 2, 3, -1)^{\top}$$
+        <p>Output has length $K + L - 1 = 7$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Result</div>
+          $$b * x \,=\, (2,\, 3,\, 5,\, -5,\, 0,\, -7,\, 2)^{\top}$$
+        </div>
+        <div class="step">
+          <div class="step-label">Spot check</div>
+          $$y[0] = b_0 x_0 = 2\cdot 1 = 2$$
+          $$y[1] = b_0 x_1 + b_1 x_0 = 2\cdot 2 + (-1)\cdot 1 = 3$$
+          $$y[6] = b_3 x_3 = (-2)\cdot(-1) = 2$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="06 Length Rule">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Output Length</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Length of $h * x$</div>
+        <h1>$h$ of length $K$, $x$ of length $L$<br/>⇒ output of length $K + L - 1$.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$\text{activity interval: } [0,\, K + L - 2]$$
+        </div>
+        <div class="stack gap-item">
+          <p>The first output occurs as soon as $h$ and $x$ overlap; the last occurs just before they separate.</p>
+          <p>This formula tells you how much to zero-pad before using a circular convolution.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="07 Convolve via DFT">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Convolve via Padded DFT</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Trick</div>
+        <h1>Linear $\to$ circular —<br/>just zero-pad enough.</h1>
+      </div>
+      <div class="bordered-math big-math">
+        $$b * s \,=\, [b;\, 0_{L-1}] \,\circledast\, [s;\, 0_{K-1}]$$
+      </div>
+      <p>Pad each vector to length $K + L - 1$ (or more). The circular convolution of the padded vectors equals the linear convolution of the originals.</p>
+      <p class="muted" style="font-size: var(--type-small); font-family: 'JetBrains Mono', monospace;">B = fft(b, K+L-1); S = fft(s, K+L-1); y = ifft(B .* S);</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="08 Block Convolution">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Block Convolution</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Long inputs, fixed-size FFTs</div>
+        <h1>Split, convolve each block,<br/>add overlapping tails.</h1>
+      </div>
+      <div class="bordered-math big-math">
+        $$b * [s^{(1)};\, s^{(2)}] \,=\, [b * s^{(1)};\, 0_{L_2}] \,+\, [0_{L_1};\, b * s^{(2)}]$$
+      </div>
+      <p>Real-time filters use this to run with fixed-length FFTs no matter how long the input. The overlap region is where consecutive blocks' tails sum.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="09 Practice">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Block Convolve a Length-12 Input</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Split $s$ into two halves<br/>and convolve.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Setup</div>
+        $$b = (1, -3, -3, 1)^{\top}$$
+        $$s = (1, -2, 3, 4, 4, -2, 7, 5, 1, 3, -1, -4)^{\top}$$
+      </div>
+      <ul class="clean">
+        <li>Split $s$ into two length-6 blocks $s^{(1)}, s^{(2)}$.</li>
+        <li>Compute $b * s^{(1)}$ and $b * s^{(2)}$ separately.</li>
+        <li>Combine with the overlap-add formula.</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="10 Solution">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">Overlap-Add</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solution</div>
+        <h1>Overlap-add reassembles<br/>the long output.</h1>
+        <div class="step">
+          <div class="step-label">Block convolutions (length 9 each)</div>
+          $$b * s^{(1)} = (1, -5, 6, 2, -19, -23, -2, 10, -2)^{\top}$$
+          $$b * s^{(2)} = (7, -16, -35, -8, -8, -9, 18, 11, -4)^{\top}$$
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Combine</div>
+        <p style="margin: 0;">Pad each to length 15 and add (offset the second by 6 samples):</p>
+        $$b * s = [b * s^{(1)};\, 0_{6}] + [0_{6};\, b * s^{(2)}]$$
+        $$=\, (1, -5, 6, 2, -19, -23, 5, -6, -37, -8, -8, -9, 18, 11, -4)^{\top}$$
+        <p style="margin: 8px 0 0;" class="muted">Overlap region: indices 6–8 — that's where the tail of block 1 meets the head of block 2.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+  <section data-label="11 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 23</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four facts.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · IMPULSE RESPONSE</div>
+          <div class="what">$h = $ output for $x = \delta$.</div>
+          <div class="how">Defines an LTI system.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · CONVOLUTION</div>
+          <div class="what">$y[n] = \sum_k h[k]\, x[n-k]$</div>
+          <div class="how">Flip, shift, dot, repeat.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · LENGTH</div>
+          <div class="what">$K + L - 1$</div>
+          <div class="how">Activity interval $[0, K+L-2]$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · BLOCK</div>
+          <div class="what">Overlap-add long inputs.</div>
+          <div class="how">Fixed FFT length, arbitrary signal length.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L24 Z-Transform &amp; Frequency-Selective Filters</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>

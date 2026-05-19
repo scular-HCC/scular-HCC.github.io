@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lecture 22 — Periodic Inputs &amp; Cascade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lecture-styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '\\[', right: '\\]', display: true},{left: '$', right: '$', display: false},{left: '\\(', right: '\\)', display: false}], throwOnError: false});"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems</div>
+    <div class="lecture-number">22</div>
+    <div class="topic">Periodic Inputs<br/>&amp; Cascaded Filters</div>
+    <div class="sub">Periodic in, periodic out. The DFT of the output is the DFT of the input multiplied by samples of the frequency response. Cascade ⇒ multiply system functions.</div>
+    <div class="reference">Reading · <em>§4.4.2, §4.4.4, §4.4.5</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lecture 22</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lecture you will</div>
+        <h1>Predict the steady-state output<br/>of an FIR filter.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Apply</strong> $A\cos(\omega_0 n + \phi) \to |H(e^{j\omega_0})|\,A\cos(\omega_0 n + \phi + \angle H(e^{j\omega_0}))$.</li>
+        <li><strong>Extend</strong> to oscillating exponentials $r^{n}\cos(\omega_0 n + \phi)$ via $z = r e^{j\omega_0}$.</li>
+        <li><strong>Filter</strong> a periodic input with the DFT: $Y[k] = H(e^{j k\,2\pi/L})\, X[k]$.</li>
+        <li><strong>Cascade</strong> two FIR filters: $H(z) = H_1(z)\, H_2(z)$.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="03 Real Sinusoid">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Real Sinusoidal Inputs</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Real sinusoid in</div>
+        <h1>Same frequency out —<br/>scaled and phase-shifted.</h1>
+      </div>
+      <div class="bordered-math huge-math">
+        $$x[n] = \cos(\omega_0 n + \phi) \;\Rightarrow\; y[n] = |H(e^{j\omega_0})|\,\cos\!\big(\omega_0 n + \phi + \angle H(e^{j\omega_0})\big)$$
+      </div>
+      <p>The amplitude response scales it. The phase response shifts it. Frequency is preserved — that's why FIR filters are <em>frequency-selective</em>.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="04 Oscillating Exponential">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Oscillating Exponentials</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Damped sinusoid</div>
+        <h1>$r^{n}\cos(\omega_0 n + \phi)$ — same shape,<br/>evaluated at $z = r e^{j\omega_0}$.</h1>
+      </div>
+      <div class="bordered-math big-math">
+        $$y[n] \,=\, |H(r e^{j\omega_0})|\, r^{n}\cos\!\big(\omega_0 n + \phi + \angle H(r e^{j\omega_0})\big)$$
+      </div>
+      <p class="muted" style="font-size: var(--type-small);">Reduces to the previous slide when $r = 1$. For $r < 1$ the input decays; for $r > 1$ it grows.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="05 Worked Damped">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Damped Cosine</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>$x[n] = 2^{-n}\cos(\pi n/3 + \pi/4)$.</h1>
+        <p>Filter from L21: $H(z) = 1 + 2 z^{-1} + 2 z^{-2} + z^{-3}$.</p>
+        <p>Evaluate at $z = \tfrac{1}{2}\,e^{j\pi/3}$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">$H$ at the point</div>
+          $$H(z) = 1 + 4 e^{-j\pi/3} + 8 e^{-j 2\pi/3} + 8 e^{-j\pi}$$
+          $$|H(z)| = 13.748,\;\; \angle H(z) = -2.285$$
+        </div>
+        <div class="defn">
+          <div class="term">Output</div>
+          $$y[n] \,=\, 13.748 \cdot 2^{-n}\cos\!\big(\tfrac{\pi n}{3} - 1.499\big)$$
+          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Phase shifted by $-2.285$ on top of the original $\pi/4 = 0.785$ — net $-1.499$ rad.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="06 Periodic Inputs">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Periodic Inputs via DFT</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Periodic in, periodic out</div>
+        <h1>Multiply DFTs.</h1>
+      </div>
+      <div class="bordered-math huge-math">
+        $$Y[k] \,=\, H\!\big(e^{j k\,2\pi/L}\big)\, X[k],\;\; k = 0, \ldots, L-1$$
+      </div>
+      <p>Period $L$ of input ⇒ period $L$ of output (transient ignored). Compute the DFT of $x[0:L-1]$, multiply pointwise by the sampled frequency response, inverse-DFT.</p>
+      <p class="muted" style="font-size: var(--type-small); font-family: 'JetBrains Mono', monospace;">X = fft(x); H = fft(b, L); Y = H .* X; y = ifft(Y);</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="07 Practice Periodic">
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Period of a Three-Cosine Sum</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Practice</div>
+        <h1>Find $L$ for the DT input.</h1>
+      </div>
+      <div class="defn">
+        <div class="term">Signal</div>
+        $$x[n] = A_1\cos(2\pi f_1 n + \phi_1) + A_2\cos(2\pi f_2 n + \phi_2) + A_3\cos(2\pi f_3 n + \phi_3)$$
+        $$f_1 = \tfrac{1}{8},\;\; f_2 = \tfrac{3}{20},\;\; f_3 = \tfrac{5}{12}$$
+      </div>
+      <ul class="clean">
+        <li>For each $f_i$, find the period $L_i = 1/f_i$.</li>
+        <li>$L$ is the LCM of the three.</li>
+      </ul>
+    </div>
+    <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="08 Solution Periodic">
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">$L = 120$</span></div>
+    <div class="cols even" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="step">
+          <div class="step-label">Individual periods</div>
+          <p style="margin: 0;">$L_1 = 8$, $L_2 = 20$, $L_3 = 12$.</p>
+        </div>
+        <div class="step">
+          <div class="step-label">LCM</div>
+          $$L \,=\, \mathrm{lcm}(8, 20, 12) \,=\, 120$$
+        </div>
+      </div>
+      <div class="defn">
+        <div class="term">Spectral picture</div>
+        <p style="margin: 0;">Three frequencies ⇒ <strong>six nonzero DFT bins</strong> out of $120$. Each cosine becomes a complex-conjugate pair $(k, L-k)$.</p>
+        <p style="margin: 8px 0 0;" class="muted">DT factoid: a finite sum of periodic DT signals is always periodic. Not true in CT.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="09 Filter via DFT">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Filter a Length-4 Input</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Length-4 periodic input.</h1>
+        <p>Filter: $y[n] = x[n] - 4 x[n-1] + x[n-2]$, so $b = (1, -4, 1)^{\top}$.</p>
+        $$x[0:3] = (2, 1, -3, 5)^{\top}$$
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Procedure</div>
+          <p style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 22px;">X = fft(x);<br/>H = fft(b, 4);<br/>Y = H .* X;<br/>y = ifft(Y);</p>
+        </div>
+        <div class="defn">
+          <div class="term">Why this works</div>
+          <p style="margin: 0;">Pointwise multiplication of length-4 DFTs ⇔ <strong>circular</strong> convolution in time. For an $L$-periodic input the steady-state output coincides with the circular convolution of one period.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="10 Cascade">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Cascade of Filters</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Cascade</div>
+        <h1>$H(z) = H_1(z)\, H_2(z)$.<br/>Order doesn't matter.</h1>
+      </div>
+      <div class="cols even">
+        <div class="bordered-math huge-math">
+          $$H(z) \,=\, H_1(z)\, H_2(z) \,=\, H_2(z)\, H_1(z)$$
+        </div>
+        <div class="stack gap-item">
+          <p>Two FIR filters in series ⇒ one combined FIR filter. The combined coefficient vector is the linear convolution of the two coefficient vectors.</p>
+          <p class="muted" style="font-size: var(--type-small);">Recovery of the L08 fact: $AB \neq BA$ in general — but for LTI single-input single-output filters, $H_1 H_2 = H_2 H_1$ because complex multiplication is commutative.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="11 Cascade Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Cascade of Two FIRs</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Worked example</div>
+        <h1>Multiply the system functions.</h1>
+        $$b^{(1)} = (1, 2, 2, 1)^{\top},\;\; b^{(2)} = (1, -4, 1)^{\top}$$
+      </div>
+      <div class="stack gap-item">
+        <div class="defn">
+          <div class="term">Product</div>
+          $$H(z) \,=\, (1 + 2 z^{-1} + 2 z^{-2} + z^{-3})(1 - 4 z^{-1} + z^{-2})$$
+          $$=\, 1 - 2 z^{-1} - 5 z^{-2} - 5 z^{-3} - 2 z^{-4} + z^{-5}$$
+        </div>
+        <div class="defn">
+          <div class="term">Cascade I/O</div>
+          $$y[n] = x[n] - 2 x[n-1] - 5 x[n-2] - 5 x[n-3] - 2 x[n-4] + x[n-5]$$
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+  <section data-label="12 Summary">
+    <div class="slide-chrome"><span class="left">Lecture 22</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four facts.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · SINUSOIDAL</div>
+          <div class="what">$y[n] = |H|\,A\cos(\omega n + \phi + \angle H)$</div>
+          <div class="how">Same frequency, scaled and shifted.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · DAMPED</div>
+          <div class="what">$z = r e^{j\omega_0}$ for $r^{n}$ inputs.</div>
+          <div class="how">$H(z)$ replaces $H(e^{j\omega})$.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · PERIODIC</div>
+          <div class="what">$Y[k] = H(e^{j 2\pi k/L})\, X[k]$</div>
+          <div class="how">Multiply DFTs; inverse.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · CASCADE</div>
+          <div class="what">$H(z) = H_1(z)\, H_2(z)$</div>
+          <div class="how">Order-independent.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · L23 Linear Convolution</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>
