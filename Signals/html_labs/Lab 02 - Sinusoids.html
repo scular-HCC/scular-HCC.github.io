@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 02 — Sinusoids</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel{background:var(--paper-2);border-left:4px solid var(--accent);padding:18px 24px 22px;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1.5;white-space:pre;overflow:hidden;color:var(--ink);}
+  .code-panel .lang{font-family:'Inter',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+  .code-panel .cmt{color:var(--ink-3);font-style:italic;} .code-panel .key{color:var(--accent);}
+  .syntax-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:stretch;}
+  .compare-table{width:100%;border-collapse:collapse;font-size:24px;}
+  .compare-table th,.compare-table td{text-align:left;padding:12px 18px;border-bottom:1px solid var(--grid);}
+  .compare-table th{font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:18px;color:var(--accent);border-bottom:1.5px solid var(--ink);}
+  .compare-table code{font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--ink);}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">02</div>
+    <div class="topic">Sinusoids</div>
+    <div class="sub">Generate, damp, and window the simplest building block of every signal you will analyze this term.</div>
+    <div class="reference">Week 2 · Reading <em>§1.4–1.5, Lect 3–5</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 02</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">By the end of this lab you will</div>
+        <h1>Generate, damp, and window<br/>discrete-time sinusoids.</h1></div>
+      <ol class="numbered">
+        <li><strong>Generate</strong> $x[n]=A\cos(2\pi f n+\phi)$ with chosen amplitude, frequency, and phase.</li>
+        <li><strong>Damp</strong> a sinusoid with an exponential envelope (the RLC / bell-tone model).</li>
+        <li><strong>Apply</strong> a Hamming window and explain spectral leakage.</li>
+        <li><strong>Compare</strong> the four standard windows (Rect, Hann, Hamming, Blackman).</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 02</span></div>
+  </section>
+
+  <section data-label="03 The Sinusoid" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The atoms of signal processing</span></div>
+    <div class="cols" style="margin-top:28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Three numbers define a sinusoid</div>
+        <h1>Amplitude. Frequency. Phase.</h1>
+        <div class="big-math">$$x[n] = A\,\cos(2\pi f\,n + \phi)$$</div>
+        <ul class="clean">
+          <li>$A$ — amplitude (volts, pressure, ...).</li>
+          <li>$f$ — frequency in <em>cycles per sample</em>.</li>
+          <li>$\phi$ — phase in radians.</li>
+        </ul>
+      </div>
+      <div class="defn">
+        <div class="term">Real-world hook</div>
+        <p style="margin:0;">A struck bell, a plucked guitar string, an RLC ring-down, an MRI free-induction-decay — all obey the <em>damped sinusoid</em> $e^{-\alpha n}\cos(2\pi f n)$. Same equation; only $\alpha$ and $f$ change.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 02</span></div>
+  </section>
+
+  <section data-label="04 Leakage &amp; Windows" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Why we window before the DFT</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Spectral leakage</div>
+        <h1>The DFT assumes the signal repeats.</h1></div>
+      <div class="cols">
+        <div class="stack gap-item">
+          <p>Non-integer cycles in the window &rArr; the periodic extension has a <strong>jump</strong>. That jump injects energy into <em>every</em> DFT bin.</p>
+          <div class="defn"><div class="term">The Hamming window</div>
+            $$w[n] = 0.54 - 0.46\cos\!\frac{2\pi n}{N-1}$$
+            <p style="margin-top:10px;font-size:24px;">Smooth taper to zero at both ends — kills the seam.</p>
+          </div>
+        </div>
+        <div>
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig02-title fig02-desc">
+              <title id="fig02-title">Spectral leakage: rectangular vs Hamming window</title>
+              <desc id="fig02-desc">Two side-by-side magnitude spectra of the same off-bin sinusoid. The left panel labeled No window shows a wide hump with many tall sidelobes that decay slowly. The right panel labeled Hamming window shows a single sharp peak at the correct frequency with sidelobes much lower than the main peak. Both share the same horizontal frequency axis and vertical magnitude axis.</desc>
+              <text x="160" y="28" font-family="Inter,sans-serif" font-size="18" font-weight="600" text-anchor="middle" fill="#1A1A1A">NO WINDOW</text>
+              <text x="480" y="28" font-family="Inter,sans-serif" font-size="18" font-weight="600" text-anchor="middle" fill="#7A1A1A">HAMMING</text>
+              <g stroke="#1A1A1A" stroke-width="1.4" fill="none">
+                <line x1="30"  y1="360" x2="290" y2="360"/>
+                <line x1="40"  y1="370" x2="40"  y2="60"/>
+              </g>
+              <g stroke="#1A1A1A" stroke-width="1.4" fill="none">
+                <line x1="350" y1="360" x2="610" y2="360"/>
+                <line x1="360" y1="370" x2="360" y2="60"/>
+              </g>
+              <g stroke="#1A1A1A" stroke-width="1.8" fill="none" stroke-linejoin="round">
+                <path d="M 50,355 L70,340 L85,320 L100,285 L115,240 L130,170 L145,90 L160,140 L175,200 L190,250 L205,290 L220,320 L235,335 L250,348 L270,355 L285,358"/>
+                <path d="M 50,348 L65,338 L80,344 L95,335 L110,346 L125,335 L140,348 L155,335 L170,340 L185,330 L200,344 L215,330 L230,346 L245,335 L260,344 L275,338"/>
+              </g>
+              <g stroke="#7A1A1A" stroke-width="2.2" fill="none">
+                <path d="M 370,358 L420,357 L450,355 L470,340 L478,260 L484,150 L490,75 L496,150 L502,260 L510,340 L530,355 L560,358 L590,358"/>
+              </g>
+              <text x="160" y="380" font-family="Source Serif 4,serif" font-size="16" fill="#7A746B" text-anchor="middle" font-style="italic">frequency</text>
+              <text x="480" y="380" font-family="Source Serif 4,serif" font-size="16" fill="#7A746B" text-anchor="middle" font-style="italic">frequency</text>
+              <text x="155" y="115" font-family="Source Serif 4,serif" font-size="14" fill="#1A1A1A" text-anchor="middle">true f</text>
+              <line x1="155" y1="80" x2="155" y2="95" stroke="#1A1A1A" stroke-width="1" stroke-dasharray="3 3"/>
+              <text x="493" y="60" font-family="Source Serif 4,serif" font-size="14" fill="#7A1A1A" text-anchor="middle">true f</text>
+              <line x1="493" y1="50" x2="493" y2="65" stroke="#7A1A1A" stroke-width="1" stroke-dasharray="3 3"/>
+              <text x="180" y="200" font-family="Inter,sans-serif" font-size="14" fill="#1A1A1A" font-style="italic">sidelobes &gt;&gt; 0</text>
+              <text x="540" y="320" font-family="Inter,sans-serif" font-size="14" fill="#7A1A1A" font-style="italic">sidelobes ≈ 0</text>
+            </svg>
+          </div>
+          <div class="diagram-caption">Same off-bin sinusoid &mdash; the Hamming window concentrates energy back at the true frequency.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 02</span></div>
+  </section>
+
+  <section data-label="05 Syntax">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Generate and window</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Same task, two languages</div>
+        <h1>Sinusoid + Hamming window in 4 lines.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+N  = <span class="key">256</span>;
+n  = <span class="key">0</span>:N-<span class="key">1</span>;
+f  = <span class="key">660</span>/<span class="key">8192</span>;             <span class="cmt">% 660 Hz @ Fs=8192</span>
+x  = cos(<span class="key">2</span>*pi*f*n);
+w  = hamming(N).<span class="key">'</span>;        <span class="cmt">% row</span>
+y  = x .* w;                <span class="cmt">% windowed</span>
+
+plot(n, y);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="key">import</span> numpy <span class="key">as</span> np
+<span class="key">import</span> matplotlib.pyplot <span class="key">as</span> plt
+
+N  = <span class="key">256</span>
+n  = np.arange(N)
+f  = <span class="key">660</span>/<span class="key">8192</span>
+x  = np.cos(<span class="key">2</span>*np.pi*f*n)
+w  = np.hamming(N)
+y  = x * w                  <span class="cmt"># element-wise</span>
+
+plt.plot(n, y)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 02</span></div>
+  </section>
+
+  <section data-label="06 Window Family">
+    <div class="slide-chrome"><span class="left">Reference</span><span class="right">Pick the right window</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">The trade-off you must know</div>
+        <h1>Mainlobe width vs sidelobe level.</h1></div>
+      <table class="compare-table">
+        <thead><tr><th>Window</th><th>Peak Sidelobe</th><th>MATLAB</th><th>Python</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>Rectangular</td><td>−13 dB</td><td><code>ones(N,1)</code></td><td><code>np.ones(N)</code></td><td>Narrowest mainlobe</td></tr>
+          <tr><td>Hann</td><td>−32 dB</td><td><code>hann(N)</code></td><td><code>np.hanning(N)</code></td><td>General-purpose</td></tr>
+          <tr><td>Hamming</td><td>−43 dB</td><td><code>hamming(N)</code></td><td><code>np.hamming(N)</code></td><td>Lowest first sidelobe</td></tr>
+          <tr><td>Blackman</td><td>−58 dB</td><td><code>blackman(N)</code></td><td><code>np.blackman(N)</code></td><td>Detect weak tone next to strong</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer"><span class="label">Reference</span><span class="rule"></span><span class="author">ENES-222 · Lab 02</span></div>
+  </section>
+
+  <section data-label="07 Damped Sinusoid">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Bell-tone / RLC ring-down</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Exponentially-faded sinusoid</div>
+        <h1>$y[n] = e^{-rn/N}\cos(2\pi f n)$</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+N = <span class="key">256</span>;  r = <span class="key">4</span>;
+n = <span class="key">0</span>:N-<span class="key">1</span>;
+e = exp(-r*n/N);
+y = cos(<span class="key">2</span>*pi*f*n) .* e;
+
+semilogy(n, e);     <span class="cmt">% log → straight line</span>
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+N, r = <span class="key">256</span>, <span class="key">4</span>
+n = np.arange(N)
+e = np.exp(-r*n/N)
+y = np.cos(<span class="key">2</span>*np.pi*f*n) * e
+
+plt.semilogy(n, e)   <span class="cmt"># log → straight line</span>
+        </div>
+      </div>
+      <p class="muted">Engineer's sanity check: plot the envelope on a log y-axis. <strong>Straight line = exponential decay.</strong></p>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 02</span></div>
+  </section>
+
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">Sinusoid-specific traps</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Common mistakes</div>
+        <h1>Five errors to avoid this week.</h1></div>
+      <ol class="numbered">
+        <li><strong>Radians vs cycles.</strong> $\cos(2\pi f n)$ uses cycles/sample; $\cos(\omega n)$ uses rad/sample. They differ by $2\pi$.</li>
+        <li><strong>Length mismatch.</strong> <code>hamming(N)</code> and your sinusoid must have <em>exactly</em> the same length. Print <code>length(t)</code> first.</li>
+        <li><strong>Non-integer cycles in the window.</strong> Causes leakage. Fix with a window, or pick <em>N</em> to fit integer cycles.</li>
+        <li><strong><code>arange</code> with float step.</strong> Use <code>linspace</code> when count matters.</li>
+        <li><strong>Linear-scale spectra.</strong> Sidelobes are 40–60 dB down. <em>Always</em> use dB.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 02</span></div>
+  </section>
+
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 02</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Take with you</div><h1>Four things to remember.</h1></div>
+      <div class="summary-grid">
+        <div class="cell"><div class="num">01 · SINUSOID</div><div class="what">$A\cos(2\pi f n+\phi)$</div><div class="how">$f$ in cycles/sample.</div></div>
+        <div class="cell"><div class="num">02 · DAMPED</div><div class="what">$e^{-rn/N}\cos(\ldots)$</div><div class="how">RLC / bell / IIR pole.</div></div>
+        <div class="cell"><div class="num">03 · WINDOWS</div><div class="what">Mainlobe vs sidelobe.</div><div class="how">Pick by application.</div></div>
+        <div class="cell"><div class="num">04 · LEAKAGE</div><div class="what">Caused by non-integer cycles.</div><div class="how">Window fixes it.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · Lab 03 Loops &amp; Scripts</span><span class="rule"></span><span class="author">ENES-222 · Lab 02</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body></html>

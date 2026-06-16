@@ -1,0 +1,330 @@
+/* Shared ENES-222 lecture deck styles */
+
+:root {
+  --type-eyebrow: 24px;
+  --type-title:   64px;
+  --type-subtitle:44px;
+  --type-body:    32px;
+  --type-small:   26px;
+  --type-tag:     24px;
+
+  --pad-top:    96px;
+  --pad-bottom: 88px;
+  --pad-x:      120px;
+  --gap-title:  44px;
+  --gap-item:   28px;
+
+  --paper:   #FAF7F1;
+  --paper-2: #F1ECE2;
+  --ink:     #1A1A1A;
+  --ink-2:   #4A4641;
+  --ink-3:   #7A746B;
+  --rule:    #1A1A1A;
+  --accent:  #7A1A1A;
+  --accent-soft: #C8A8A8;
+  --grid:    #D9D2C2;
+}
+
+html, body { margin: 0; padding: 0; background: #2a2a2a; overflow: hidden; }
+body { font-family: 'Source Serif 4', Georgia, serif; color: var(--ink); }
+
+deck-stage section {
+  background: var(--paper);
+  color: var(--ink);
+  box-sizing: border-box;
+  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--type-body);
+  line-height: 1.45;
+  position: relative;
+  overflow: hidden;
+}
+
+.paper-rules::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 47px,
+    rgba(122, 26, 26, 0.045) 47px,
+    rgba(122, 26, 26, 0.045) 48px
+  );
+  pointer-events: none;
+}
+
+.slide-chrome {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  top: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-tag);
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.slide-chrome .left { font-weight: 600; color: var(--ink-2); }
+.slide-chrome .right { font-feature-settings: "tnum"; }
+
+.slide-footer {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.slide-footer .rule {
+  flex: 1;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 5px;
+}
+.slide-footer .label { padding-right: 18px; text-transform: uppercase; font-weight: 500; }
+.slide-footer .author { padding-left: 18px; }
+
+h1, h2, h3 {
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: var(--type-title);    font-weight: 700; }
+h2 { font-size: var(--type-subtitle); font-weight: 600; }
+h3 { font-size: var(--type-body);     font-weight: 600; }
+
+.eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-eyebrow);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+p { margin: 0 0 var(--gap-item) 0; max-width: 1400px; }
+
+ul.clean { list-style: none; padding: 0; margin: 0; }
+ul.clean li {
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: var(--gap-item);
+  max-width: 1500px;
+}
+ul.clean li::before {
+  content: "—";
+  position: absolute;
+  left: 0; top: 0;
+  color: var(--accent);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+ol.numbered { list-style: none; counter-reset: step; padding: 0; margin: 0; }
+ol.numbered li {
+  position: relative;
+  padding-left: 64px;
+  margin-bottom: var(--gap-item);
+  max-width: 1500px;
+  counter-increment: step;
+}
+ol.numbered li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0; top: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.defn {
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 28px 0 28px;
+  margin: 0;
+  max-width: 1400px;
+}
+.defn .term {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.cols { display: grid; grid-template-columns: 1.05fr 1fr; gap: 80px; align-items: start; }
+.cols.tight { gap: 60px; }
+.cols.even  { grid-template-columns: 1fr 1fr; }
+
+.title-slide { display: flex; flex-direction: column; justify-content: center; }
+.title-slide .course {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  color: var(--ink-2);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  margin-bottom: 28px;
+}
+.title-slide .lecture-number {
+  font-family: 'Inter', sans-serif;
+  font-size: 200px;
+  font-weight: 700;
+  line-height: 0.9;
+  color: var(--accent);
+  letter-spacing: -0.04em;
+  margin: -10px 0 32px -10px;
+}
+.title-slide .topic {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 88px;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+  margin-bottom: 36px;
+  max-width: 1500px;
+}
+.title-slide .sub {
+  font-size: var(--type-body);
+  color: var(--ink-2);
+  max-width: 1100px;
+}
+.title-slide .reference {
+  margin-top: 60px;
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.title-slide .reference em { font-style: italic; color: var(--ink-2); }
+
+.math-block { padding: 12px 0; margin: 16px 0; }
+.math-row { display: flex; flex-direction: column; gap: 22px; margin: 0; }
+.math-row .item { display: flex; gap: 28px; align-items: baseline; }
+.math-row .item .lbl {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  color: var(--ink-3);
+  min-width: 200px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.katex { font-size: 1.04em; }
+.katex-display { margin: 0.4em 0 !important; }
+.big-math .katex-display .katex { font-size: 1.6em; }
+.huge-math .katex-display .katex { font-size: 2.2em; }
+
+.diagram-wrap {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.diagram-wrap.tight { padding: 12px; }
+.diagram-wrap svg { width: 100%; height: auto; display: block; }
+.diagram-caption {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  color: var(--ink-3);
+  margin-top: 16px;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 14px 32px; align-items: baseline; font-size: var(--type-body); }
+.kv dt {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+.kv dd { margin: 0; }
+
+.step { margin-bottom: 26px; }
+.step .step-label {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1.5px solid var(--ink);
+  border-left: 1.5px solid var(--ink);
+  max-width: 1500px;
+}
+.summary-grid .cell {
+  border-right: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 28px 32px;
+}
+.summary-grid .cell .num {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-small);
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.summary-grid .cell .what {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--type-body);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.summary-grid .cell .how {
+  font-size: 24px;
+  color: var(--ink-2);
+}
+
+.accent { color: var(--accent); }
+.muted  { color: var(--ink-3); }
+.ink2   { color: var(--ink-2); }
+.center-vert { display:flex; flex-direction:column; justify-content:center; height:100%; }
+.stack { display: flex; flex-direction: column; }
+.gap-title > * + * { margin-top: var(--gap-title); }
+.gap-item  > * + * { margin-top: var(--gap-item); }
+
+/* Math-heavy specialized blocks */
+.bordered-math {
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 30px 0;
+}
+
+/* Code/matrix display, used for matrix readout when needed */
+.matrix-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 26px;
+  color: var(--ink);
+}

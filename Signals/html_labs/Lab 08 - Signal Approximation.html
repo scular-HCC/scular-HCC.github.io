@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 08 — Signal Approximation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel{background:var(--paper-2);border-left:4px solid var(--accent);padding:18px 24px 22px;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1.5;white-space:pre;overflow:hidden;color:var(--ink);}
+  .code-panel .lang{font-family:'Inter',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+  .code-panel .cmt{color:var(--ink-3);font-style:italic;} .code-panel .key{color:var(--accent);}
+  .syntax-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:stretch;}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">08</div>
+    <div class="topic">Signal Approximation</div>
+    <div class="sub">Compression in three steps: transform, keep the big coefficients, throw the rest away. The math behind JPEG, MP3, and JPEG 2000.</div>
+    <div class="reference">Week 9 · Reading <em>§3.4–3.7, Lect 15–17</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 08</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">By the end of this lab you will</div>
+        <h1>Approximate a signal in an<br/>orthogonal basis.</h1></div>
+      <ol class="numbered">
+        <li><strong>Build</strong> the Haar wavelet matrix $V$ and verify orthogonality.</li>
+        <li><strong>Project</strong> a signal: $\mathbf c = V^T \mathbf s$ and reconstruct at increasing scales.</li>
+        <li><strong>Implement</strong> <code>COMPRESS1</code> — keep the M largest-magnitude coefficients.</li>
+        <li><strong>Compare</strong> Haar vs DFT compression for the same M.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 08</span></div>
+  </section>
+
+  <section data-label="03 Compression Recipe" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">How every codec works</span></div>
+    <div class="cols" style="margin-top:28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Three-step recipe</div>
+        <h1>Transform, threshold, code.</h1>
+        <ol class="numbered">
+          <li>Transform into a basis where energy <em>compacts</em>.</li>
+          <li>Keep the $M$ largest-magnitude coefficients.</li>
+          <li>Entropy-code what remains.</li>
+        </ol>
+      </div>
+      <div class="defn">
+        <div class="term">Real-world hook</div>
+        <p style="margin:0;">JPEG (DCT) gets ~20× compression. JPEG 2000 (wavelet) gets ~50× at similar quality — because real images have edges where wavelets shine. <strong>Step 2 is this lab.</strong></p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 08</span></div>
+  </section>
+
+  <section data-label="04 Haar Basis" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The simplest wavelet</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Average and difference</div>
+        <h1>Build the Haar basis scale by scale.</h1></div>
+      <div class="cols">
+        <div class="stack gap-item">
+          <ul class="clean">
+            <li>Column 0: constant — captures the <em>mean</em>.</li>
+            <li>Column 1: one up–down step — captures asymmetry.</li>
+            <li>Columns 2–3: half-length steps — local trends.</li>
+            <li>Scale $k$ adds $2^{k-1}$ columns; total $N$.</li>
+          </ul>
+          <div class="defn">
+            <div class="term">Why Haar wins on edges</div>
+            <p style="margin:0;font-size:24px;">Smooth regions need few coefficients; only the kinks need many.</p>
+          </div>
+        </div>
+        <div>
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 640 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig08-title fig08-desc">
+              <title id="fig08-title">Multi-scale Haar approximation of a piecewise signal</title>
+              <desc id="fig08-desc">Plot of an original piecewise smooth signal drawn as a smooth red curve with a clear corner in the middle. Three superimposed staircase approximations show increasingly fine reconstruction: a coarse 2-step staircase, a medium 4-step staircase, and a finer 8-step staircase. Each successive staircase hugs the red curve more tightly, especially near the corner. Legend at lower right identifies the curves as original signal, scale 0 to 1, scale 0 to 2, and scale 0 to 3.</desc>
+              <g stroke="#1A1A1A" stroke-width="1.4" fill="none">
+                <line x1="50" y1="320" x2="610" y2="320"/>
+                <line x1="50" y1="40"  x2="50"  y2="335"/>
+              </g>
+              <text x="610" y="340" font-family="Source Serif 4,serif" font-size="14" fill="#7A746B" font-style="italic" text-anchor="end">n →</text>
+              <text x="60"  y="35"  font-family="Source Serif 4,serif" font-size="14" fill="#7A746B" font-style="italic">s[n]</text>
+              <!-- Original red curve: piecewise smooth with kink at middle -->
+              <path d="M 50,290 C 130,210 200,140 320,100 L 320,100 C 460,170 540,260 610,300" fill="none" stroke="#7A1A1A" stroke-width="2.6"/>
+              <!-- Scale 0..1 — two-step approx (lightest) -->
+              <path d="M 50,200 L 320,200 L 320,210 L 610,210" fill="none" stroke="#D6CDB9" stroke-width="2.2"/>
+              <!-- Scale 0..2 — four-step approx -->
+              <path d="M 50,260 L 190,260 L 190,150 L 320,150 L 320,160 L 460,160 L 460,260 L 610,260" fill="none" stroke="#A89B83" stroke-width="2.2"/>
+              <!-- Scale 0..3 — eight-step approx, hugs red curve -->
+              <path d="M 50,290 L 120,250 L 120,210 L 190,170 L 190,135 L 260,115 L 260,100 L 320,100
+                       L 320,110 L 390,140 L 390,180 L 460,210 L 460,240 L 530,270 L 530,295 L 610,300"
+                       fill="none" stroke="#1A1A1A" stroke-width="1.8"/>
+              <!-- legend -->
+              <g font-family="Inter,sans-serif" font-size="12">
+                <rect x="440" y="55" width="170" height="78" fill="#FAF7F1" stroke="#D9D2C2" stroke-width="1"/>
+                <line x1="450" y1="68" x2="475" y2="68" stroke="#7A1A1A" stroke-width="2.6"/>
+                <text x="481" y="72" fill="#1A1A1A">original signal</text>
+                <line x1="450" y1="86" x2="475" y2="86" stroke="#D6CDB9" stroke-width="2.2"/>
+                <text x="481" y="90" fill="#1A1A1A">scales 0–1 (2 vecs)</text>
+                <line x1="450" y1="104" x2="475" y2="104" stroke="#A89B83" stroke-width="2.2"/>
+                <text x="481" y="108" fill="#1A1A1A">scales 0–2 (4 vecs)</text>
+                <line x1="450" y1="122" x2="475" y2="122" stroke="#1A1A1A" stroke-width="1.8"/>
+                <text x="481" y="126" fill="#1A1A1A">scales 0–3 (8 vecs)</text>
+              </g>
+            </svg>
+          </div>
+          <div class="diagram-caption">Each finer scale refines the staircase near the kink — exactly where energy lives.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 08</span></div>
+  </section>
+
+  <section data-label="05 Project Syntax">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Transform → keep top M → reconstruct</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">The whole pipeline in five lines</div>
+        <h1>COMPRESS1 in MATLAB and Python.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+N = <span class="key">512</span>;
+V = nhaar(N);          <span class="cmt">% provided helper</span>
+c = V.<span class="key">'</span> * s(:);        <span class="cmt">% project</span>
+
+<span class="cmt">% Keep M largest by magnitude</span>
+[~, J] = sort(abs(c), <span class="key">'descend'</span>);
+ck = zeros(size(c));
+ck(J(<span class="key">1</span>:M)) = c(J(<span class="key">1</span>:M));
+
+s_rec = V * ck;        <span class="cmt">% reconstruct</span>
+rrmse = norm(s - s_rec) / norm(s);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+N = <span class="key">512</span>
+V = nhaar(N)           <span class="cmt"># provided helper</span>
+c = V.T @ s
+
+<span class="cmt"># Keep M largest by magnitude</span>
+J = np.argsort(np.abs(c))[::-<span class="key">1</span>][:M]
+ck = np.zeros_like(c)
+ck[J] = c[J]
+
+s_rec = V @ ck
+rrmse = np.linalg.norm(s - s_rec) / np.linalg.norm(s)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 08</span></div>
+  </section>
+
+  <section data-label="06 Haar vs DFT">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Picking the right basis</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Match the basis to the signal class</div>
+        <h1>Stationary tones &harr; DFT. Edges &harr; Haar.</h1></div>
+      <div class="cols">
+        <div class="defn">
+          <div class="term">DFT wins for</div>
+          <p style="margin:0;">Pure sinusoids, sustained audio tones, periodic textures.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Haar wins for</div>
+          <p style="margin:0;">Piecewise-smooth signals with edges or transitions: images, ECG, step responses, geological logs.</p>
+        </div>
+      </div>
+      <p class="muted">At the same M, the wrong basis can mean an order of magnitude more error. Modern codecs (HEVC, AV1) choose adaptively per block.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 08</span></div>
+  </section>
+
+  <section data-label="07 Energy Curve">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Energy-compaction curve</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">How few coefficients do we really need?</div>
+        <h1>Sort. Sum. Plot.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+c = V.<span class="key">'</span> * s(:);
+[c_sq, ~] = sort(c.^<span class="key">2</span>, <span class="key">'descend'</span>);
+energy = cumsum(c_sq) / sum(c_sq);
+
+semilogx(<span class="key">1</span>:N, energy);
+yline(<span class="key">0.99</span>);    yline(<span class="key">0.999</span>);
+xlabel(<span class="key">'top K coefficients'</span>);
+ylabel(<span class="key">'fraction of energy'</span>);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+c = V.T @ s
+c_sq = np.sort(c**<span class="key">2</span>)[::-<span class="key">1</span>]
+energy = np.cumsum(c_sq) / c_sq.sum()
+
+plt.semilogx(np.arange(<span class="key">1</span>, N+<span class="key">1</span>), energy)
+plt.axhline(<span class="key">0.99</span>);  plt.axhline(<span class="key">0.999</span>)
+plt.xlabel(<span class="key">'top K coefficients'</span>)
+plt.ylabel(<span class="key">'fraction of energy'</span>)
+        </div>
+      </div>
+      <p class="muted">For a typical piecewise signal: 99% of energy lives in &lt; 5% of coefficients. That's the compression ratio.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 08</span></div>
+  </section>
+
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">Approximation traps</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Common mistakes</div><h1>Five errors to avoid.</h1></div>
+      <ol class="numbered">
+        <li><strong><code>endpoint=False</code> vs <code>endpoint=True</code>.</strong> $N$ samples over $[0, 4)$ wants <code>endpoint=False</code>; otherwise you get $N+1$.</li>
+        <li><strong>Counting basis vectors per scale.</strong> Scale 0 = 1 vector; scale $k$ adds $2^{k-1}$.</li>
+        <li><strong>Output of <code>COMPRESS1</code> has length $N$.</strong> Only $M$ entries are nonzero; the rest are zero.</li>
+        <li><strong>Comparing bases at $M = N$.</strong> Both reconstruct exactly. Interesting regime is <em>low</em> $M$.</li>
+        <li><strong>Forgetting Parseval.</strong> <code>norm(c) == norm(s)</code> for an orthonormal $V$. Useful sanity check.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 08</span></div>
+  </section>
+
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 08</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Take with you</div><h1>Four things to remember.</h1></div>
+      <div class="summary-grid">
+        <div class="cell"><div class="num">01 · RECIPE</div><div class="what">Transform, threshold, code.</div><div class="how">Every codec.</div></div>
+        <div class="cell"><div class="num">02 · ORTHONORMAL</div><div class="what">$V^T V = I$</div><div class="how">Coefficients = $V^T \mathbf s$.</div></div>
+        <div class="cell"><div class="num">03 · TOP-K</div><div class="what">Keep largest magnitudes.</div><div class="how">Optimal MSE for orthonormal $V$.</div></div>
+        <div class="cell"><div class="num">04 · MATCH BASIS</div><div class="what">Tones &rarr; DFT. Edges &rarr; Haar.</div><div class="how">Choose by signal class.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · Lab 09 Image Processing</span><span class="rule"></span><span class="author">ENES-222 · Lab 08</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body></html>

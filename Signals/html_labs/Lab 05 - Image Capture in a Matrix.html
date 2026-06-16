@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 05 — Image Capture in a Matrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel{background:var(--paper-2);border-left:4px solid var(--accent);padding:18px 24px 22px;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1.5;white-space:pre;overflow:hidden;color:var(--ink);}
+  .code-panel .lang{font-family:'Inter',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+  .code-panel .cmt{color:var(--ink-3);font-style:italic;} .code-panel .key{color:var(--accent);}
+  .syntax-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:stretch;}
+  .compare-table{width:100%;border-collapse:collapse;font-size:24px;}
+  .compare-table th,.compare-table td{text-align:left;padding:12px 18px;border-bottom:1px solid var(--grid);}
+  .compare-table th{font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:18px;color:var(--accent);border-bottom:1.5px solid var(--ink);}
+  .compare-table code{font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--ink);}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">05</div>
+    <div class="topic">Image Capture in a Matrix</div>
+    <div class="sub">A grayscale image <em>is</em> a matrix. Every operation in this course extends from 1-D arrays to 2-D images.</div>
+    <div class="reference">Week 5 · Reading <em>§2.4–2.10, Lect 9–10</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 05</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">By the end of this lab you will</div>
+        <h1>Manipulate images as 2-D matrices.</h1></div>
+      <ol class="numbered">
+        <li><strong>Index</strong> rows and columns; permute, crop, flip, rotate.</li>
+        <li><strong>Display</strong> grayscale and threshold images.</li>
+        <li><strong>Apply</strong> gamma correction (the math behind sRGB).</li>
+        <li><strong>Detect</strong> edges with a 2-tap FIR difference — a preview of Lab 12.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 05</span></div>
+  </section>
+
+  <section data-label="03 Image = Matrix" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">No metaphor</span></div>
+    <div class="cols" style="margin-top:24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Real-world hook</div>
+        <h1>It's literally a matrix.</h1>
+        <ul class="clean">
+          <li>Grayscale MRI slice → <code>float32</code> $M\times N$ array.</li>
+          <li>Satellite band (Landsat) → <code>uint16</code> $M\times N$ array.</li>
+          <li>Phone camera frame → $1080\times 1920\times 3$ tensor.</li>
+        </ul>
+        <div class="defn">
+          <div class="term">Origin convention</div>
+          <p style="margin:0;font-size:24px;">Image: $(0,0)$ at <strong>top-left</strong>. Math: at <strong>bottom-left</strong>. Use <code>origin='lower'</code> when mixing.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig05-title fig05-desc">
+            <title id="fig05-title">An image is a matrix of pixel intensity values</title>
+            <desc id="fig05-desc">An 8 by 8 grid of square cells representing pixels. Each cell is filled with a shade of gray from black to white based on its intensity value. A few cells in the upper left, middle, and lower right are labeled with their numerical values such as 0.95, 0.42, 0.10. The cell at row 2 column 3 is outlined in red and labeled A bracket 1 comma 2 close bracket equals 0.42. Row indices 0 through 7 run down the left side; column indices 0 through 7 run across the top.</desc>
+              <g font-family="Inter,sans-serif" font-size="11" fill="#7A746B">
+                <text x="60" y="32" text-anchor="middle">col 0</text>
+                <text x="100" y="32" text-anchor="middle">1</text>
+                <text x="140" y="32" text-anchor="middle">2</text>
+                <text x="180" y="32" text-anchor="middle">3</text>
+                <text x="220" y="32" text-anchor="middle">4</text>
+                <text x="260" y="32" text-anchor="middle">5</text>
+                <text x="300" y="32" text-anchor="middle">6</text>
+                <text x="340" y="32" text-anchor="middle">7</text>
+                <text x="32" y="65"  text-anchor="end">row 0</text>
+                <text x="32" y="105" text-anchor="end">1</text>
+                <text x="32" y="145" text-anchor="end">2</text>
+                <text x="32" y="185" text-anchor="end">3</text>
+                <text x="32" y="225" text-anchor="end">4</text>
+                <text x="32" y="265" text-anchor="end">5</text>
+                <text x="32" y="305" text-anchor="end">6</text>
+                <text x="32" y="345" text-anchor="end">7</text>
+              </g>
+              <g stroke="#1A1A1A" stroke-width="0.8">
+                <!-- 8x8 cells, varied fills -->
+                <rect x="40"  y="45" width="40" height="40" fill="#E8E0D0"/>
+                <rect x="80"  y="45" width="40" height="40" fill="#D6CDB9"/>
+                <rect x="120" y="45" width="40" height="40" fill="#9E9279"/>
+                <rect x="160" y="45" width="40" height="40" fill="#5C523E"/>
+                <rect x="200" y="45" width="40" height="40" fill="#3C3525"/>
+                <rect x="240" y="45" width="40" height="40" fill="#26211A"/>
+                <rect x="280" y="45" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="320" y="45" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="40"  y="85" width="40" height="40" fill="#D6CDB9"/>
+                <rect x="80"  y="85" width="40" height="40" fill="#A89B83"/>
+                <rect x="120" y="85" width="40" height="40" fill="#6C6249"/>
+                <rect x="160" y="85" width="40" height="40" fill="#3C3525"/>
+                <rect x="200" y="85" width="40" height="40" fill="#26211A"/>
+                <rect x="240" y="85" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="280" y="85" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="320" y="85" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="40"  y="125" width="40" height="40" fill="#A89B83"/>
+                <rect x="80"  y="125" width="40" height="40" fill="#7C7257"/>
+                <rect x="120" y="125" width="40" height="40" fill="#5C523E"/>
+                <rect x="160" y="125" width="40" height="40" fill="#3C3525"/>
+                <rect x="200" y="125" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="240" y="125" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="280" y="125" width="40" height="40" fill="#26211A"/>
+                <rect x="320" y="125" width="40" height="40" fill="#3C3525"/>
+                <rect x="40"  y="165" width="40" height="40" fill="#7C7257"/>
+                <rect x="80"  y="165" width="40" height="40" fill="#5C523E"/>
+                <rect x="120" y="165" width="40" height="40" fill="#3C3525"/>
+                <rect x="160" y="165" width="40" height="40" fill="#26211A"/>
+                <rect x="200" y="165" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="240" y="165" width="40" height="40" fill="#26211A"/>
+                <rect x="280" y="165" width="40" height="40" fill="#5C523E"/>
+                <rect x="320" y="165" width="40" height="40" fill="#9E9279"/>
+                <rect x="40"  y="205" width="40" height="40" fill="#5C523E"/>
+                <rect x="80"  y="205" width="40" height="40" fill="#3C3525"/>
+                <rect x="120" y="205" width="40" height="40" fill="#26211A"/>
+                <rect x="160" y="205" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="200" y="205" width="40" height="40" fill="#3C3525"/>
+                <rect x="240" y="205" width="40" height="40" fill="#7C7257"/>
+                <rect x="280" y="205" width="40" height="40" fill="#A89B83"/>
+                <rect x="320" y="205" width="40" height="40" fill="#D6CDB9"/>
+                <rect x="40"  y="245" width="40" height="40" fill="#3C3525"/>
+                <rect x="80"  y="245" width="40" height="40" fill="#26211A"/>
+                <rect x="120" y="245" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="160" y="245" width="40" height="40" fill="#3C3525"/>
+                <rect x="200" y="245" width="40" height="40" fill="#5C523E"/>
+                <rect x="240" y="245" width="40" height="40" fill="#9E9279"/>
+                <rect x="280" y="245" width="40" height="40" fill="#D6CDB9"/>
+                <rect x="320" y="245" width="40" height="40" fill="#E8E0D0"/>
+                <rect x="40"  y="285" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="80"  y="285" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="120" y="285" width="40" height="40" fill="#26211A"/>
+                <rect x="160" y="285" width="40" height="40" fill="#5C523E"/>
+                <rect x="200" y="285" width="40" height="40" fill="#9E9279"/>
+                <rect x="240" y="285" width="40" height="40" fill="#D6CDB9"/>
+                <rect x="280" y="285" width="40" height="40" fill="#E8E0D0"/>
+                <rect x="320" y="285" width="40" height="40" fill="#F5F0E5"/>
+                <rect x="40"  y="325" width="40" height="40" fill="#1A1A1A"/>
+                <rect x="80"  y="325" width="40" height="40" fill="#26211A"/>
+                <rect x="120" y="325" width="40" height="40" fill="#5C523E"/>
+                <rect x="160" y="325" width="40" height="40" fill="#9E9279"/>
+                <rect x="200" y="325" width="40" height="40" fill="#D6CDB9"/>
+                <rect x="240" y="325" width="40" height="40" fill="#E8E0D0"/>
+                <rect x="280" y="325" width="40" height="40" fill="#F5F0E5"/>
+                <rect x="320" y="325" width="40" height="40" fill="#FAF7F1"/>
+              </g>
+              <!-- highlight one pixel -->
+              <rect x="80" y="125" width="40" height="40" fill="none" stroke="#7A1A1A" stroke-width="3"/>
+              <line x1="120" y1="145" x2="430" y2="190" stroke="#7A1A1A" stroke-width="1.2"/>
+              <text x="440" y="195" font-family="Source Serif 4,serif" font-size="16" fill="#7A1A1A" font-style="italic">A[2, 1] = 0.42</text>
+              <text x="440" y="220" font-family="Inter,sans-serif" font-size="13" fill="#7A746B">grayscale value</text>
+              <text x="440" y="240" font-family="Inter,sans-serif" font-size="13" fill="#7A746B">in [0, 1]</text>
+              <text x="440" y="280" font-family="Inter,sans-serif" font-size="13" fill="#1A1A1A" font-style="italic">one number</text>
+              <text x="440" y="296" font-family="Inter,sans-serif" font-size="13" fill="#1A1A1A" font-style="italic">per pixel</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">Each cell holds one number; an MRI slice or photo is just a bigger version of this grid.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 05</span></div>
+  </section>
+
+  <section data-label="04 Gamma Correction">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Why $\gamma = 2.2$</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Human perception is non-linear</div>
+        <h1>Display systems compensate.</h1></div>
+      <div class="cols">
+        <div class="big-math">$$I_\text{out} = I_\text{in}^{\gamma}$$</div>
+        <ul class="clean">
+          <li>$\gamma = 1$ — linear (no correction).</li>
+          <li>$\gamma = 2.2$ — sRGB display standard.</li>
+          <li>$\gamma &lt; 1$ — darkens shadows.</li>
+          <li>$\gamma &gt; 1$ — brightens highlights.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 05</span></div>
+  </section>
+
+  <section data-label="05 2D Syntax">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Load, display, transform</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Same image, two languages</div>
+        <h1>Load &rarr; threshold &rarr; gamma.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+A = imread(<span class="key">'cameraman.tif'</span>);
+A = double(A) / <span class="key">255</span>;
+imshow(A);
+
+<span class="cmt">% Threshold</span>
+B = A &gt; <span class="key">0.5</span>;          imshow(B);
+
+<span class="cmt">% Gamma correction</span>
+G = A.^<span class="key">0.8</span>;            imshow(G);
+
+<span class="cmt">% Rotate, flip, transpose</span>
+imshow(rot90(A));
+imshow(flipud(A));
+imshow(A.');
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="key">from</span> scipy.datasets <span class="key">import</span> face
+A = face(gray=<span class="key">True</span>).astype(<span class="key">float</span>) / <span class="key">255</span>
+plt.imshow(A, cmap=<span class="key">'gray'</span>)
+
+<span class="cmt"># Threshold</span>
+B = A &gt; <span class="key">0.5</span>;          plt.imshow(B, cmap=<span class="key">'gray'</span>)
+
+<span class="cmt"># Gamma correction</span>
+G = A**<span class="key">0.8</span>;           plt.imshow(G, cmap=<span class="key">'gray'</span>)
+
+<span class="cmt"># Rotate, flip, transpose</span>
+plt.imshow(np.rot90(A), cmap=<span class="key">'gray'</span>)
+plt.imshow(np.flipud(A), cmap=<span class="key">'gray'</span>)
+plt.imshow(A.T, cmap=<span class="key">'gray'</span>)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 05</span></div>
+  </section>
+
+  <section data-label="06 Image Ops Cheat Sheet">
+    <div class="slide-chrome"><span class="left">Reference</span><span class="right">Common image operations</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Translation table</div><h1>Image manipulation primitives.</h1></div>
+      <table class="compare-table">
+        <thead><tr><th>Operation</th><th>MATLAB</th><th>Python / NumPy</th></tr></thead>
+        <tbody>
+          <tr><td>Load grayscale</td><td><code>imread('x.png')</code></td><td><code>scipy.datasets.face(gray=True)</code></td></tr>
+          <tr><td>Display</td><td><code>imshow(A)</code></td><td><code>plt.imshow(A, cmap='gray')</code></td></tr>
+          <tr><td>Crop</td><td><code>A(60:190, 170:300)</code></td><td><code>A[60:190, 170:300]</code></td></tr>
+          <tr><td>Rotate 90°</td><td><code>rot90(A)</code></td><td><code>np.rot90(A)</code></td></tr>
+          <tr><td>Flip vertical</td><td><code>flipud(A)</code></td><td><code>np.flipud(A)</code></td></tr>
+          <tr><td>Threshold</td><td><code>A &gt; t</code></td><td><code>A &gt; t</code></td></tr>
+          <tr><td>Circular shift</td><td><code>circshift(A,k,1)</code></td><td><code>np.roll(A, k, axis=0)</code></td></tr>
+          <tr><td>Reshape (column-maj)</td><td><code>reshape(A,m,n)</code></td><td><code>A.reshape(m,n,order='F')</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer"><span class="label">Reference</span><span class="rule"></span><span class="author">ENES-222 · Lab 05</span></div>
+  </section>
+
+  <section data-label="07 Edge Detection">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">2-tap FIR on an image</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Difference of neighbors = edge</div>
+        <h1>The simplest FIR filter, in 2-D.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+<span class="cmt">% Horizontal difference → vertical edges</span>
+Ex = A - circshift(A, <span class="key">1</span>, <span class="key">2</span>);
+
+<span class="cmt">% Vertical difference → horizontal edges</span>
+Ey = A - circshift(A, <span class="key">1</span>, <span class="key">1</span>);
+
+<span class="cmt">% Gradient magnitude</span>
+G  = sqrt(Ex.^<span class="key">2</span> + Ey.^<span class="key">2</span>);
+imshow(G, []);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="cmt"># Horizontal difference → vertical edges</span>
+Ex = A - np.roll(A, <span class="key">1</span>, axis=<span class="key">1</span>)
+
+<span class="cmt"># Vertical difference → horizontal edges</span>
+Ey = A - np.roll(A, <span class="key">1</span>, axis=<span class="key">0</span>)
+
+<span class="cmt"># Gradient magnitude</span>
+G  = np.sqrt(Ex**<span class="key">2</span> + Ey**<span class="key">2</span>)
+plt.imshow(G, cmap=<span class="key">'gray'</span>)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 05</span></div>
+  </section>
+
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">Image-specific traps</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Common mistakes</div><h1>Five errors to avoid.</h1></div>
+      <ol class="numbered">
+        <li><strong>Forgetting <code>order='F'</code>.</strong> MATLAB <code>reshape</code> is column-major; NumPy default is row-major.</li>
+        <li><strong>Wrong <code>vmin</code>/<code>vmax</code>.</strong> If <code>A</code> is in $[0, 255]$, set <code>vmax=255</code>; if in $[0, 1]$, use <code>vmax=1</code>.</li>
+        <li><strong>Gamma on <code>uint8</code> data.</strong> Convert to float first: <code>(A/255.0)**gamma * 255</code>.</li>
+        <li><strong>Origin confusion.</strong> Math-style plots need <code>origin='lower'</code> or <code>flipud</code>.</li>
+        <li><strong>Testing exact equality of floats.</strong> Use <code>np.allclose(R, R.T)</code>, not <code>R == R.T</code>.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 05</span></div>
+  </section>
+
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 05</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Take with you</div><h1>Four things to remember.</h1></div>
+      <div class="summary-grid">
+        <div class="cell"><div class="num">01 · IMAGE</div><div class="what">A 2-D matrix.</div><div class="how">All array tools apply.</div></div>
+        <div class="cell"><div class="num">02 · GAMMA</div><div class="what">$I^\gamma$</div><div class="how">$\gamma=2.2$ for sRGB.</div></div>
+        <div class="cell"><div class="num">03 · EDGES</div><div class="what">2-tap FIR difference.</div><div class="how">Sobel, Prewitt = elaboration.</div></div>
+        <div class="cell"><div class="num">04 · ORIGIN</div><div class="what">Top-left vs bottom-left.</div><div class="how">Know which the tool uses.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · Lab 06 Linear Systems</span><span class="rule"></span><span class="author">ENES-222 · Lab 05</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body></html>

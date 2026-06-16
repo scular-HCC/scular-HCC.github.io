@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 06 — Linear Systems and Matrices</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel{background:var(--paper-2);border-left:4px solid var(--accent);padding:18px 24px 22px;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1.5;white-space:pre;overflow:hidden;color:var(--ink);}
+  .code-panel .lang{font-family:'Inter',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+  .code-panel .cmt{color:var(--ink-3);font-style:italic;} .code-panel .key{color:var(--accent);}
+  .syntax-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:stretch;}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">06</div>
+    <div class="topic">Linear Systems &amp; Matrices</div>
+    <div class="sub">Solving $A\mathbf x = \mathbf b$ is the single most-run calculation in all of engineering. Today: do it correctly.</div>
+    <div class="reference">Week 7 · Reading <em>§2.10–2.12, Lect 11–12</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 06</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">By the end of this lab you will</div>
+        <h1>Solve, condition, and least-squares-fit<br/>a linear system.</h1></div>
+      <ol class="numbered">
+        <li><strong>Solve</strong> $A\mathbf x = \mathbf b$ with the correct routine (<code>solve</code>, not <code>inv</code>).</li>
+        <li><strong>Detect</strong> singular and near-singular matrices via <code>rank</code> and <code>cond</code>.</li>
+        <li><strong>Fit</strong> a line to noisy data with <code>lstsq</code> — linear regression in one line.</li>
+        <li><strong>Recognize</strong> reduction operations: <code>min</code>, <code>max</code>, <code>sum</code> along an axis.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 06</span></div>
+  </section>
+
+  <section data-label="03 Ax=b" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The universal linear system</span></div>
+    <div class="cols" style="margin-top:28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Real-world hook</div>
+        <h1>The most-used algorithm.</h1>
+        <ul class="clean">
+          <li>SPICE: nodal admittance · node voltage = injected current.</li>
+          <li>GPS: satellite Jacobian · position correction = pseudo-range residuals.</li>
+          <li>Regression: design matrix · coefficients = observations.</li>
+          <li>Structural FEA: stiffness · displacement = force.</li>
+        </ul>
+      </div>
+      <div class="defn">
+        <div class="term">Rule</div>
+        <p style="margin:0;">Never compute <code>inv(A)*b</code>. Always use the dedicated solver. Solvers do <em>LU decomposition</em> once; <code>inv</code> does it then multiplies by $b$ — twice the operations, more round-off error.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 06</span></div>
+  </section>
+
+  <section data-label="04 Conditioning">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">When the system loses accuracy</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Condition number</div>
+        <h1>$\kappa(A) = \sigma_{\max} / \sigma_{\min}$</h1></div>
+      <div class="cols">
+        <div class="stack gap-item">
+          <p>Input errors are <strong>amplified by $\kappa$</strong>: $\dfrac{\|\Delta\mathbf x\|}{\|\mathbf x\|} \leq \kappa(A)\cdot\dfrac{\|\Delta\mathbf b\|}{\|\mathbf b\|}$. A matrix with $\kappa = 10^k$ loses about $k$ digits of <code>float64</code> accuracy.</p>
+          <div class="defn"><div class="term">Practical thresholds</div>
+            <p style="margin:0;font-size:24px;">$\kappa &lt; 10^3$: fine. &nbsp;
+            $10^3 &lt; \kappa &lt; 10^{10}$: degrading. &nbsp;
+            $\kappa &gt; 10^{12}$: numerical noise.</p>
+          </div>
+        </div>
+        <div>
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 640 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig06-title fig06-desc">
+              <title id="fig06-title">Well-conditioned vs ill-conditioned linear systems</title>
+              <desc id="fig06-desc">Two side-by-side ellipses representing how each matrix stretches the unit circle. The left ellipse is nearly circular, labeled well-conditioned, kappa equals 2; a small input error arrow produces an output error arrow of similar length. The right ellipse is extremely elongated, labeled ill-conditioned, kappa equals 100; the same input error arrow produces an output error arrow many times longer, illustrating amplification of error.</desc>
+              <defs>
+                <marker id="ar06" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#7A1A1A"/>
+                </marker>
+                <marker id="ar06k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/>
+                </marker>
+              </defs>
+              <text x="160" y="28" font-family="Inter,sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#1A1A1A">WELL-CONDITIONED</text>
+              <text x="160" y="52" font-family="Source Serif 4,serif" font-size="15" font-style="italic" text-anchor="middle" fill="#7A746B">κ ≈ 2</text>
+              <ellipse cx="160" cy="200" rx="120" ry="95" fill="none" stroke="#1A1A1A" stroke-width="2"/>
+              <ellipse cx="160" cy="200" rx="60"  ry="60"  fill="none" stroke="#7A746B" stroke-width="1" stroke-dasharray="4 3"/>
+              <text x="225" y="195" font-family="Inter,sans-serif" font-size="13" fill="#7A746B" font-style="italic">unit circle</text>
+              <line x1="160" y1="200" x2="178" y2="180" stroke="#1A1A1A" stroke-width="2.4" marker-end="url(#ar06k)"/>
+              <text x="190" y="170" font-family="Inter,sans-serif" font-size="13" fill="#1A1A1A">Δb</text>
+              <line x1="160" y1="200" x2="200" y2="160" stroke="#7A1A1A" stroke-width="2.4" marker-end="url(#ar06)"/>
+              <text x="170" y="345" font-family="Inter,sans-serif" font-size="13" fill="#7A1A1A" text-anchor="middle" font-style="italic">small Δx</text>
+              <line x1="320" y1="60" x2="320" y2="350" stroke="#D9D2C2" stroke-width="1"/>
+              <text x="480" y="28" font-family="Inter,sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#7A1A1A">ILL-CONDITIONED</text>
+              <text x="480" y="52" font-family="Source Serif 4,serif" font-size="15" font-style="italic" text-anchor="middle" fill="#7A746B">κ ≈ 100</text>
+              <ellipse cx="480" cy="200" rx="155" ry="22" fill="none" stroke="#7A1A1A" stroke-width="2"/>
+              <ellipse cx="480" cy="200" rx="60"  ry="60" fill="none" stroke="#7A746B" stroke-width="1" stroke-dasharray="4 3"/>
+              <line x1="480" y1="200" x2="498" y2="180" stroke="#1A1A1A" stroke-width="2.4" marker-end="url(#ar06k)"/>
+              <text x="510" y="170" font-family="Inter,sans-serif" font-size="13" fill="#1A1A1A">Δb</text>
+              <line x1="480" y1="200" x2="620" y2="218" stroke="#7A1A1A" stroke-width="2.4" marker-end="url(#ar06)"/>
+              <text x="500" y="345" font-family="Inter,sans-serif" font-size="13" fill="#7A1A1A" text-anchor="middle" font-style="italic">huge Δx</text>
+            </svg>
+          </div>
+          <div class="diagram-caption">$\kappa$ is the ratio of how much the matrix stretches its widest direction vs its narrowest.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 06</span></div>
+  </section>
+
+  <section data-label="05 Solve Syntax">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Solve, rank, det, cond</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Same operation, two languages</div>
+        <h1>Solve, check rank, measure conditioning.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+A = rand(<span class="key">100</span>);
+b = rand(<span class="key">100</span>, <span class="key">1</span>);
+
+<span class="cmt">% Correct way</span>
+x = A \ b;
+
+<span class="cmt">% Wrong way (slower, less accurate)</span>
+x_bad = inv(A) * b;
+
+rank(A)
+det(A)
+cond(A)
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+A = np.random.rand(<span class="key">100</span>, <span class="key">100</span>)
+b = np.random.rand(<span class="key">100</span>)
+
+<span class="cmt"># Correct way</span>
+x = np.linalg.solve(A, b)
+
+<span class="cmt"># Wrong way</span>
+x_bad = np.linalg.inv(A) @ b
+
+np.linalg.matrix_rank(A)
+np.linalg.det(A)
+np.linalg.cond(A)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 06</span></div>
+  </section>
+
+  <section data-label="06 Reduction Ops">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Reduce along an axis</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Per-column, per-row, or overall</div>
+        <h1>Choose the axis.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+A = magic(<span class="key">5</span>);
+
+min(A)              <span class="cmt">% per column</span>
+min(A, [], <span class="key">2</span>)        <span class="cmt">% per row</span>
+min(A(:))           <span class="cmt">% overall</span>
+
+sum(A)
+sum(A, <span class="key">2</span>)
+sort(A)             <span class="cmt">% per column</span>
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+A = np.arange(<span class="key">1</span>, <span class="key">26</span>).reshape(<span class="key">5</span>, <span class="key">5</span>)
+
+np.min(A, axis=<span class="key">0</span>)    <span class="cmt"># per column</span>
+np.min(A, axis=<span class="key">1</span>)    <span class="cmt"># per row</span>
+np.min(A)            <span class="cmt"># overall</span>
+
+np.sum(A, axis=<span class="key">0</span>)
+np.sum(A, axis=<span class="key">1</span>)
+np.sort(A, axis=<span class="key">0</span>)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 06</span></div>
+  </section>
+
+  <section data-label="07 Least Squares">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Linear regression in 3 lines</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Fit $y = m x + c$ to noisy data</div>
+        <h1>Overdetermined system &rarr; <code>lstsq</code>.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+x = linspace(<span class="key">0</span>, <span class="key">10</span>, <span class="key">40</span>).<span class="key">'</span>;
+y = <span class="key">2</span>*x + <span class="key">1.5</span> + <span class="key">0.8</span>*randn(<span class="key">40</span>, <span class="key">1</span>);
+
+A = [x ones(size(x))];
+coeffs = A \ y;
+m = coeffs(<span class="key">1</span>);  c = coeffs(<span class="key">2</span>);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+x = np.linspace(<span class="key">0</span>, <span class="key">10</span>, <span class="key">40</span>)
+y = <span class="key">2</span>*x + <span class="key">1.5</span> + <span class="key">0.8</span>*np.random.randn(<span class="key">40</span>)
+
+A = np.column_stack([x, np.ones_like(x)])
+(m, c), *_ = np.linalg.lstsq(A, y, rcond=<span class="key">None</span>)
+        </div>
+      </div>
+      <p class="muted">This same operation underlies linear regression, Kalman filtering, and the warm-start step of every deep-learning optimizer.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 06</span></div>
+  </section>
+
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">Linear-algebra traps</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Common mistakes</div><h1>Five errors to avoid.</h1></div>
+      <ol class="numbered">
+        <li><strong><code>inv(A) * b</code> when you mean <code>A \ b</code>.</strong> Twice the work, more error.</li>
+        <li><strong>Checking singularity by <code>det == 0</code>.</strong> Use <code>cond</code> or <code>matrix_rank</code> for floating-point detection.</li>
+        <li><strong><code>min(A)</code> without axis.</strong> Python <code>np.min(A)</code> is global; pass <code>axis=0</code> for per-column.</li>
+        <li><strong>Shape mismatch in <code>lstsq</code>.</strong> $A$ is $(m,n)$, $b$ is $(m,)$. A column-vector $(m,1)$ returns 2-D output.</li>
+        <li><strong>Comparing exact floats.</strong> Use <code>np.allclose</code> for symmetry / equality checks.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 06</span></div>
+  </section>
+
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 06</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Take with you</div><h1>Four things to remember.</h1></div>
+      <div class="summary-grid">
+        <div class="cell"><div class="num">01 · SOLVE</div><div class="what">$A\mathbf x=\mathbf b$ &rarr; <code>solve</code></div><div class="how">Never <code>inv</code>.</div></div>
+        <div class="cell"><div class="num">02 · CONDITION</div><div class="what">$\kappa(A) = \sigma_{\max}/\sigma_{\min}$</div><div class="how">Loses $\log_{10}\kappa$ digits.</div></div>
+        <div class="cell"><div class="num">03 · LSTSQ</div><div class="what">Overdetermined → least squares.</div><div class="how">Linear regression.</div></div>
+        <div class="cell"><div class="num">04 · REDUCE</div><div class="what">Pick the axis.</div><div class="how">0 = column, 1 = row.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · Lab 07 Intro to DFT</span><span class="rule"></span><span class="author">ENES-222 · Lab 06</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body></html>

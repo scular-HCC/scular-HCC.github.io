@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 03 — Loops and Scripts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel{background:var(--paper-2);border-left:4px solid var(--accent);padding:18px 24px 22px;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1.5;white-space:pre;overflow:hidden;color:var(--ink);}
+  .code-panel .lang{font-family:'Inter',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+  .code-panel .cmt{color:var(--ink-3);font-style:italic;} .code-panel .key{color:var(--accent);}
+  .syntax-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:stretch;}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">03</div>
+    <div class="topic">Loops, Functions &amp; Scripts</div>
+    <div class="sub">Reusable code, parameter sweeps, and the one DSP lesson that beats every other: vectorize.</div>
+    <div class="reference">Week 3 · Reading <em>§1.6, Lect 6 — Aliasing</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 03</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">By the end of this lab you will</div>
+        <h1>Write loops when needed,<br/>vectorize when possible.</h1></div>
+      <ol class="numbered">
+        <li><strong>Identify</strong> when a loop is genuinely required (recurrence, parameter sweep).</li>
+        <li><strong>Vectorize</strong> array operations and measure the speedup.</li>
+        <li><strong>Write</strong> anonymous and named functions.</li>
+        <li><strong>Visualize</strong> aliasing via a parameter sweep over sample rate.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 03</span></div>
+  </section>
+
+  <section data-label="03 Vectorize" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Loops vs vectorization</span></div>
+    <div class="cols" style="margin-top:28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Use a loop only when…</div>
+        <h1>Iteration depends on iteration.</h1>
+        <ul class="clean">
+          <li><strong>Recurrence:</strong> IIR filter, PLL, gradient descent.</li>
+          <li><strong>Parameter sweep:</strong> run independent analyses for many <em>(r, f)</em> pairs.</li>
+          <li><strong>Complex body:</strong> branching, file I/O, conditionals.</li>
+        </ul>
+      </div>
+      <div class="defn">
+        <div class="term">Rule of thumb</div>
+        <p style="margin:0;">Vectorized NumPy or MATLAB code runs <strong>~100× faster</strong> than an equivalent Python <code>for</code> loop. <code>y = x.^2</code> is right; <code>for i: y(i)=x(i)^2</code> is wrong.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 03</span></div>
+  </section>
+
+  <section data-label="04 Aliasing">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Lecture 6 — Aliasing</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Why sampling rate matters</div>
+        <h1>Frequencies above $f_s/2$ fold back.</h1></div>
+      <div class="cols">
+        <div class="stack gap-item">
+          <p>A continuous-time sinusoid at $f$ sampled at $f_s$ is indistinguishable from one at $f + k f_s$ for any integer $k$.</p>
+          <div class="defn">
+            <div class="term">Observed (folded) frequency</div>
+            $$f_\text{obs} = \bigl((f + f_s/2) \bmod f_s\bigr) - f_s/2$$
+          </div>
+        </div>
+        <div>
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig03-title fig03-desc">
+              <title id="fig03-title">Aliasing fold-back: observed frequency vs true frequency</title>
+              <desc id="fig03-desc">A sawtooth-style plot. The horizontal axis is true frequency f divided by sample rate fs, marked at 0, 1, 2, and 3. The vertical axis is observed frequency from negative half fs to positive half fs. The curve goes up linearly to plus one half, then jumps to minus one half and repeats, forming a sawtooth pattern. Dashed horizontal lines mark the Nyquist limits at plus and minus half fs. Vertical dashed lines mark each fs multiple where the fold occurs.</desc>
+              <g stroke="#D9D2C2" stroke-width="1">
+                <line x1="80"  y1="60"  x2="80"  y2="360"/>
+                <line x1="220" y1="60"  x2="220" y2="360"/>
+                <line x1="360" y1="60"  x2="360" y2="360"/>
+                <line x1="500" y1="60"  x2="500" y2="360"/>
+                <line x1="50"  y1="120" x2="610" y2="120"/>
+                <line x1="50"  y1="300" x2="610" y2="300"/>
+              </g>
+              <line x1="50"  y1="210" x2="610" y2="210" stroke="#1A1A1A" stroke-width="1.5"/>
+              <line x1="80"  y1="380" x2="80"  y2="50"  stroke="#1A1A1A" stroke-width="1.5"/>
+              <text x="612" y="216" font-family="Source Serif 4,serif" font-size="18" font-style="italic" fill="#1A1A1A">f / f<tspan baseline-shift="sub" font-size="12">s</tspan></text>
+              <text x="55"  y="48"  font-family="Source Serif 4,serif" font-size="18" font-style="italic" fill="#1A1A1A">f<tspan baseline-shift="sub" font-size="12">obs</tspan></text>
+              <text x="80"  y="375" font-family="Inter,sans-serif" font-size="14" fill="#7A746B" text-anchor="middle">0</text>
+              <text x="150" y="375" font-family="Inter,sans-serif" font-size="14" fill="#7A746B" text-anchor="middle">½</text>
+              <text x="220" y="375" font-family="Inter,sans-serif" font-size="14" fill="#7A746B" text-anchor="middle">1</text>
+              <text x="360" y="375" font-family="Inter,sans-serif" font-size="14" fill="#7A746B" text-anchor="middle">2</text>
+              <text x="500" y="375" font-family="Inter,sans-serif" font-size="14" fill="#7A746B" text-anchor="middle">3</text>
+              <line x1="50" y1="120" x2="610" y2="120" stroke="#7A1A1A" stroke-width="1" stroke-dasharray="4 4"/>
+              <line x1="50" y1="300" x2="610" y2="300" stroke="#7A1A1A" stroke-width="1" stroke-dasharray="4 4"/>
+              <text x="600" y="115" font-family="Inter,sans-serif" font-size="13" fill="#7A1A1A" text-anchor="end">+ f<tspan baseline-shift="sub" font-size="10">s</tspan>/2 (Nyquist)</text>
+              <text x="600" y="320" font-family="Inter,sans-serif" font-size="13" fill="#7A1A1A" text-anchor="end">− f<tspan baseline-shift="sub" font-size="10">s</tspan>/2</text>
+              <g stroke="#7A1A1A" stroke-width="2.6" fill="none">
+                <line x1="80"  y1="210" x2="220" y2="120"/>
+                <line x1="220" y1="300" x2="360" y2="120"/>
+                <line x1="360" y1="300" x2="500" y2="120"/>
+                <line x1="500" y1="300" x2="610" y2="160"/>
+              </g>
+              <text x="430" y="170" font-family="Inter,sans-serif" font-size="13" fill="#7A1A1A" font-style="italic">f folds at every f<tspan baseline-shift="sub" font-size="10">s</tspan></text>
+            </svg>
+          </div>
+          <div class="diagram-caption">Every frequency interval of width $f_s$ maps back into the Nyquist band $[-f_s/2,\,f_s/2]$.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 03</span></div>
+  </section>
+
+  <section data-label="05 Loop Syntax">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">For-loop construction</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Aliasing sweep — legitimate loop</div>
+        <h1>Sweep $f$ from 0 to 3·$f_s$.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+fs = <span class="key">1.0</span>;
+f_true = linspace(<span class="key">0</span>, <span class="key">3</span>, <span class="key">200</span>);
+f_obs  = zeros(size(f_true));
+
+<span class="key">for</span> i = <span class="key">1</span>:length(f_true)
+    f_obs(i) = mod(f_true(i)+fs/<span class="key">2</span>, fs) - fs/<span class="key">2</span>;
+<span class="key">end</span>
+
+plot(f_true, f_obs);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+fs = <span class="key">1.0</span>
+f_true = np.linspace(<span class="key">0</span>, <span class="key">3</span>, <span class="key">200</span>)
+f_obs  = []
+
+<span class="key">for</span> f <span class="key">in</span> f_true:
+    f_obs.append((f+fs/<span class="key">2</span>) % fs - fs/<span class="key">2</span>)
+
+plt.plot(f_true, f_obs)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 03</span></div>
+  </section>
+
+  <section data-label="06 Function Syntax">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Functions: anonymous and named</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Reusable code blocks</div>
+        <h1>Anonymous (one-line) and named (multi-line).</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+<span class="cmt">% Anonymous</span>
+fun1 = @(x) exp(-x).*cos(<span class="key">4</span>*x);
+
+<span class="cmt">% Pass a function handle</span>
+m = max(fun1(<span class="key">-1</span>:<span class="key">0.001</span>:<span class="key">1</span>));
+
+<span class="cmt">% Named function in damped.m</span>
+<span class="key">function</span> y = damped(N, f, r)
+    n = <span class="key">0</span>:N-<span class="key">1</span>;
+    y = exp(-r*n/N) .* cos(<span class="key">2</span>*pi*f*n);
+<span class="key">end</span>
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="cmt"># Anonymous (lambda)</span>
+fun1 = <span class="key">lambda</span> x: np.exp(-x)*np.cos(<span class="key">4</span>*x)
+
+<span class="cmt"># Pass a function as object</span>
+m = np.max(fun1(np.arange(<span class="key">-1</span>, <span class="key">1.001</span>, <span class="key">0.001</span>)))
+
+<span class="cmt"># Named function</span>
+<span class="key">def</span> damped(N, f, r):
+    n = np.arange(N)
+    <span class="key">return</span> np.exp(-r*n/N) * np.cos(<span class="key">2</span>*np.pi*f*n)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 03</span></div>
+  </section>
+
+  <section data-label="07 Vectorization Demo">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Time a loop vs a vector op</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">The 100× speedup</div>
+        <h1>Square a million numbers.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+N = <span class="key">1e6</span>;
+x = randn(N, <span class="key">1</span>);
+
+tic;
+y = zeros(size(x));
+<span class="key">for</span> i = <span class="key">1</span>:N
+    y(i) = x(i)^<span class="key">2</span>;
+<span class="key">end</span>
+toc                        <span class="cmt">% slow</span>
+
+tic; y = x.^<span class="key">2</span>; toc       <span class="cmt">% fast</span>
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="key">import</span> time
+N = <span class="key">1_000_000</span>
+x = np.random.randn(N)
+
+t0 = time.time()
+y = [v**<span class="key">2</span> <span class="key">for</span> v <span class="key">in</span> x]
+print(time.time()-t0)      <span class="cmt"># slow</span>
+
+t0 = time.time()
+y = x**<span class="key">2</span>
+print(time.time()-t0)      <span class="cmt"># fast</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 03</span></div>
+  </section>
+
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">Five errors this week</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Common mistakes</div><h1>Avoid these.</h1></div>
+      <ol class="numbered">
+        <li><strong>Writing a loop where vector ops work.</strong> Always vectorize first; loop only on recurrences.</li>
+        <li><strong>Late binding in lambdas.</strong> Python captures variable <em>names</em>, not values. Use <code>lambda x, a=a: a*x</code>.</li>
+        <li><strong>Mutable default arguments.</strong> <code>def f(x, lst=[])</code> shares <em>one</em> list across calls. Use <code>None</code>.</li>
+        <li><strong><code>arange</code> with float step.</strong> Use <code>linspace</code> when the count matters.</li>
+        <li><strong>Counting up to N exclusive vs inclusive.</strong> MATLAB <code>1:N</code> includes N. Python <code>range(N)</code> stops at N-1.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 03</span></div>
+  </section>
+
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 03</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Take with you</div><h1>Four things to remember.</h1></div>
+      <div class="summary-grid">
+        <div class="cell"><div class="num">01 · VECTORIZE</div><div class="what">Whole-array math.</div><div class="how">~100× faster than a loop.</div></div>
+        <div class="cell"><div class="num">02 · LOOPS</div><div class="what">Only for recurrence or sweep.</div><div class="how">Each step needs the last.</div></div>
+        <div class="cell"><div class="num">03 · FUNCTIONS</div><div class="what">Wrap reusable code.</div><div class="how">Lambda for one line; <code>def</code> for more.</div></div>
+        <div class="cell"><div class="num">04 · ALIASING</div><div class="what">$f \to f_\text{obs} \in [-f_s/2, f_s/2]$</div><div class="how">Above Nyquist folds back.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · Lab 04 Audio</span><span class="rule"></span><span class="author">ENES-222 · Lab 03</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body></html>

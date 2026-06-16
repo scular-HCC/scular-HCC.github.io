@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 01 — Vectors and Complex Numbers</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+      integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+        integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '\\[', right: '\\]', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false}
+          ],
+          throwOnError: false
+        });"></script>
+
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel {
+    background: var(--paper-2);
+    border-left: 4px solid var(--accent);
+    padding: 18px 24px 22px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    line-height: 1.5;
+    white-space: pre;
+    overflow: hidden;
+    color: var(--ink);
+  }
+  .code-panel .lang {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .code-panel .cmt { color: var(--ink-3); font-style: italic; }
+  .code-panel .key { color: var(--accent); }
+  .syntax-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: stretch; }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 24px;
+  }
+  .compare-table th, .compare-table td {
+    text-align: left;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--grid);
+  }
+  .compare-table th {
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 18px;
+    color: var(--accent);
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .compare-table code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    color: var(--ink);
+  }
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- SLIDE 1 — TITLE -->
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">01</div>
+    <div class="topic">Vectors &amp; Complex Numbers</div>
+    <div class="sub">Every signal in this course will be stored as an array of numbers — real or complex. Today you learn the tools used in every lab that follows.</div>
+    <div class="reference">Week 1 · Reading <em>§1.1–1.3, Lect 1–2</em></div>
+  </section>
+
+  <!-- SLIDE 2 — OBJECTIVES -->
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 01</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">By the end of this lab you will</div>
+        <h1>Build, index, and plot arrays<br/>in both MATLAB and Python.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Create</strong> row vectors, column vectors, and matrices.</li>
+        <li><strong>Index</strong> elements using ranges, strides, and reversal.</li>
+        <li><strong>Compute</strong> with complex numbers (magnitude, angle, conjugate).</li>
+        <li><strong>Plot</strong> arrays and complex-valued trajectories (Lissajous figures).</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 01</span></div>
+  </section>
+
+  <!-- SLIDE 3 — WHY ARRAYS -->
+  <section data-label="03 Why Arrays" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Arrays are the universal DSP container</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Real-world hook</div>
+        <h1>Every signal is an array.</h1>
+      </div>
+      <div class="cols">
+        <ul class="clean">
+          <li>1 s of CD-quality audio &rarr; <strong>44 100</strong> floats.</li>
+          <li>One 1080p image &rarr; <strong>1920 × 1080 × 3</strong> matrix.</li>
+          <li>One WiFi packet &rarr; <strong>~20 000</strong> complex samples.</li>
+          <li>A 5G OFDM symbol &rarr; <strong>2048</strong> complex frequency-bin loads.</li>
+        </ul>
+        <div class="defn">
+          <div class="term">Vectorization</div>
+          <p style="margin:0;">Operate on the whole array in one statement. A NumPy / MATLAB expression like <code>y = x.^2</code> runs <strong>~100× faster</strong> than the equivalent <code>for</code> loop, because it dispatches to a compiled BLAS routine.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 01</span></div>
+  </section>
+
+  <!-- SLIDE 4 — COMPLEX NUMBER REFRESHER -->
+  <section data-label="04 Complex Numbers" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Complex Numbers in Code</span></div>
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Two representations</div>
+        <h1>Cartesian vs polar.</h1>
+        <div class="big-math">$$z = x + j\,y = r\,e^{j\theta}$$</div>
+        <ul class="clean">
+          <li>Magnitude: $r = |z| = \sqrt{x^2+y^2}$</li>
+          <li>Phase: $\theta = \angle z = \text{atan2}(y, x)$</li>
+          <li>Conjugate: $z^* = x - j\,y$</li>
+        </ul>
+        <div class="defn">
+          <div class="term">Imaginary-unit gotcha</div>
+          <p style="margin:0;font-size:24px;"><strong>MATLAB</strong>: <code>i</code> or <code>j</code>. <strong>Python</strong>: <code>1j</code> only — bare <code>j</code> is a <code>NameError</code>.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig01-title fig01-desc">
+            <title id="fig01-title">A complex number on the complex plane</title>
+            <desc id="fig01-desc">Two-dimensional plane with a horizontal real axis labeled Re and a vertical imaginary axis labeled Im. A point labeled z = x + jy sits in the upper right quadrant. A solid arrow runs from the origin to the point, labeled r. The angle from the positive real axis to the arrow is labeled theta. Dashed lines drop from the point down to the real axis at x and across to the imaginary axis at y.</desc>
+            <defs>
+              <marker id="ar01" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/>
+              </marker>
+              <marker id="ar01b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#7A1A1A"/>
+              </marker>
+            </defs>
+            <g stroke="#D9D2C2" stroke-width="1">
+              <line x1="60"  y1="240" x2="540" y2="240"/>
+              <line x1="160" y1="60"  x2="160" y2="420"/>
+              <line x1="260" y1="60"  x2="260" y2="420"/>
+              <line x1="360" y1="60"  x2="360" y2="420"/>
+              <line x1="460" y1="60"  x2="460" y2="420"/>
+              <line x1="60"  y1="140" x2="540" y2="140"/>
+              <line x1="60"  y1="340" x2="540" y2="340"/>
+            </g>
+            <line x1="50"  y1="240" x2="555" y2="240" stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#ar01)"/>
+            <line x1="300" y1="430" x2="300" y2="45"  stroke="#1A1A1A" stroke-width="1.6" marker-end="url(#ar01)"/>
+            <text x="548" y="262" font-family="Source Serif 4, serif" font-size="22" font-style="italic">Re</text>
+            <text x="312" y="55"  font-family="Source Serif 4, serif" font-size="22" font-style="italic">Im</text>
+            <text x="285" y="262" font-size="20" fill="#7A746B">0</text>
+            <line x1="460" y1="240" x2="460" y2="140" stroke="#1A1A1A" stroke-width="1" stroke-dasharray="5 5"/>
+            <line x1="300" y1="140" x2="460" y2="140" stroke="#1A1A1A" stroke-width="1" stroke-dasharray="5 5"/>
+            <path d="M 360,240 A 60,60 0 0 0 340,200" fill="none" stroke="#7A1A1A" stroke-width="2"/>
+            <text x="370" y="220" font-family="Source Serif 4, serif" font-size="22" font-style="italic" fill="#7A1A1A">θ</text>
+            <line x1="300" y1="240" x2="455" y2="145" stroke="#7A1A1A" stroke-width="2.5" marker-end="url(#ar01b)"/>
+            <text x="370" y="180" font-family="Source Serif 4, serif" font-size="22" font-style="italic" fill="#7A1A1A">r</text>
+            <circle cx="460" cy="140" r="5" fill="#1A1A1A"/>
+            <text x="470" y="135" font-family="Source Serif 4, serif" font-size="22" font-style="italic">z = x + jy</text>
+            <text x="455" y="262" font-family="Source Serif 4, serif" font-size="20" font-style="italic" fill="#7A746B">x</text>
+            <text x="270" y="146" font-family="Source Serif 4, serif" font-size="20" font-style="italic" fill="#7A746B">y</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">Cartesian $(x, y)$ and polar $(r, \theta)$ are two addresses for the same point.</div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 01</span></div>
+  </section>
+
+  <!-- SLIDE 5 — SYNTAX SIDE BY SIDE -->
+  <section data-label="05 Syntax Comparison">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">MATLAB &harr; Python</span></div>
+    <div class="stack gap-title" style="margin-top: 24px;">
+      <div>
+        <div class="eyebrow">Same operation, two languages</div>
+        <h1>Build a vector. Take its DFT-ready form.</h1>
+      </div>
+      <div class="syntax-grid">
+        <div class="code-panel">
+          <div class="lang">MATLAB</div>
+<span class="cmt">% Row vector and indexing</span>
+v = <span class="key">0</span>:<span class="key">0.1</span>:<span class="key">2</span>;        <span class="cmt">% step 0.1, length 21</span>
+v(<span class="key">1</span>)              <span class="cmt">% first element (1-based)</span>
+v(<span class="key">end</span>:-1:<span class="key">1</span>)      <span class="cmt">% reversed</span>
+
+<span class="cmt">% Complex number</span>
+z = <span class="key">3</span> + <span class="key">4</span>i;
+abs(z), angle(z), conj(z)
+
+<span class="cmt">% Element-wise vs matrix multiply</span>
+A.*B
+A * B
+        </div>
+        <div class="code-panel">
+          <div class="lang">PYTHON / NumPy</div>
+<span class="key">import</span> numpy <span class="key">as</span> np
+
+<span class="cmt"># Row vector and indexing</span>
+v = np.arange(<span class="key">0</span>, <span class="key">2.001</span>, <span class="key">0.1</span>)   <span class="cmt"># length 21</span>
+v[<span class="key">0</span>]                  <span class="cmt"># first element (0-based)</span>
+v[::-<span class="key">1</span>]               <span class="cmt"># reversed</span>
+
+<span class="cmt"># Complex number — j must follow a number</span>
+z = <span class="key">3</span> + <span class="key">4</span>j
+np.abs(z), np.angle(z), np.conj(z)
+
+<span class="cmt"># Element-wise vs matrix multiply</span>
+A * B
+A @ B
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 01</span></div>
+  </section>
+
+  <!-- SLIDE 6 — TRANSLATION CHEAT SHEET -->
+  <section data-label="06 Cheat Sheet">
+    <div class="slide-chrome"><span class="left">Reference</span><span class="right">MATLAB &harr; Python Cheat Sheet</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Keep this open in every lab</div>
+        <h1>The off-by-one trap is real.</h1>
+      </div>
+      <table class="compare-table">
+        <thead><tr><th>Concept</th><th>MATLAB</th><th>Python / NumPy</th></tr></thead>
+        <tbody>
+          <tr><td>Index base</td><td><code>v(1)</code></td><td><code>v[0]</code></td></tr>
+          <tr><td>Exact-count range</td><td><code>linspace(0,2,21)</code></td><td><code>np.linspace(0, 2, 21)</code></td></tr>
+          <tr><td>Element-wise multiply</td><td><code>A .* B</code></td><td><code>A * B</code></td></tr>
+          <tr><td>Matrix multiply</td><td><code>A * B</code></td><td><code>A @ B</code></td></tr>
+          <tr><td>Plain transpose</td><td><code>A.'</code></td><td><code>A.T</code></td></tr>
+          <tr><td>Hermitian transpose</td><td><code>A'</code></td><td><code>A.conj().T</code></td></tr>
+          <tr><td>Imaginary unit</td><td><code>i</code> or <code>j</code></td><td><code>1j</code> (never bare <code>j</code>)</td></tr>
+          <tr><td>Reshape (column-major)</td><td><code>reshape(A,m,n)</code></td><td><code>A.reshape(m,n,order='F')</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer"><span class="label">Reference</span><span class="rule"></span><span class="author">ENES-222 · Lab 01</span></div>
+  </section>
+
+  <!-- SLIDE 7 — WORKED EXAMPLE: LISSAJOUS -->
+  <section data-label="07 Worked Example">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Lissajous Figure (3:2)</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">A complex vector traced in the plane</div>
+        <h1>$z(t)=\cos(3t)+j\cos(2t)$ &mdash; draw it.</h1>
+      </div>
+      <div class="syntax-grid">
+        <div class="code-panel">
+          <div class="lang">MATLAB</div>
+t = linspace(<span class="key">0</span>, <span class="key">2</span>*pi, <span class="key">1000</span>);
+z = cos(<span class="key">3</span>*t) + <span class="key">1</span>i*cos(<span class="key">2</span>*t);
+
+plot(real(z), imag(z), <span class="key">'b'</span>);
+axis equal;
+title(<span class="key">'Lissajous 3:2'</span>);
+        </div>
+        <div class="code-panel">
+          <div class="lang">PYTHON</div>
+<span class="key">import</span> numpy <span class="key">as</span> np
+<span class="key">import</span> matplotlib.pyplot <span class="key">as</span> plt
+
+t = np.linspace(<span class="key">0</span>, <span class="key">2</span>*np.pi, <span class="key">1000</span>)
+z = np.cos(<span class="key">3</span>*t) + <span class="key">1</span>j*np.cos(<span class="key">2</span>*t)
+
+plt.plot(z.real, z.imag, <span class="key">'b'</span>)
+plt.gca().set_aspect(<span class="key">'equal'</span>)
+plt.title(<span class="key">'Lissajous 3:2'</span>)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 01</span></div>
+  </section>
+
+  <!-- SLIDE 8 — COMMON MISTAKES -->
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">Avoid these in every lab</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Common mistakes</div>
+        <h1>Five errors that bite every semester.</h1>
+      </div>
+      <ol class="numbered">
+        <li><strong>Off-by-one.</strong> MATLAB <code>v(1)</code> &harr; Python <code>v[0]</code>. Subtract 1 from every MATLAB index when porting.</li>
+        <li><strong><code>A.T</code> on complex arrays.</strong> Plain transpose — no conjugation. Use <code>A.conj().T</code> for Hermitian.</li>
+        <li><strong>Bare <code>j</code>.</strong> Python wants <code>1j</code>; bare <code>j</code> is a <code>NameError</code>.</li>
+        <li><strong><code>*</code> vs <code>@</code>.</strong> NumPy <code>*</code> is element-wise; <code>@</code> is matrix multiply. Both run; only the answer differs.</li>
+        <li><strong><code>arange</code> with a float step.</strong> <code>np.arange(0, 1, 0.1)</code> may give 10 <em>or</em> 11 elements. Use <code>linspace</code> when count matters.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 01</span></div>
+  </section>
+
+  <!-- SLIDE 9 — SUMMARY -->
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 01</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top: 28px;">
+      <div>
+        <div class="eyebrow">Take with you</div>
+        <h1>Four things to remember.</h1>
+      </div>
+      <div class="summary-grid">
+        <div class="cell">
+          <div class="num">01 · ARRAYS</div>
+          <div class="what">Every signal &rarr; one array.</div>
+          <div class="how">Vectorize. Loops are slow.</div>
+        </div>
+        <div class="cell">
+          <div class="num">02 · INDEXING</div>
+          <div class="what">MATLAB 1-based, Python 0-based.</div>
+          <div class="how">Translate every index when porting code.</div>
+        </div>
+        <div class="cell">
+          <div class="num">03 · COMPLEX</div>
+          <div class="what">$z = x+jy = re^{j\theta}$</div>
+          <div class="how">Python: <code>1j</code>. MATLAB: <code>i</code> or <code>j</code>.</div>
+        </div>
+        <div class="cell">
+          <div class="num">04 · MULTIPLY</div>
+          <div class="what">Element-wise &ne; matrix multiply.</div>
+          <div class="how"><code>.*</code> / <code>*</code> vs <code>*</code> / <code>@</code>.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <span class="label">Next · Lab 02 Sinusoids</span><span class="rule"></span><span class="author">ENES-222 · Lab 01</span>
+    </div>
+  </section>
+
+</deck-stage>
+
+<script src="deck-stage.js"></script>
+</body>
+</html>

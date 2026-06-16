@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 09 — Image Processing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel{background:var(--paper-2);border-left:4px solid var(--accent);padding:18px 24px 22px;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1.5;white-space:pre;overflow:hidden;color:var(--ink);}
+  .code-panel .lang{font-family:'Inter',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+  .code-panel .cmt{color:var(--ink-3);font-style:italic;} .code-panel .key{color:var(--accent);}
+  .syntax-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:stretch;}
+  .compare-table{width:100%;border-collapse:collapse;font-size:24px;}
+  .compare-table th,.compare-table td{text-align:left;padding:12px 18px;border-bottom:1px solid var(--grid);}
+  .compare-table th{font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:18px;color:var(--accent);border-bottom:1.5px solid var(--ink);}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">09</div>
+    <div class="topic">Image Processing</div>
+    <div class="sub">Compress, denoise, and measure image quality with PSNR. The 1-D ideas of Lab 8 generalized to two dimensions.</div>
+    <div class="reference">Week 10 · Reading <em>§3.7–3.8, Lect 17–18</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 09</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">By the end of this lab you will</div>
+        <h1>Compress and denoise images<br/>in 2-D transforms.</h1></div>
+      <ol class="numbered">
+        <li><strong>Compute</strong> the 2-D DFT and 2-D Haar transform.</li>
+        <li><strong>Compress</strong> an image with <code>COMPRESS2</code> and measure quality with <strong>PSNR</strong>.</li>
+        <li><strong>Denoise</strong> by projecting onto the signal subspace.</li>
+        <li><strong>Apply</strong> Donoho–Johnstone soft thresholding for realistic images.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 09</span></div>
+  </section>
+
+  <section data-label="03 2D Transforms" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">From 1-D to 2-D</span></div>
+    <div class="cols" style="margin-top:28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Separability</div>
+        <h1>Transform rows, then columns.</h1>
+        <div class="big-math">$$\text{2D DFT: } X = F\,A\,F^T$$</div>
+        <div class="big-math">$$\text{2D Haar: } C = V^T A\,V$$</div>
+      </div>
+      <div class="defn">
+        <div class="term">Why this matters</div>
+        <p style="margin:0;">A separable 2-D transform = a 1-D transform applied to <em>every row</em>, then to <em>every column</em>. All the 1-D math of Lab 8 carries over with one extra matrix multiply.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 09</span></div>
+  </section>
+
+  <section data-label="04 PSNR" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The standard image-quality metric</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Peak Signal-to-Noise Ratio</div>
+        <h1>$\text{PSNR} = 10\log_{10}\!\dfrac{\text{MAX}^2}{\text{MSE}}$ dB</h1></div>
+      <div class="cols">
+        <table class="compare-table">
+          <thead><tr><th>PSNR (dB)</th><th>Quality</th></tr></thead>
+          <tbody>
+            <tr><td>&gt; 40</td><td>Visually indistinguishable</td></tr>
+            <tr><td>30 – 40</td><td>Minor artifacts (streaming)</td></tr>
+            <tr><td>20 – 30</td><td>Visibly degraded</td></tr>
+            <tr><td>&lt; 20</td><td>Heavy blocking / ringing</td></tr>
+          </tbody>
+        </table>
+        <div>
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 640 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig09-title fig09-desc">
+              <title id="fig09-title">Compression quality curve: PSNR versus fraction of coefficients kept</title>
+              <desc id="fig09-desc">A log-x rate-distortion curve. The horizontal axis is the fraction of DFT or wavelet coefficients kept, on a logarithmic scale from one one-thousandth to one. The vertical axis is PSNR in decibels, from below twenty up to past fifty. The curve rises steeply at low fractions, then bends sharply near five percent — the labeled knee — and flattens at high fractions. Two horizontal shaded bands mark the engineering quality zones: PSNR above forty (indistinguishable) on the upper band, and twenty to thirty (visibly degraded) on the lower band. Band labels sit on the left edge of the chart so they do not collide with the knee callout on the right.</desc>
+              <g stroke="#1A1A1A" stroke-width="1.4" fill="none">
+                <line x1="80" y1="340" x2="610" y2="340"/>
+                <line x1="80" y1="40"  x2="80"  y2="350"/>
+              </g>
+              <!-- shaded quality bands -->
+              <rect x="80" y="60"  width="530" height="60" fill="#C8A8A8" opacity="0.18"/>
+              <rect x="80" y="220" width="530" height="80" fill="#7A746B" opacity="0.12"/>
+              <!-- band labels on the LEFT, inside their bands, well away from the knee callout -->
+              <text x="92" y="84"  font-family="Inter,sans-serif" font-size="12" fill="#7A1A1A" font-style="italic">indistinguishable</text>
+              <text x="92" y="102" font-family="Inter,sans-serif" font-size="11" fill="#7A1A1A">PSNR &gt; 40 dB</text>
+              <text x="92" y="248" font-family="Inter,sans-serif" font-size="12" fill="#1A1A1A" font-style="italic">visibly degraded</text>
+              <text x="92" y="266" font-family="Inter,sans-serif" font-size="11" fill="#1A1A1A">20–30 dB</text>
+              <!-- y-axis dB labels -->
+              <g font-family="Inter,sans-serif" font-size="12" fill="#7A746B">
+                <text x="75" y="50"  text-anchor="end">50</text>
+                <text x="75" y="110" text-anchor="end">40</text>
+                <text x="75" y="170" text-anchor="end">30</text>
+                <text x="75" y="230" text-anchor="end">20</text>
+                <text x="75" y="290" text-anchor="end">10</text>
+              </g>
+              <text x="20" y="200" font-family="Source Serif 4,serif" font-size="14" font-style="italic" fill="#7A746B" transform="rotate(-90 30 200)">PSNR (dB)</text>
+              <!-- x-axis log labels -->
+              <g font-family="Inter,sans-serif" font-size="12" fill="#7A746B" text-anchor="middle">
+                <text x="80"  y="358">0.001</text>
+                <text x="195" y="358">0.01</text>
+                <text x="325" y="358">0.05</text>
+                <text x="425" y="358">0.10</text>
+                <text x="540" y="358">0.50</text>
+                <text x="610" y="358">1.00</text>
+              </g>
+              <text x="345" y="378" font-family="Source Serif 4,serif" font-size="14" font-style="italic" fill="#7A746B" text-anchor="middle">fraction of coefficients kept (log)</text>
+              <!-- the knee curve -->
+              <path d="M 80,320 C 130,310 170,280 220,240 C 280,180 320,140 360,115 C 420,98 480,90 555,87 L 610,86"
+                    fill="none" stroke="#7A1A1A" stroke-width="2.6"/>
+              <!-- knee marker + callout on the RIGHT side, in a clear region -->
+              <circle cx="360" cy="115" r="6" fill="#7A1A1A"/>
+              <line x1="360" y1="115" x2="475" y2="155" stroke="#7A1A1A" stroke-width="1"/>
+              <text x="485" y="150" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#7A1A1A">KNEE</text>
+              <text x="485" y="170" font-family="Inter,sans-serif" font-size="12" fill="#7A1A1A" font-style="italic">≈ 5% coeffs</text>
+              <text x="485" y="186" font-family="Inter,sans-serif" font-size="12" fill="#7A1A1A" font-style="italic">≈ 40 dB</text>
+            </svg>
+          </div>
+          <div class="diagram-caption">The "knee" is the engineering operating point — more coefficients give little extra quality.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 09</span></div>
+  </section>
+
+  <section data-label="05 2D FFT Syntax">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">2-D DFT, compression, PSNR</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Whole pipeline</div>
+        <h1>Image → 2-D DFT → top-K → PSNR.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+A = double(imread(<span class="key">'cameraman.tif'</span>));
+X = fft2(A);
+
+<span class="cmt">% Keep top M magnitudes</span>
+[~, J] = sort(abs(X(:)), <span class="key">'descend'</span>);
+Y = zeros(size(X));
+Y(J(<span class="key">1</span>:M)) = X(J(<span class="key">1</span>:M));
+
+A_rec = real(ifft2(Y));
+mse  = mean((A(:) - A_rec(:)).^<span class="key">2</span>);
+psnr = <span class="key">10</span>*log10(<span class="key">255</span>^<span class="key">2</span> / mse);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="key">from</span> numpy.fft <span class="key">import</span> fft2, ifft2
+
+A = img.astype(<span class="key">float</span>)
+X = fft2(A)
+
+<span class="cmt"># Keep top M magnitudes</span>
+flat = X.flatten(order=<span class="key">'F'</span>)
+J = np.argsort(np.abs(flat))[::-<span class="key">1</span>][:M]
+Y = np.zeros_like(flat);  Y[J] = flat[J]
+Y = Y.reshape(X.shape, order=<span class="key">'F'</span>)
+
+A_rec = np.real(ifft2(Y))
+mse  = np.mean((A - A_rec)**<span class="key">2</span>)
+psnr = <span class="key">10</span>*np.log10(<span class="key">255</span>**<span class="key">2</span> / mse)
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 09</span></div>
+  </section>
+
+  <section data-label="06 Denoising" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Subspace projection</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">If signal &amp; noise live in different subspaces</div>
+        <h1>Project onto signal. Noise vanishes.</h1></div>
+      <div class="cols">
+        <div class="defn">
+          <div class="term">Hard subspace projection</div>
+          <p style="margin:0;">Keep coefficients at scales $0..L-1$ (low frequencies); zero scales $L..\log_2 N$. Works exactly when noise is band-limited to fine scales.</p>
+        </div>
+        <div class="defn">
+          <div class="term">Donoho–Johnstone soft threshold</div>
+          $$\hat c = \text{sgn}(c)\cdot\max(|c|-T, 0)$$
+          <p style="margin-top:14px;">$T = \sigma\sqrt{2\ln N}$. Used when noise is broadband — works on real images.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 09</span></div>
+  </section>
+
+  <section data-label="07 Soft Threshold">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Wavelet soft-threshold denoising</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">The real-world recipe</div>
+        <h1>Transform → shrink → inverse-transform.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+sigma = <span class="key">0.15</span>;
+T = sigma * sqrt(<span class="key">2</span>*log(numel(img)));
+
+C = V<span class="key">'</span> * img * V;          <span class="cmt">% 2D Haar</span>
+C_thr = sign(C) .* max(abs(C)-T, <span class="key">0</span>);
+img_dn = V * C_thr * V<span class="key">'</span>;
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+sigma = <span class="key">0.15</span>
+T = sigma * np.sqrt(<span class="key">2</span>*np.log(img.size))
+
+C = V.T @ img @ V         <span class="cmt"># 2D Haar</span>
+C_thr = np.sign(C) * np.maximum(np.abs(C)-T, <span class="key">0</span>)
+img_dn = V @ C_thr @ V.T
+        </div>
+      </div>
+      <p class="muted">This is essentially what <code>scipy.signal.denoise_wavelet</code> and MATLAB's <code>wdenoise</code> do under the hood.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 09</span></div>
+  </section>
+
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">2-D processing traps</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Common mistakes</div><h1>Five errors to avoid.</h1></div>
+      <ol class="numbered">
+        <li><strong>PSNR with wrong MAX.</strong> If A is in [0,1], use peak = 1. If [0,255], peak = 255.</li>
+        <li><strong>Auto-scaled <code>imshow</code>.</strong> Sets <code>vmin</code>/<code>vmax</code> per image, making bad reconstructions <em>look</em> identical to good ones. Lock the scale.</li>
+        <li><strong>Believing infinite SNR carries over.</strong> Constructed orthogonality is unrealistic. Expect 5–15 dB from basic wavelet denoising.</li>
+        <li><strong>Forgetting the inverse transform.</strong> Compression operates in the transform domain; you must inverse-transform to see an image.</li>
+        <li><strong>Column-major vs row-major.</strong> MATLAB linear indices are column-major; use <code>order='F'</code> for <code>flatten</code> in Python.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 09</span></div>
+  </section>
+
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 09</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Take with you</div><h1>Four things to remember.</h1></div>
+      <div class="summary-grid">
+        <div class="cell"><div class="num">01 · SEPARABLE</div><div class="what">$F A F^T$ or $V^T A V$</div><div class="how">Rows, then columns.</div></div>
+        <div class="cell"><div class="num">02 · PSNR</div><div class="what">$10\log_{10}(\text{MAX}^2/\text{MSE})$</div><div class="how">&gt;40 dB = good.</div></div>
+        <div class="cell"><div class="num">03 · DENOISE</div><div class="what">Projection or soft threshold.</div><div class="how">Subspace assumption.</div></div>
+        <div class="cell"><div class="num">04 · CHOICE</div><div class="what">Match basis to image class.</div><div class="how">Edges → Haar; smooth → DCT.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · Lab 10 DFT &amp; AM Radio</span><span class="rule"></span><span class="author">ENES-222 · Lab 09</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body></html>

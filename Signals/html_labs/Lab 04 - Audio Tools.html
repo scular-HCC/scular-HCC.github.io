@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 04 — Audio Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel{background:var(--paper-2);border-left:4px solid var(--accent);padding:18px 24px 22px;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1.5;white-space:pre;overflow:hidden;color:var(--ink);}
+  .code-panel .lang{font-family:'Inter',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+  .code-panel .cmt{color:var(--ink-3);font-style:italic;} .code-panel .key{color:var(--accent);}
+  .syntax-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:stretch;}
+  .compare-table{width:100%;border-collapse:collapse;font-size:24px;}
+  .compare-table th,.compare-table td{text-align:left;padding:12px 18px;border-bottom:1px solid var(--grid);}
+  .compare-table th{font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:18px;color:var(--accent);border-bottom:1.5px solid var(--ink);}
+  .compare-table code{font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--ink);}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">04</div>
+    <div class="topic">MATLAB Audio Tools</div>
+    <div class="sub">Read, write, and synthesize sound. Build a tiny music synthesizer from the sinusoids you wrote last week.</div>
+    <div class="reference">Week 4 · Reading <em>§2.1–2.3, Lect 7–8</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 04</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">By the end of this lab you will</div>
+        <h1>Synthesize a melody.<br/>Write it to a WAV file.</h1></div>
+      <ol class="numbered">
+        <li><strong>Index</strong> arrays with slices, logical masks, and stride syntax.</li>
+        <li><strong>Read &amp; write</strong> WAV files at a chosen sample rate $F_s$.</li>
+        <li><strong>Synthesize</strong> equal-tempered musical notes.</li>
+        <li><strong>Wrap</strong> each note in an <strong>ADSR</strong> envelope to make it sound natural.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 04</span></div>
+  </section>
+
+  <section data-label="03 Equal Temperament" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The music of $2^{1/12}$</span></div>
+    <div class="cols" style="margin-top:28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">12 logarithmic steps per octave</div>
+        <h1>$F_k = 440 \cdot 2^{k/12}$ Hz</h1>
+        <ul class="clean">
+          <li>A4 = 440 Hz (reference).</li>
+          <li>One semitone = ratio $2^{1/12}\!\approx 1.0595$.</li>
+          <li>Twelve semitones = exactly one octave (ratio 2).</li>
+        </ul>
+      </div>
+      <div class="defn">
+        <div class="term">Real-world hook</div>
+        <p style="margin:0;">Guitar frets, piano-key spacing, and the band layout of every cellular network use the same exponential scale. Once you can synthesize one note, you can synthesize every Western melody.</p>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 04</span></div>
+  </section>
+
+  <section data-label="04 ADSR" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">The shape of a note</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Attack — Decay — Sustain — Release</div>
+        <h1>The envelope distinguishes piano from organ.</h1></div>
+      <div class="cols">
+        <div class="stack gap-item">
+          <div class="big-math">$$E[n] = (1 - e^{-r_1 n/N}) \cdot e^{-r_2 n/N}$$</div>
+          <ul class="clean">
+            <li>Large $r_1$: fast attack (percussion).</li>
+            <li>Small $r_2$: long sustain (organ).</li>
+            <li>Final tone: <code>note = cos(2πfn) · E[n]</code>.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 640 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig04-title fig04-desc">
+              <title id="fig04-title">ADSR envelope and the resulting note waveform</title>
+              <desc id="fig04-desc">Top panel shows the ADSR envelope curve starting at zero, rising quickly to a peak labeled Attack, then decaying gradually back toward zero labeled Decay and Release. The envelope's mirror image is drawn as a dashed line below the horizontal axis. The bottom panel shows the resulting note as a sinusoid whose amplitude is bounded above and below by the envelope outline, growing rapidly then fading.</desc>
+              <g stroke="#1A1A1A" stroke-width="1.4" fill="none">
+                <line x1="40" y1="100" x2="610" y2="100"/>
+                <line x1="40" y1="50"  x2="40"  y2="170"/>
+              </g>
+              <path d="M 40,100 Q 100,15 160,30 Q 280,55 420,85 Q 540,98 605,100" fill="none" stroke="#7A1A1A" stroke-width="2.4"/>
+              <path d="M 40,100 Q 100,185 160,170 Q 280,145 420,115 Q 540,102 605,100" fill="none" stroke="#7A1A1A" stroke-width="1.4" stroke-dasharray="5 4"/>
+              <line x1="155" y1="20"  x2="155" y2="100" stroke="#1A1A1A" stroke-width="1" stroke-dasharray="3 3"/>
+              <text x="100" y="20"  font-family="Inter,sans-serif" font-size="14" fill="#7A1A1A" font-style="italic">ATTACK</text>
+              <text x="280" y="50"  font-family="Inter,sans-serif" font-size="14" fill="#7A1A1A" font-style="italic">DECAY / RELEASE</text>
+              <text x="50"  y="60"  font-family="Source Serif 4,serif" font-size="14" fill="#7A746B" font-style="italic">E[n]</text>
+              <g stroke="#1A1A1A" stroke-width="1.4" fill="none">
+                <line x1="40" y1="290" x2="610" y2="290"/>
+                <line x1="40" y1="220" x2="40"  y2="360"/>
+              </g>
+              <path d="M 40,290 Q 100,200 160,215 Q 280,245 420,275 Q 540,288 605,290" fill="none" stroke="#1A1A1A" stroke-width="1" stroke-dasharray="4 3"/>
+              <path d="M 40,290 Q 100,380 160,365 Q 280,335 420,305 Q 540,292 605,290" fill="none" stroke="#1A1A1A" stroke-width="1" stroke-dasharray="4 3"/>
+              <path d="M 40,290 L46,265 L52,300 L58,235 L64,335 L70,215 L76,348 L84,210 L92,355 L100,205 L110,355 L120,210 L132,348 L144,222 L158,338 L172,234 L186,331 L200,243 L216,322 L232,253 L250,313 L270,261 L290,303 L312,272 L334,295 L356,278 L378,290 L400,284 L424,287 L450,289 L480,290 L515,290 L555,290 L595,290"
+                    fill="none" stroke="#7A1A1A" stroke-width="1.6"/>
+              <text x="50" y="235" font-family="Source Serif 4,serif" font-size="14" fill="#7A746B" font-style="italic">x[n] · E[n]</text>
+              <text x="610" y="312" font-family="Source Serif 4,serif" font-size="14" fill="#7A746B" font-style="italic" text-anchor="end">time →</text>
+            </svg>
+          </div>
+          <div class="diagram-caption">The envelope $E[n]$ shapes the sinusoid into a note that fades naturally.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 04</span></div>
+  </section>
+
+  <section data-label="05 Audio I/O Syntax">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Read, write, play</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Audio file I/O</div><h1>One-line operations.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+<span class="cmt">% Write</span>
+audiowrite(<span class="key">'tone.wav'</span>, x, Fs);
+
+<span class="cmt">% Read</span>
+[x, Fs] = audioread(<span class="key">'tone.wav'</span>);
+
+<span class="cmt">% Play (auto-scales)</span>
+soundsc(x, Fs);
+
+<span class="cmt">% Downsample by 2 → octave up</span>
+y = x(<span class="key">1</span>:<span class="key">2</span>:<span class="key">end</span>);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="key">from</span> scipy.io <span class="key">import</span> wavfile
+
+<span class="cmt"># Write (scale to int16)</span>
+sig = np.int16(x/np.max(np.abs(x))*<span class="key">32767</span>)
+wavfile.write(<span class="key">'tone.wav'</span>, Fs, sig)
+
+<span class="cmt"># Read</span>
+Fs, x = wavfile.read(<span class="key">'tone.wav'</span>)
+
+<span class="cmt"># Play in Jupyter</span>
+<span class="key">from</span> IPython.display <span class="key">import</span> Audio
+Audio(x, rate=Fs)
+
+<span class="cmt"># Downsample → octave up</span>
+y = x[::<span class="key">2</span>]
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 04</span></div>
+  </section>
+
+  <section data-label="06 Indexing">
+    <div class="slide-chrome"><span class="left">Reference</span><span class="right">Indexing patterns</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Slice. Stride. Mask.</div>
+        <h1>Same operation, two syntaxes.</h1></div>
+      <table class="compare-table">
+        <thead><tr><th>Operation</th><th>MATLAB</th><th>Python</th></tr></thead>
+        <tbody>
+          <tr><td>First 5 samples</td><td><code>b(1:5)</code></td><td><code>b[0:5]</code></td></tr>
+          <tr><td>Every other sample</td><td><code>b(1:2:end)</code></td><td><code>b[::2]</code></td></tr>
+          <tr><td>Reversed</td><td><code>b(end:-1:1)</code></td><td><code>b[::-1]</code></td></tr>
+          <tr><td>Logical mask</td><td><code>b(b&gt;50)</code></td><td><code>b[b&gt;50]</code></td></tr>
+          <tr><td>Indices of nonzero</td><td><code>find(b&gt;0)</code></td><td><code>np.where(b&gt;0)[0]</code></td></tr>
+          <tr><td>Concatenate</td><td><code>[a b]</code></td><td><code>np.concatenate([a, b])</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer"><span class="label">Reference</span><span class="rule"></span><span class="author">ENES-222 · Lab 04</span></div>
+  </section>
+
+  <section data-label="07 Synthesize a Note">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">One ADSR note</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">A4 at 440 Hz, piano-style</div>
+        <h1>$F_s = 8000$, duration 0.5 s.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+Fs = <span class="key">8000</span>;  T = <span class="key">0.5</span>;
+N = round(T*Fs);
+n = <span class="key">0</span>:N-<span class="key">1</span>;
+f = <span class="key">440</span>/Fs;
+
+env = (<span class="key">1</span>-exp(-<span class="key">5</span>*n/N)) .* exp(-<span class="key">6</span>*n/N);
+note = cos(<span class="key">2</span>*pi*f*n) .* env;
+
+audiowrite(<span class="key">'A4.wav'</span>, note, Fs);
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+Fs, T = <span class="key">8000</span>, <span class="key">0.5</span>
+N = round(T*Fs)
+n = np.arange(N)
+f = <span class="key">440</span>/Fs
+
+env  = (<span class="key">1</span>-np.exp(-<span class="key">5</span>*n/N))*np.exp(-<span class="key">6</span>*n/N)
+note = np.cos(<span class="key">2</span>*np.pi*f*n)*env
+
+wavfile.write(<span class="key">'A4.wav'</span>, Fs,
+              np.int16(note*<span class="key">32767</span>))
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 04</span></div>
+  </section>
+
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">Audio-specific traps</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Common mistakes</div><h1>Five errors to avoid.</h1></div>
+      <ol class="numbered">
+        <li><strong>1-based score &harr; 0-based score.</strong> MATLAB <code>score = [1 8 13]</code> &rarr; Python <code>score - 1</code>.</li>
+        <li><strong>Clipping on save.</strong> WAV needs samples in $[-1, 1]$ (float) or $[-32768, 32767]$ (int16). Scale before writing.</li>
+        <li><strong>Sample-rate mismatch.</strong> WAV written at <code>Fs=8192</code>, played at <code>Fs=44100</code> → 5.4× faster, 2.5 octaves up.</li>
+        <li><strong><code>concatenate</code> in a loop.</strong> Each call copies. Preallocate <code>np.zeros(N_total)</code> for long pieces.</li>
+        <li><strong>Forgetting to clip after envelope multiply.</strong> ADSR can leave residual peaks above 1.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 04</span></div>
+  </section>
+
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 04</span><span class="right">Summary</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Take with you</div><h1>Four things to remember.</h1></div>
+      <div class="summary-grid">
+        <div class="cell"><div class="num">01 · TEMPERAMENT</div><div class="what">$F_k = 440\cdot2^{k/12}$</div><div class="how">12 semitones per octave.</div></div>
+        <div class="cell"><div class="num">02 · ADSR</div><div class="what">$(1-e^{-r_1n/N})e^{-r_2n/N}$</div><div class="how">Envelope = timbre.</div></div>
+        <div class="cell"><div class="num">03 · WAV I/O</div><div class="what"><code>audiowrite</code> / <code>wavfile</code></div><div class="how">Scale to int16 before writing.</div></div>
+        <div class="cell"><div class="num">04 · INDEXING</div><div class="what">Slice. Stride. Mask.</div><div class="how">Same idea, two syntaxes.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Next · Lab 05 Images</span><span class="rule"></span><span class="author">ENES-222 · Lab 04</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body></html>

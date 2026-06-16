@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ENES-222 · Lab 12 — Filter Design (FIR &amp; IIR)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+<link rel="stylesheet" href="lecture-styles.css">
+<style>
+  .code-panel{background:var(--paper-2);border-left:4px solid var(--accent);padding:18px 24px 22px;font-family:'JetBrains Mono',monospace;font-size:22px;line-height:1.5;white-space:pre;overflow:hidden;color:var(--ink);}
+  .code-panel .lang{font-family:'Inter',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+  .code-panel .cmt{color:var(--ink-3);font-style:italic;} .code-panel .key{color:var(--accent);}
+  .syntax-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:stretch;}
+  .compare-table{width:100%;border-collapse:collapse;font-size:24px;}
+  .compare-table th,.compare-table td{text-align:left;padding:12px 18px;border-bottom:1px solid var(--grid);}
+  .compare-table th{font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:18px;color:var(--accent);border-bottom:1.5px solid var(--ink);}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <section data-label="01 Title" class="title-slide">
+    <div class="course">ENES-222 · Signals &amp; Systems · Lab</div>
+    <div class="lecture-number">12</div>
+    <div class="topic">Filter Design: FIR &amp; IIR</div>
+    <div class="sub">The course capstone. Design a digital filter to a specification, apply it, and understand the FIR/IIR trade-off.</div>
+    <div class="reference">Week 14 · Reading <em>§4.5–4.7, Lect 23–24</em></div>
+  </section>
+
+  <section data-label="02 Objectives">
+    <div class="slide-chrome"><span class="left">Lab 12</span><span class="right">Objectives</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">By the end of this lab you will</div>
+        <h1>Design, evaluate, and apply<br/>digital filters.</h1></div>
+      <ol class="numbered">
+        <li><strong>Read</strong> an FIR filter's amplitude &amp; phase response from its coefficients $b_k$.</li>
+        <li><strong>Design</strong> a lowpass FIR by window method and least squares.</li>
+        <li><strong>Choose</strong> between causal (<code>filter</code>) and zero-phase (<code>filtfilt</code>) processing.</li>
+        <li><strong>Locate</strong> IIR poles and verify BIBO stability.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · Lab 12</span></div>
+  </section>
+
+  <section data-label="03 FIR vs IIR" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">Two filter families</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Pick the right tool</div>
+        <h1>FIR vs IIR — the trade-offs.</h1></div>
+      <table class="compare-table">
+        <thead><tr><th></th><th>FIR</th><th>IIR</th></tr></thead>
+        <tbody>
+          <tr><td>Form</td><td>$y = \sum b_k x[n-k]$</td><td>$y = \sum b_k x[n-k] - \sum a_k y[n-k]$</td></tr>
+          <tr><td>Stability</td><td>Always stable</td><td>Only if all poles inside unit circle</td></tr>
+          <tr><td>Phase</td><td>Linear phase available</td><td>Generally non-linear</td></tr>
+          <tr><td>Order for sharp cutoff</td><td>Tens–hundreds of taps</td><td>Often 2–4 coefficients</td></tr>
+          <tr><td>Used in</td><td>ECG, image filters, audio EQ mastering</td><td>Hearing aids, ANC headphones, analog-style EQ</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 12</span></div>
+  </section>
+
+  <section data-label="04 Frequency Response" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Concept</span><span class="right">FIR frequency response</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">From coefficients to spectrum</div>
+        <h1>$H(e^{j\omega}) = \sum_k b_k e^{-j\omega k}$</h1></div>
+      <div class="cols">
+        <div class="stack gap-item">
+          <p>The frequency response is the <strong>DTFT of the coefficient vector $b$</strong>. Sample it densely with <code>fft(b, N)</code>, $N \gg \text{length}(b)$.</p>
+          <div class="defn">
+            <div class="term">Linear phase</div>
+            <p style="margin:0;font-size:24px;">If $b_k = \pm b_{M-k}$, the phase is exactly linear &rarr; group delay $= M/2$ is constant &rarr; no waveform distortion.</p>
+          </div>
+        </div>
+        <div>
+          <div class="diagram-wrap">
+            <svg viewBox="0 0 640 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fig12-title fig12-desc">
+              <title id="fig12-title">Lowpass FIR filter magnitude response with passband, transition, and stopband</title>
+              <desc id="fig12-desc">Magnitude response plot in decibels. Horizontal axis is normalized frequency from 0 to pi. Vertical axis is magnitude in dB from 0 down to minus 100. The curve stays near 0 dB across a red passband region up to the passband edge omega p, drops sharply through a tan transition band, then oscillates near minus 80 dB inside the gray stopband region beyond the stopband edge omega s. Band names appear in a strip above the plot. Passband ripple is shown by two dashed lines bracketing the curve in the passband, and the stopband attenuation is shown by a vertical bracket on the right edge.</desc>
+              <!-- BAND-NAME STRIP above the chart -->
+              <rect x="60"  y="35" width="240" height="28" fill="#7A1A1A" opacity="0.18" stroke="#7A1A1A" stroke-width="1"/>
+              <rect x="300" y="35" width="60"  height="28" fill="#D9D2C2" opacity="0.8"  stroke="#7A746B" stroke-width="1"/>
+              <rect x="360" y="35" width="260" height="28" fill="#1A1A1A" opacity="0.14" stroke="#1A1A1A" stroke-width="1"/>
+              <text x="180" y="54" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#7A1A1A" text-anchor="middle">PASSBAND</text>
+              <text x="330" y="54" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#7A746B" text-anchor="middle" font-style="italic">transition</text>
+              <text x="490" y="54" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#1A1A1A" text-anchor="middle">STOPBAND</text>
+
+              <!-- chart axes -->
+              <g stroke="#1A1A1A" stroke-width="1.4" fill="none">
+                <line x1="60" y1="390" x2="620" y2="390"/>
+                <line x1="60" y1="80"  x2="60"  y2="400"/>
+              </g>
+              <!-- shaded chart background bands (tint only — names are above) -->
+              <rect x="60"  y="80" width="240" height="310" fill="#7A1A1A" opacity="0.06"/>
+              <rect x="300" y="80" width="60"  height="310" fill="#D9D2C2" opacity="0.45"/>
+              <rect x="360" y="80" width="260" height="310" fill="#1A1A1A" opacity="0.06"/>
+
+              <!-- y-axis dB labels -->
+              <g font-family="Inter,sans-serif" font-size="12" fill="#7A746B" text-anchor="end">
+                <text x="55" y="105">0</text>
+                <text x="55" y="170">−20</text>
+                <text x="55" y="235">−40</text>
+                <text x="55" y="300">−60</text>
+                <text x="55" y="380">−80</text>
+              </g>
+              <text x="20" y="240" font-family="Source Serif 4,serif" font-size="14" font-style="italic" fill="#7A746B" transform="rotate(-90 30 240)">|H(e^jω)|  (dB)</text>
+
+              <!-- x-axis labels -->
+              <g font-family="Inter,sans-serif" font-size="13" fill="#7A746B" text-anchor="middle">
+                <text x="60"  y="410">0</text>
+                <text x="300" y="410">ω<tspan baseline-shift="sub" font-size="10">p</tspan></text>
+                <text x="360" y="410">ω<tspan baseline-shift="sub" font-size="10">s</tspan></text>
+                <text x="620" y="410">π</text>
+              </g>
+              <text x="340" y="432" font-family="Source Serif 4,serif" font-size="14" font-style="italic" fill="#7A746B" text-anchor="middle">normalized frequency ω</text>
+
+              <!-- response curve: nearly flat in passband, sharp drop in transition, oscillates in stopband -->
+              <path d="M 60,108 L80,110 L100,106 L120,111 L150,105 L180,111 L210,106 L240,110 L270,108 L290,111
+                       L300,120 L315,150 L330,200 L345,260 L355,310 L365,355
+                       L380,322 L395,355 L415,335 L435,365 L460,338 L490,365 L520,340 L555,368
+                       L585,345 L615,368"
+                    fill="none" stroke="#7A1A1A" stroke-width="2.4"/>
+
+              <!-- passband ripple: two dashed lines & bracket OUTSIDE the curve to the left -->
+              <line x1="60"  y1="102" x2="290" y2="102" stroke="#1A1A1A" stroke-width="1" stroke-dasharray="3 3"/>
+              <line x1="60"  y1="118" x2="290" y2="118" stroke="#1A1A1A" stroke-width="1" stroke-dasharray="3 3"/>
+              <line x1="80"  y1="102" x2="80"  y2="118" stroke="#1A1A1A" stroke-width="1.4"/>
+              <line x1="73"  y1="102" x2="87"  y2="102" stroke="#1A1A1A" stroke-width="1.4"/>
+              <line x1="73"  y1="118" x2="87"  y2="118" stroke="#1A1A1A" stroke-width="1.4"/>
+              <text x="95"  y="135" font-family="Inter,sans-serif" font-size="13" fill="#1A1A1A" font-style="italic">δ (passband ripple)</text>
+
+              <!-- stopband attenuation: bracket on the right margin, well clear of curve -->
+              <line x1="610" y1="108" x2="610" y2="365" stroke="#1A1A1A" stroke-width="1.4"/>
+              <line x1="603" y1="108" x2="617" y2="108" stroke="#1A1A1A" stroke-width="1.4"/>
+              <line x1="603" y1="365" x2="617" y2="365" stroke="#1A1A1A" stroke-width="1.4"/>
+              <text x="610" y="245" font-family="Inter,sans-serif" font-size="13" fill="#1A1A1A" font-style="italic" text-anchor="end" transform="rotate(-90 610 245)">A (attenuation)</text>
+            </svg>
+          </div>
+          <div class="diagram-caption">Three regions every filter spec defines: passband, transition, stopband.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · Lab 12</span></div>
+  </section>
+
+  <section data-label="05 FIR Design">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Design and evaluate a lowpass FIR</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Window method vs least squares</div>
+        <h1>37-tap lowpass, cutoff 0.5 (normalized).</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+<span class="cmt">% Window method</span>
+b_win = fir1(<span class="key">36</span>, <span class="key">0.5</span>);
+
+<span class="cmt">% Least-squares (Parks-McClellan)</span>
+b_pm  = firpm(<span class="key">36</span>, [<span class="key">0</span> <span class="key">0.5</span> <span class="key">0.6</span> <span class="key">1</span>], [<span class="key">1</span> <span class="key">1</span> <span class="key">0</span> <span class="key">0</span>]);
+
+<span class="cmt">% Frequency response in dB</span>
+[H, w] = freqz(b_win, <span class="key">1</span>, <span class="key">1024</span>);
+plot(w/pi, <span class="key">20</span>*log10(abs(H)));
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="key">from</span> scipy.signal <span class="key">import</span> firwin, firls, freqz
+
+<span class="cmt"># Window method</span>
+b_win = firwin(<span class="key">37</span>, <span class="key">0.5</span>, fs=<span class="key">2.0</span>)
+
+<span class="cmt"># Least-squares</span>
+b_ls  = firls(<span class="key">37</span>, [<span class="key">0</span>, <span class="key">0.5</span>, <span class="key">0.6</span>, <span class="key">1</span>],
+                  [<span class="key">1</span>, <span class="key">1</span>, <span class="key">0</span>, <span class="key">0</span>], fs=<span class="key">2.0</span>)
+
+<span class="cmt"># Frequency response in dB</span>
+w, H = freqz(b_win, <span class="key">1</span>, worN=<span class="key">1024</span>, fs=<span class="key">2.0</span>)
+plt.plot(w, <span class="key">20</span>*np.log10(np.abs(H)))
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 12</span></div>
+  </section>
+
+  <section data-label="06 Apply Filter">
+    <div class="slide-chrome"><span class="left">Syntax</span><span class="right">Causal vs zero-phase</span></div>
+    <div class="stack gap-title" style="margin-top:24px;">
+      <div><div class="eyebrow">Two ways to apply a filter</div>
+        <h1><code>filter</code> (real-time) vs <code>filtfilt</code> (offline).</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+<span class="cmt">% Causal — delays by M/2 samples</span>
+y_real = filter(b, <span class="key">1</span>, x);
+
+<span class="cmt">% Zero-phase — forward + backward</span>
+y_off  = filtfilt(b, <span class="key">1</span>, x);
+
+<span class="cmt">% Sample delay introduced by filter</span>
+M = length(b) - <span class="key">1</span>;
+group_delay_samples = M/<span class="key">2</span>;
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="key">from</span> scipy.signal <span class="key">import</span> lfilter, filtfilt
+
+<span class="cmt"># Causal — delays by M/2 samples</span>
+y_real = lfilter(b, <span class="key">1</span>, x)
+
+<span class="cmt"># Zero-phase — forward + backward</span>
+y_off  = filtfilt(b, <span class="key">1</span>, x)
+
+M = <span class="key">len</span>(b) - <span class="key">1</span>
+group_delay_samples = M/<span class="key">2</span>
+        </div>
+      </div>
+      <p class="muted"><strong><code>filtfilt</code> is only for offline processing.</strong> It requires the whole signal up front.</p>
+    </div>
+    <div class="slide-footer"><span class="label">Syntax</span><span class="rule"></span><span class="author">ENES-222 · Lab 12</span></div>
+  </section>
+
+  <section data-label="07 IIR Stability">
+    <div class="slide-chrome"><span class="left">Worked Example</span><span class="right">Pole-zero stability check</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">BIBO criterion</div>
+        <h1>Stable &hArr; every pole inside the unit circle.</h1></div>
+      <div class="syntax-grid">
+        <div class="code-panel"><div class="lang">MATLAB</div>
+<span class="cmt">% v[n] = 0.5 v[n-1] - 0.4 v[n-2] + u[n]</span>
+a = [<span class="key">1</span> -<span class="key">0.5</span> <span class="key">0.4</span>];
+b = [<span class="key">1</span>];
+
+p = roots(a);
+disp(abs(p));        <span class="cmt">% all &lt; 1 → stable</span>
+zplane(b, a);
+
+<span class="cmt">% Frequency response</span>
+[H, w] = freqz(b, a, <span class="key">1024</span>);
+plot(w/pi, <span class="key">20</span>*log10(abs(H)));
+        </div>
+        <div class="code-panel"><div class="lang">PYTHON</div>
+<span class="key">from</span> scipy.signal <span class="key">import</span> freqz
+
+a = [<span class="key">1</span>, -<span class="key">0.5</span>, <span class="key">0.4</span>]
+b = [<span class="key">1</span>]
+
+p = np.roots(a)
+print(np.abs(p))     <span class="cmt"># all &lt; 1 → stable</span>
+
+w, H = freqz(b, a, worN=<span class="key">1024</span>)
+plt.plot(w/np.pi, <span class="key">20</span>*np.log10(np.abs(H)))
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · Lab 12</span></div>
+  </section>
+
+  <section data-label="08 Common Mistakes" class="paper-rules">
+    <div class="slide-chrome"><span class="left">Pitfalls</span><span class="right">Filter-design traps</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Common mistakes</div><h1>Five errors to avoid.</h1></div>
+      <ol class="numbered">
+        <li><strong>Anti-symmetric $b$ for lowpass.</strong> Anti-symmetric coefficients give linear phase <em>and a zero at $\omega = 0$</em> — useless for lowpass. Use symmetric.</li>
+        <li><strong><code>fft(b)</code> vs <code>freqz(b)</code> axes.</strong> <code>fft</code> covers $[0, 2\pi)$; <code>freqz</code> returns $[0, \pi]$.</li>
+        <li><strong>IIR coefficient sign convention.</strong> SciPy uses $\sum a_k y[n-k] = \sum b_k x[n-k]$, so $v[n] = 0.5 v[n-1] - 0.4 v[n-2]$ becomes <code>a = [1, -0.5, 0.4]</code>.</li>
+        <li><strong><code>filtfilt</code> in real time.</strong> It requires the whole signal — cannot stream.</li>
+        <li><strong>Missing <code>fs</code> argument.</strong> <code>firwin(M, 2000, fs=8000)</code> and <code>firwin(M, 0.5)</code> are the same only if <code>fs</code> is consistent.</li>
+      </ol>
+    </div>
+    <div class="slide-footer"><span class="label">Pitfalls</span><span class="rule"></span><span class="author">ENES-222 · Lab 12</span></div>
+  </section>
+
+  <section data-label="09 Summary">
+    <div class="slide-chrome"><span class="left">Lab 12</span><span class="right">Course Closing Summary</span></div>
+    <div class="stack gap-title" style="margin-top:28px;">
+      <div><div class="eyebrow">Take with you</div><h1>Four things to remember.</h1></div>
+      <div class="summary-grid">
+        <div class="cell"><div class="num">01 · FIR</div><div class="what">$y = \sum b_k x[n-k]$</div><div class="how">Always stable; linear phase possible.</div></div>
+        <div class="cell"><div class="num">02 · IIR</div><div class="what">Feedback for sharp cutoff.</div><div class="how">Stable iff poles inside unit circle.</div></div>
+        <div class="cell"><div class="num">03 · DESIGN</div><div class="what">Window method or least squares.</div><div class="how">More taps = sharper cutoff + more delay.</div></div>
+        <div class="cell"><div class="num">04 · APPLY</div><div class="what"><code>filter</code> (causal) vs <code>filtfilt</code> (zero-phase)</div><div class="how">Real-time vs offline.</div></div>
+      </div>
+    </div>
+    <div class="slide-footer"><span class="label">End of course</span><span class="rule"></span><span class="author">ENES-222 · Lab 12</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body></html>
