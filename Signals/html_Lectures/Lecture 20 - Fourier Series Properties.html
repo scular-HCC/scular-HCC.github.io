@@ -219,8 +219,77 @@
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
   </section>
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="11 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
 
-  <section data-label="11 Summary">
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §FS</div>
+        <h1>FS of $z(t)=2x(t)-y(t)$<br/>via linearity.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">$X_k=1/k$ ($k\neq0$), $T_0=4$;&ensp;$y(t)=x(t-1)$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · FS of $y$</div>
+          $\Omega_0=2\pi/4=\pi/2$
+          $$Y_k=e^{-jk\pi/2}\cdot\frac{1}{k}$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · FS of $z$ by linearity</div>
+          $$Z_k=2X_k-Y_k=\frac{2-e^{-jk\pi/2}}{k}$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · Evaluate</div>
+          $Z_1=2-e^{-j\pi/2}=2-(-j)=2+j$
+          $Z_2=(2-e^{-j\pi})/2=(2+1)/2=3/2$
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="12 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §FS</div>
+        <h1>Find the even and odd parts<br/>of the triangular wave.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">$x(t)$: triangular, period $T_0$, slope $+2/T_0$ on $[0,T_0/2]$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Even part</div>
+          $x_e(t)=\frac{x(t)+x(-t)}{2}$&ensp;— for triangular wave, $x_e(t)$ is a triangular wave symmetric about $t=0$.
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Odd part</div>
+          $x_o(t)=\frac{x(t)-x(-t)}{2}$&ensp;— antisymmetric.
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · FS relationship</div>
+          $X_k$ real $\Rightarrow$ $x$ even.&ensp;$X_k$ purely imaginary $\Rightarrow$ $x$ odd.
+          For triangular wave: $X_k=-j\cdot c_k$ for odd $k$ (purely imaginary).
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Symmetry rule</div>
+          <p style="margin:0; font-size:15px;">Even signal $\Leftrightarrow$ real FS coefficients.&ensp;Odd signal $\Leftrightarrow$ purely imaginary FS coefficients.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
+  </section>
+
+
+  <section data-label="13 Summary">
     <div class="slide-chrome"><span class="left">Lecture 20</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>

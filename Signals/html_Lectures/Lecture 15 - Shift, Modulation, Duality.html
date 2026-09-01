@@ -226,8 +226,71 @@
     </div>
     <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L15</span></div>
   </section>
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="11 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
 
-  <section data-label="11 Summary">
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §3.4.3</div>
+        <h1>Apply modulation: DFT of<br/>$(-1)^n x[n]$, $N=8$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Use: $\mathbf{F}^k\mathbf{x}\leftrightarrow P^kS$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Identify $(-1)^n$</div>
+          $(-1)^n=e^{j\pi n}=v^{(4)}[n]$ (Fourier sinusoid $k=4$ for $N=8$)
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Apply modulation property</div>
+          $$(-1)^nx[n]\leftrightarrow P^4S\quad\text{i.e.,}\quad(P^4S)[k]=S[(k-4)\bmod8]$$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Key insight</div>
+          <p style="margin:0; font-size:15px;">Multiplying by $(-1)^n$ shifts the spectrum by $N/2$: low-pass $\leftrightarrow$ high-pass.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L15</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="12 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §3.4.3</div>
+        <h1>Use duality to find the DFT<br/>of the all-ones vector $\mathbf{1}$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Start from: $\mathbf{e}^{(0)}\leftrightarrow\mathbf{1}$ (DFT of unit impulse).</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · DFT of $\mathbf{e}^{(0)}$</div>
+          $$S[k]=\sum_{n=0}^{N-1}\delta[n]e^{-j2\pi kn/N}=1\quad\forall k$$
+          So $\mathbf{e}^{(0)}\leftrightarrow\mathbf{1}$.
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Apply duality: if $\mathbf{x}\leftrightarrow S$, then $S\leftrightarrow NR\mathbf{x}$</div>
+          $$\mathbf{1}\leftrightarrow N\cdot R\mathbf{e}^{(0)}=N\cdot\mathbf{e}^{(0)}$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Result</div>
+          $$\text{DFT of }\mathbf{1}=(N,0,0,\ldots,0)^\top\;\checkmark$$
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L15</span></div>
+  </section>
+
+
+  <section data-label="13 Summary">
     <div class="slide-chrome"><span class="left">Lecture 15</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>

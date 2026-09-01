@@ -225,8 +225,70 @@
     </div>
     <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
   </section>
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="10 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
 
-  <section data-label="10 Summary">
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §FS</div>
+        <h1>Time shift property: find<br/>FS of $y(t)=x(t-t_0)$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Given $X_k$ (FS of $x$), express $Y_k$ in terms of $X_k$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Substitute into analysis equation</div>
+          $$Y_k=\frac{1}{T_0}\int_0^{T_0}x(t-t_0)e^{-jk\Omega_0 t}dt$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Change variable $u=t-t_0$</div>
+          $$Y_k=\frac{1}{T_0}\int_0^{T_0}x(u)e^{-jk\Omega_0(u+t_0)}du=e^{-jk\Omega_0 t_0}X_k$$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Time-shift property</div>
+          <p style="margin:0; font-size:15px;">$y(t)=x(t-t_0)\Rightarrow Y_k=e^{-jk\Omega_0 t_0}X_k$.&ensp;Magnitudes unchanged; only phases rotate.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="11 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §FS</div>
+        <h1>Power via Parseval's theorem:<br/>$x(t)=3\cos(\Omega_0 t)+4\sin(2\Omega_0 t)$.</h1>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · FS coefficients</div>
+          $X_{\pm1}=3/2$,&ensp;$X_2=-2j$,&ensp;$X_{-2}=2j$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Parseval</div>
+          $$P=\sum_k|X_k|^2=2|X_1|^2+2|X_2|^2=2(9/4)+2(4)$$
+          $$=\frac{9}{2}+8=12.5$$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Parseval's theorem</div>
+          <p style="margin:0; font-size:15px;">Average power $=\sum_k|X_k|^2$. Each harmonic contributes independently.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L19</span></div>
+  </section>
+
+
+  <section data-label="12 Summary">
     <div class="slide-chrome"><span class="left">Lecture 19</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>

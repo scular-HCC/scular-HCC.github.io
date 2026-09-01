@@ -400,7 +400,78 @@
   </section>
 
   <!-- 14 SUMMARY -->
-  <section data-label="14 Summary">
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="14 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §1.3.3</div>
+        <h1>Multiply $z_1=5-2j$<br/>by $z_2=3-4j$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Compute in Cartesian form, then verify via polar.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Cartesian</div>
+          $(5-2j)(3-4j)=15-20j-6j+8j^2$
+          $$=15-26j-8=7-26j$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Polar forms</div>
+          $|z_1|=\sqrt{29},\;\angle z_1\approx -0.381\text{ rad}$
+          $|z_2|=5,\;\angle z_2\approx -0.927\text{ rad}$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · Polar product</div>
+          $$|z_1z_2|=5\sqrt{29}\approx26.93,\quad\angle z_1z_2\approx-1.308\text{ rad}$$
+          $z_1z_2=5\sqrt{29}(\cos(-1.308)+j\sin(-1.308))=7-26j\;\checkmark$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Key insight</div>
+          <p style="margin:0; font-size:15px;">Polar: multiply magnitudes, add angles. Cartesian: distribute and use $j^2=-1$.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="15 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §1.3.5</div>
+        <h1>Divide $z_1=\sqrt{3}-j$<br/>by $z_2=1+j$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Multiply numerator and denominator by $z_2^*$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Multiply by $z_2^*=1-j$</div>
+          $$\frac{\sqrt{3}-j}{1+j}=\frac{(\sqrt{3}-j)(1-j)}{(1-j)(1+j)}$$
+          $$=\frac{\sqrt{3}-j\sqrt{3}-j+j^2}{2}=\frac{(\sqrt{3}-1)}{2}-j\frac{(\sqrt{3}+1)}{2}$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Polar check</div>
+          $z_1=2e^{-j\pi/6},\;z_2=\sqrt{2}e^{j\pi/4}$
+          $$z_1/z_2=\frac{2}{\sqrt{2}}e^{j(-\pi/6-\pi/4)}=\sqrt{2}\,e^{-j5\pi/12}$$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Division rule</div>
+          <p style="margin:0; font-size:15px;">$|z_1/z_2|=|z_1|/|z_2|$ and $\angle(z_1/z_2)=\angle z_1-\angle z_2$.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L02</span></div>
+  </section>
+
+  <section data-label="16 Summary">
     <div class="slide-chrome"><span class="left">Lecture 02</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>

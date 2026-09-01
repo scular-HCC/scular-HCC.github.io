@@ -891,9 +891,223 @@
   </section>
 
   <!-- ============================================================
-       SLIDE 10 — YOUR TURN
+       SLIDE 10 — SOLVED EXAMPLE A: Third-Quadrant Point
   ============================================================ -->
-  <section data-label="10 Your Turn">
+  <section data-label="10 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Third-Quadrant Conversion</span></div>
+
+    <div class="cols" style="margin-top: 28px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Fully solved — step by step</div>
+        <h1>Convert $w = -3 - 4j$<br/>to polar form.</h1>
+
+        <div style="border-top: 1.5px solid var(--ink); margin-top: 10px; padding-top: 14px;">
+          <div class="step" style="margin-bottom: 16px;">
+            <div class="step-label">Step 1 · Identify Cartesian parts</div>
+            <p style="margin:0;">$x = -3$ (left half-plane) and $y = -4$. Both negative: $w$ is in the <strong>third quadrant</strong>.</p>
+          </div>
+          <div class="step" style="margin-bottom: 16px;">
+            <div class="step-label">Step 2 · Compute the modulus $r$</div>
+            $$r \;=\; \sqrt{(-3)^{2} + (-4)^{2}} \;=\; \sqrt{25} \;=\; 5$$
+          </div>
+          <div class="step" style="margin-bottom: 16px;">
+            <div class="step-label">Step 3 · Compute the angle $\theta$</div>
+            $$\theta_{\text{raw}} \;=\; \arctan\!\left(\tfrac{4}{3}\right) \;\approx\; 0.927 \text{ rad} \quad\Rightarrow\quad \theta \;=\; 0.927 + \pi \;\approx\; 4.07 \text{ rad}$$
+            <p class="muted" style="font-size: 24px; margin: 4px 0 0;">$x &lt; 0$, so add $\pi$ to reach the third quadrant.</p>
+          </div>
+          <div class="step" style="margin-bottom: 0;">
+            <div class="step-label">Result</div>
+            $$w \;=\; \bigl(5,\; 4.07\text{ rad}\bigr) \;\approx\; \bigl(5,\; 233.1^{\circ}\bigr)$$
+          </div>
+        </div>
+      </div>
+
+      <div class="stack" style="gap: 18px;">
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="figEx1-title figEx1-desc">
+            <title id="figEx1-title">Third-quadrant complex number w = -3 - 4j on the complex plane</title>
+            <desc id="figEx1-desc">A complex plane with a light grid. The point w is plotted in the third quadrant at Cartesian coordinates negative three, negative four. A solid arrow runs from the origin to w, labeled r equals five. Dashed projection lines show the negative x-component of negative three on the real axis and the negative y-component of negative four on the imaginary axis. A curved arc near the origin indicates the angle theta of approximately 4.07 radians measured counter-clockwise from the positive real axis.</desc>
+            <defs>
+              <marker id="arrExA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/>
+              </marker>
+              <marker id="arrWvec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#7A1A1A"/>
+              </marker>
+            </defs>
+
+            <!-- grid -->
+            <g stroke="#E4DDC9" stroke-width="1">
+              <line x1="50"  y1="40" x2="50"  y2="560"/>
+              <line x1="100" y1="40" x2="100" y2="560"/>
+              <line x1="150" y1="40" x2="150" y2="560"/>
+              <line x1="200" y1="40" x2="200" y2="560"/>
+              <line x1="250" y1="40" x2="250" y2="560"/>
+              <line x1="350" y1="40" x2="350" y2="560"/>
+              <line x1="400" y1="40" x2="400" y2="560"/>
+              <line x1="450" y1="40" x2="450" y2="560"/>
+              <line x1="500" y1="40" x2="500" y2="560"/>
+              <line x1="550" y1="40" x2="550" y2="560"/>
+              <line x1="40" y1="50"  x2="560" y2="50"/>
+              <line x1="40" y1="100" x2="560" y2="100"/>
+              <line x1="40" y1="150" x2="560" y2="150"/>
+              <line x1="40" y1="200" x2="560" y2="200"/>
+              <line x1="40" y1="250" x2="560" y2="250"/>
+              <line x1="40" y1="350" x2="560" y2="350"/>
+              <line x1="40" y1="400" x2="560" y2="400"/>
+              <line x1="40" y1="450" x2="560" y2="450"/>
+              <line x1="40" y1="500" x2="560" y2="500"/>
+              <line x1="40" y1="550" x2="560" y2="550"/>
+            </g>
+
+            <!-- axes -->
+            <line x1="30"  y1="300" x2="570" y2="300" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#arrExA)"/>
+            <line x1="300" y1="570" x2="300" y2="30"  stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#arrExA)"/>
+            <text x="555" y="324" font-size="20" font-style="italic">Re</text>
+            <text x="312" y="44" font-size="20" font-style="italic">Im</text>
+
+            <!-- tick labels -->
+            <text x="142" y="324" font-size="18" fill="#7A746B">-3</text>
+            <text x="448" y="324" font-size="18" fill="#7A746B">3</text>
+            <text x="308" y="206" font-size="18" fill="#7A746B">3</text>
+            <text x="308" y="506" font-size="18" fill="#7A746B">-4</text>
+
+            <!-- w = (-3, -4) -> px (300 - 3*50, 300 + 4*50) = (150, 500) -->
+            <!-- dashed projection lines -->
+            <line x1="150" y1="300" x2="150" y2="500" stroke="#7A746B" stroke-width="1" stroke-dasharray="5 5"/>
+            <line x1="300" y1="500" x2="150" y2="500" stroke="#7A746B" stroke-width="1" stroke-dasharray="5 5"/>
+
+            <!-- vector w -->
+            <line x1="300" y1="300" x2="150" y2="500" stroke="#7A1A1A" stroke-width="3" marker-end="url(#arrWvec)"/>
+            <circle cx="150" cy="500" r="8" fill="#7A1A1A"/>
+            <text x="115" y="520" font-size="26" font-style="italic" fill="#7A1A1A">w</text>
+
+            <!-- r label along vector -->
+            <text x="176" y="398" font-size="24" font-style="italic" fill="#7A1A1A">r = 5</text>
+
+            <!-- arc for full angle ~233 degrees CCW in math (= CW on screen, sweep=1, large-arc=1) -->
+            <!-- start: (360,300) = 0°; end: direction of vector (300,300)→(150,500), r=60: (264,348) -->
+            <path d="M 360,300 A 60,60 0 1 1 264,348" fill="none" stroke="#7A1A1A" stroke-width="2"/>
+            <text x="226" y="280" font-size="19" fill="#7A1A1A">θ ≈ 4.07 rad</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · $w = -3-4j$ in the third quadrant. The $\pi$ correction is essential.</div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L01</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 11 — SOLVED EXAMPLE B: Vector Addition
+  ============================================================ -->
+  <section data-label="11 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Adding Two Complex Numbers</span></div>
+
+    <div class="cols" style="margin-top: 20px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Fully solved — step by step</div>
+        <h1>Find $z_a + z_b$<br/>and its polar form.</h1>
+
+        <dl class="kv" style="margin-top: 4px;">
+          <dt>$z_a$</dt><dd>$|z_a|=3,\quad \angle z_a = \tfrac{\pi}{2}$</dd>
+          <dt>$z_b$</dt><dd>$\mathrm{Re}\{z_b\}=4,\quad \mathrm{Im}\{z_b\}=0$</dd>
+        </dl>
+
+        <div style="border-top: 1.5px solid var(--ink); margin-top: 10px; padding-top: 14px;">
+          <div class="step" style="margin-bottom: 16px;">
+            <div class="step-label">Step 1 · Cartesianize $z_a$</div>
+            $$\mathrm{Re}\{z_a\} = 3\cos\!\left(\tfrac{\pi}{2}\right) = 0 \qquad \mathrm{Im}\{z_a\} = 3\sin\!\left(\tfrac{\pi}{2}\right) = 3$$
+            <p style="margin: 4px 0 0; font-size: 24px; color: var(--ink-2);">$z_a = 0 + 3j$ — purely imaginary, pointing straight up.</p>
+          </div>
+          <div class="step" style="margin-bottom: 16px;">
+            <div class="step-label">Step 2 · Add in Cartesian (always add in Cartesian!)</div>
+            $$z_a + z_b \;=\; (0 + 4) + (3 + 0)j \;=\; 4 + 3j$$
+          </div>
+          <div class="step" style="margin-bottom: 0;">
+            <div class="step-label">Step 3 · Convert sum to polar</div>
+            $$r \;=\; \sqrt{4^{2}+3^{2}} \;=\; 5 \qquad \theta \;=\; \arctan\!\left(\tfrac{3}{4}\right) \;\approx\; 0.644 \text{ rad} \;=\; 36.9^{\circ}$$
+            <p class="muted" style="font-size: 24px; margin: 4px 0 0;">$x=4>0$ — no $\pi$ correction needed.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack" style="gap: 18px;">
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 600 580" xmlns="http://www.w3.org/2000/svg" font-family="Source Serif 4, Georgia, serif" role="img" aria-labelledby="figEx2-title figEx2-desc">
+            <title id="figEx2-title">Vector addition of z sub a and z sub b on the complex plane</title>
+            <desc id="figEx2-desc">A complex plane showing vector addition. The vector z sub a points straight up from the origin to 0 comma 3 in the first quadrant, drawn in oxblood red. The vector z sub b points right from the origin to 4 comma 0 on the real axis, drawn in dark gray. Dashed copies of each vector are translated to the tip of the other to form a parallelogram. The sum vector from the origin to 4 comma 3 is drawn as a thick black arrow labeled z sub a plus z sub b. A small arc at the origin marks the angle of approximately 36.9 degrees.</desc>
+            <defs>
+              <marker id="arrExB"  viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9"  markerHeight="9"  orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+              <marker id="arrZa"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7A1A1A"/></marker>
+              <marker id="arrZb"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4A4641"/></marker>
+              <marker id="arrSum2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/></marker>
+            </defs>
+
+            <!-- light grid -->
+            <g stroke="#E4DDC9" stroke-width="1">
+              <line x1="40" y1="50"  x2="560" y2="50"/>
+              <line x1="40" y1="150" x2="560" y2="150"/>
+              <line x1="40" y1="250" x2="560" y2="250"/>
+              <line x1="40" y1="350" x2="560" y2="350"/>
+              <line x1="40" y1="450" x2="560" y2="450"/>
+              <line x1="40" y1="540" x2="560" y2="540"/>
+              <line x1="100" y1="40" x2="100" y2="560"/>
+              <line x1="200" y1="40" x2="200" y2="560"/>
+              <line x1="300" y1="40" x2="300" y2="560"/>
+              <line x1="400" y1="40" x2="400" y2="560"/>
+              <line x1="500" y1="40" x2="500" y2="560"/>
+            </g>
+
+            <!-- axes — origin at (100, 450) -->
+            <line x1="80"  y1="450" x2="560" y2="450" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#arrExB)"/>
+            <line x1="100" y1="540" x2="100" y2="40"  stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#arrExB)"/>
+            <text x="545" y="472" font-size="20" font-style="italic">Re</text>
+            <text x="112" y="52"  font-size="20" font-style="italic">Im</text>
+
+            <!-- tick labels — 1 unit = 80px -->
+            <text x="172" y="472" font-size="18" fill="#7A746B">1</text>
+            <text x="252" y="472" font-size="18" fill="#7A746B">2</text>
+            <text x="332" y="472" font-size="18" fill="#7A746B">3</text>
+            <text x="412" y="472" font-size="18" fill="#7A746B">4</text>
+            <text x="108" y="374" font-size="18" fill="#7A746B">1</text>
+            <text x="108" y="294" font-size="18" fill="#7A746B">2</text>
+            <text x="108" y="214" font-size="18" fill="#7A746B">3</text>
+
+            <!-- z_a = (0,3) -> px (100, 450-240)=(100,210) -->
+            <line x1="100" y1="450" x2="100" y2="210" stroke="#7A1A1A" stroke-width="3" marker-end="url(#arrZa)"/>
+            <text x="56" y="325" font-size="24" font-style="italic" fill="#7A1A1A">z_a</text>
+
+            <!-- z_b = (4,0) -> px (100+320, 450)=(420, 450) -->
+            <line x1="100" y1="450" x2="420" y2="450" stroke="#4A4641" stroke-width="3" marker-end="url(#arrZb)"/>
+            <text x="255" y="490" font-size="24" font-style="italic" fill="#4A4641">z_b</text>
+
+            <!-- parallelogram: z_a translated from z_b tip: (420,450)→(420,210) -->
+            <line x1="420" y1="450" x2="420" y2="210" stroke="#7A1A1A" stroke-width="2" stroke-dasharray="6 5"/>
+            <!-- z_b translated from z_a tip: (100,210)→(420,210) -->
+            <line x1="100" y1="210" x2="420" y2="210" stroke="#4A4641" stroke-width="2" stroke-dasharray="6 5"/>
+
+            <!-- sum vector: (0,0)->(4,3) -> px (100,450)->(420,210) -->
+            <line x1="100" y1="450" x2="420" y2="210" stroke="#1A1A1A" stroke-width="3.5" marker-end="url(#arrSum2)"/>
+            <text x="430" y="204" font-size="26" font-style="italic">z_a + z_b</text>
+            <text x="430" y="232" font-size="22" fill="#4A4641">= 4 + 3j</text>
+
+            <!-- angle arc -->
+            <path d="M 180,450 A 80,80 0 0 0 163,396" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
+            <text x="186" y="426" font-size="19" fill="#1A1A1A">≈36.9°</text>
+          </svg>
+        </div>
+        <div class="diagram-caption">FIG. · Parallelogram rule: $z_a + z_b = 4 + 3j$, modulus 5.</div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L01</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 12 — YOUR TURN
+  ============================================================ -->
+  <section data-label="12 Your Turn">
     <div class="slide-chrome"><span class="left">Practice</span><span class="right">Your Turn</span></div>
 
     <div class="stack gap-title" style="margin-top: 28px;">
@@ -927,9 +1141,9 @@
   </section>
 
   <!-- ============================================================
-       SLIDE 11 — SOLUTION TO YOUR TURN
+       SLIDE 13 — SOLUTION TO YOUR TURN
   ============================================================ -->
-  <section data-label="11 Solution">
+  <section data-label="13 Solution">
     <div class="slide-chrome"><span class="left">Solution</span><span class="right">z₃ and z₄</span></div>
 
     <div class="cols" style="margin-top: 28px;">
@@ -1039,9 +1253,9 @@
   </section>
 
   <!-- ============================================================
-       SLIDE 12 — VECTOR INTERPRETATION
+       SLIDE 14 — VECTOR INTERPRETATION
   ============================================================ -->
-  <section data-label="12 Vectors">
+  <section data-label="14 Vectors">
     <div class="slide-chrome"><span class="left">Concept</span><span class="right">Complex Numbers as Vectors</span></div>
 
     <div class="cols" style="margin-top: 28px;">
@@ -1111,9 +1325,9 @@
   </section>
 
   <!-- ============================================================
-       SLIDE 13 — SUMMARY
+       SLIDE 15 — SUMMARY
   ============================================================ -->
-  <section data-label="13 Summary">
+  <section data-label="15 Summary">
     <div class="slide-chrome"><span class="left">Lecture 01</span><span class="right">Summary</span></div>
 
     <div class="stack gap-title" style="margin-top: 28px;">

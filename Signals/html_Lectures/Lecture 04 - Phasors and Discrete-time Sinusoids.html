@@ -296,8 +296,78 @@
     </div>
     <div class="slide-footer"><span class="label">Worked Example</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
   </section>
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="13 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
 
-  <section data-label="13 Summary">
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §1.4.3</div>
+        <h1>Add via phasors:<br/>$2.7\cos(15\pi t{+}0.6)+4.1\sin(15\pi t{-}1.8)$</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Convert sin to cos, form stationary phasors, sum.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · $\sin\to\cos$</div>
+          $4.1\sin(15\pi t-1.8)=4.1\cos(15\pi t-1.8-\pi/2)$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Stationary phasors</div>
+          $P_1=2.7e^{j0.6}\approx2.212+2.255j$
+          $P_2=4.1e^{-j2.371}\approx-2.823-3.077j$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · Sum and convert</div>
+          $$P=P_1+P_2\approx-0.611-0.822j$$
+          $A=|P|\approx1.025$, $\phi=\angle P\approx-2.211\text{ rad}$
+          $$x(t)\approx1.025\cos(15\pi t-2.211)$$
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="14 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §1.5.4</div>
+        <h1>Find the period of<br/>$x[n]=\cos(3\pi n/7)$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">$x[n]$ periodic iff $\omega=(k/N)\cdot2\pi$ for integers $k,N$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Read $\omega$</div>
+          $$\omega=3\pi/7$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Solve for $N$</div>
+          $$\frac{3\pi}{7}=\frac{k}{N}\cdot2\pi\implies\frac{k}{N}=\frac{3}{14}$$
+          Smallest integers: $k=3$, $N=14$.
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · Verify</div>
+          $x[n+14]=\cos(3\pi(n+14)/7)=\cos(3\pi n/7+6\pi)=x[n]\;\checkmark$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Answer</div>
+          <p style="margin:0; font-size:15px;">$T_0=14$ samples.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
+  </section>
+
+
+  <section data-label="15 Summary">
     <div class="slide-chrome"><span class="left">Lecture 04</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>

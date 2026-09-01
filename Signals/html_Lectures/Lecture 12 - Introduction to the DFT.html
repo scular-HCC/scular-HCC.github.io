@@ -177,8 +177,75 @@
     </div>
     <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L12</span></div>
   </section>
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="09 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
 
-  <section data-label="09 Summary">
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §3.2.1</div>
+        <h1>Compute $S[0]$, $S[1]$, $S[5]$<br/>for $\mathbf{s}=(1,2,3,6,5,4)^\top$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">$N=6$.&ensp;Analysis equation: $S[k]=\sum_{n=0}^{5}s[n]e^{-j2\pi kn/6}$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · $S[0]$</div>
+          $$S[0]=1+2+3+6+5+4=21$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · $S[1]$ ($w=e^{-j\pi/3}$)</div>
+          $S[1]=1+2w+3w^2+6w^3+5w^4+4w^5$
+          $w^3=-1$, substitute: $S[1]\approx-3-2.598j$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · $S[5]$ by conjugate symmetry</div>
+          $$S[5]=S[N-1]=S[1]^*\approx-3+2.598j$$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Rule</div>
+          <p style="margin:0; font-size:15px;">For real $\mathbf{s}$: $S[N-k]=S[k]^*$.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L12</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="10 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §3.2.1</div>
+        <h1>Invert: find $\mathbf{s}$ from<br/>$S=(4,0,0,0)^\top$, $N=4$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Synthesis equation: $s[n]=\frac{1}{N}\sum_k S[k]e^{j2\pi kn/N}$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Only $S[0]=4$ nonzero</div>
+          $$s[n]=\frac{1}{4}\cdot4\cdot e^{j\cdot0}=1\quad\forall n$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Result</div>
+          $$\mathbf{s}=(1,1,1,1)^\top$$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">DC interpretation</div>
+          <p style="margin:0; font-size:15px;">Energy only at $k=0$ $\Leftrightarrow$ constant signal. $S[0]/N$ equals the signal's average value.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L12</span></div>
+  </section>
+
+
+  <section data-label="11 Summary">
     <div class="slide-chrome"><span class="left">Lecture 12</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>

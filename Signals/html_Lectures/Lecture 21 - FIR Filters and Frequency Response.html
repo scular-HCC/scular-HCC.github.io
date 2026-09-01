@@ -241,8 +241,74 @@
     </div>
     <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
   </section>
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="11 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
 
-  <section data-label="11 Summary">
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §4.3.2</div>
+        <h1>Find $H(e^{j\omega})$ for<br/>$y[n]=x[n]-x[n-1]+x[n-2]$.</h1>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Frequency response</div>
+          $$H(e^{j\omega})=1-e^{-j\omega}+e^{-j2\omega}$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Factor</div>
+          $=e^{-j\omega}(e^{j\omega}-1+e^{-j\omega})=e^{-j\omega}(2\cos\omega-1)$
+          $$|H(e^{j\omega})|=|2\cos\omega-1|$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · Key values</div>
+          $\omega=0$: $|H|=1$.&ensp;$\omega=\pi/3$: $|H|=0$ (null).&ensp;$\omega=\pi$: $|H|=3$.
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="12 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §4.3.2</div>
+        <h1>Find the output for input<br/>$x[n]=\cos(\pi n/3)$.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Filter from Example A.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Evaluate $H$ at $\omega_0=\pi/3$</div>
+          $$H(e^{j\pi/3})=1-e^{-j\pi/3}+e^{-j2\pi/3}=0$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Eigen-property</div>
+          Output $=|H(e^{j\pi/3})|\cos(\pi n/3+\angle H)=0$.
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Result</div>
+          $$y[n]=0\quad\forall n$$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Null at $\omega=\pi/3$</div>
+          <p style="margin:0; font-size:15px;">This filter completely rejects sinusoids at $\omega=\pi/3$. Designing filters with prescribed zeros at specific frequencies is a key tool.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
+  </section>
+
+
+  <section data-label="13 Summary">
     <div class="slide-chrome"><span class="left">Lecture 21</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>

@@ -213,8 +213,70 @@
     </div>
     <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
   </section>
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="11 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
 
-  <section data-label="11 Summary">
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §3.6.2</div>
+        <h1>Circular convolve<br/>$\mathbf{x}=(1,2,3,4)$ and $\mathbf{h}=(1,0,-1,0)$, $N=4$.</h1>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · $H[k]=1-e^{-jk\pi}=1-(-1)^k$</div>
+          $H[0]=0,\;H[1]=2,\;H[2]=0,\;H[3]=2$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · $X=(10,-2+2j,-2,-2-2j)^\top$ (standard)</div>
+          $$Y=X\odot H=(0,\;{-4+4j},\;0,\;{-4-4j})^\top$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · IDFT</div>
+          $$y[n]=\tfrac{1}{4}\sum_k Y[k]e^{j2\pi kn/4}$$
+          $$\mathbf{y}=(-2,\;2,\;2,\;-2)^\top$$
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="12 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §3.6.2</div>
+        <h1>Show linear = circular for<br/>short zero-padded vectors.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">$\mathbf{b}=(1,2)$, $\mathbf{s}=(3,-1)$.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Linear convolution</div>
+          $$\mathbf{b}*\mathbf{s}=(3,\;5,\;-2)^\top$$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Zero-pad to $N=3$, circular convolve</div>
+          $(1,2,0)\circledast(3,-1,0)=(3,5,-2)^\top\;\checkmark$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">DFT-9 theorem</div>
+          <p style="margin:0; font-size:15px;">Linear convolution of length-$K$ and $L$ vectors equals circular convolution zero-padded to $N\geq K+L-1$.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L16</span></div>
+  </section>
+
+
+  <section data-label="13 Summary">
     <div class="slide-chrome"><span class="left">Lecture 16</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>

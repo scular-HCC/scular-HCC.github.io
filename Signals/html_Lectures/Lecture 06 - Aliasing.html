@@ -272,8 +272,74 @@
     </div>
     <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
   </section>
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE A
+  ============================================================ -->
+  <section data-label="11 Solved Example A">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
 
-  <section data-label="11 Summary">
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example A · §1.6.3</div>
+        <h1>List aliases of $f=150$ Hz<br/>at $f_s=400$ samples/s.</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">Find all aliases in $[0,1000]$ Hz.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · Two alias families</div>
+          $f'=150+400k$: $\;150, 550, 950$ Hz
+          $f'=-150+400k$ ($k\geq1$): $250, 650$ Hz
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · All five aliases</div>
+          $$\{150,\,250,\,550,\,650,\,950\}\text{ Hz}$$
+        </div>
+        <div class="defn" style="margin-top:8px;">
+          <div class="term">Common DT frequency</div>
+          <p style="margin:0; font-size:15px;">All produce $\omega=2\pi\cdot150/400=3\pi/4$ rad/sample.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example A</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 00 — SOLVED EXAMPLE B
+  ============================================================ -->
+  <section data-label="12 Solved Example B">
+    <div class="slide-chrome"><span class="left">Solved Example</span><span class="right">Two Fully-Solved Examples</span></div>
+
+    <div class="cols" style="margin-top: 24px;">
+      <div class="stack gap-item">
+        <div class="eyebrow">Solved Example B · §1.6.4</div>
+        <h1>Aliasing in a sum of two sinusoids:</h1>
+        <p style="font-size:16px; margin: 4px 0 8px;">$x(t)=\cos(2\pi\cdot50\,t)+\cos(2\pi\cdot350\,t)$, $f_s=400$ s/s.</p>
+      </div>
+      <div class="stack gap-item">
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 1 · DT frequencies</div>
+          $\omega_1=2\pi\cdot50/400=\pi/4$
+          $\omega_2=2\pi\cdot350/400=7\pi/4$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 2 · Check for equivalence</div>
+          $\omega_2=7\pi/4=2\pi-\pi/4\equiv-\omega_1\pmod{2\pi}$
+          $\Rightarrow\cos(\omega_2 n)=\cos(-\omega_1 n)=\cos(\omega_1 n)$
+        </div>
+        <div class="step" style="margin-bottom:14px;">
+          <div class="step-label">Step 3 · Consequence</div>
+          $$x[n]=2\cos(\tfrac{\pi}{4}n)$$
+          Components merged — $x(t)$ cannot be reconstructed from $x[n]$.
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer"><span class="label">Solved Example B</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
+  </section>
+
+
+  <section data-label="13 Summary">
     <div class="slide-chrome"><span class="left">Lecture 06</span><span class="right">Summary</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
