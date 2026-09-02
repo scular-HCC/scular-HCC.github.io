@@ -49,7 +49,7 @@
       </div>
       <div class="defn">
         <div class="term">Example signal</div>
-        <p style="margin: 0;">A 200-point vector built from three real sinusoids at $\omega = 0.12\pi$, $0.19\pi$, $0.23\pi$ plus noise. The time plot looks like a smear; the magnitude spectrum $|S|$ shows three clear peaks on each half.</p>
+        <p style="margin: 0;">A 200-point vector built from three real sinusoids at $\Omega = 0.12\pi$, $0.19\pi$, $0.23\pi$ plus noise. The time plot looks like a smear; the magnitude spectrum $|S|$ shows three clear peaks on each half.</p>
       </div>
       <p>The DFT <strong>resolves</strong> $s$ into sinusoidal components whose amplitudes you can read directly off the plot. That is the core engineering reason it matters.</p>
     </div>
@@ -109,7 +109,7 @@
       <div class="stack gap-item">
         <div class="eyebrow">Worked example</div>
         <h1>Compute $c_0$, $c_1$, $c_5$<br/>for $s = (1,2,3,6,5,4)^{\top}$.</h1>
-        <p>Fourier frequencies: $\omega = 0,\, \tfrac{\pi}{3},\, \tfrac{2\pi}{3},\, \pi,\, \tfrac{4\pi}{3},\, \tfrac{5\pi}{3}$.</p>
+        <p>Fourier frequencies: $\Omega = 0,\, \tfrac{\pi}{3},\, \tfrac{2\pi}{3},\, \pi,\, \tfrac{4\pi}{3},\, \tfrac{5\pi}{3}$.</p>
         <p>Coefficients $c_k = \langle v^{(k)}, s\rangle / 6$.</p>
       </div>
       <div class="stack gap-item">
@@ -163,7 +163,7 @@
         </div>
         <div class="step">
           <div class="step-label">Read off $v^{(0)}$</div>
-          <p style="margin: 0;">The $k=0$ column is the all-ones vector — its frequency is $\omega = 0$.</p>
+          <p style="margin: 0;">The $k=0$ column is the all-ones vector — its frequency is $\Omega = 0$.</p>
           $$s \,=\, \tfrac{1}{8}\,(1,1,1,1,1,1,1,1)^{\top}$$
         </div>
       </div>
@@ -271,7 +271,7 @@
         <div class="cell">
           <div class="num">04 · SINGLE BIN</div>
           <div class="what">$S[k] \neq 0$ alone ⇔ pure sinusoid.</div>
-          <div class="how">Frequency $\omega = k\,2\pi/N$.</div>
+          <div class="how">Frequency $\Omega = k\,2\pi/N$.</div>
         </div>
         <div class="cell">
           <div class="num">05 · SYMMETRY</div>
@@ -280,7 +280,7 @@
         </div>
         <div class="cell">
           <div class="num">06 · MEANING</div>
-          <div class="what">$|S[k]|$ — content at $\omega_k$.</div>
+          <div class="what">$|S[k]|$ — content at $\Omega_k$.</div>
           <div class="how">Peaks reveal hidden sinusoids.</div>
         </div>
       </div>

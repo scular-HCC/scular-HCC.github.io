@@ -6,6 +6,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+      integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+        integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '\\[', right: '\\]', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false}
+          ],
+          throwOnError: false
+        });"></script>
 <style>
   :root {
     --paper: #FAF7F1;
@@ -65,6 +81,23 @@
     text-transform: uppercase;
     white-space: nowrap;
   }
+  .section-header {
+    margin: 80px 0 0;
+  }
+  .section-header h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin: 0 0 16px;
+    line-height: 1.08;
+  }
+  .section-header p {
+    font-size: 20px;
+    color: var(--ink-2);
+    max-width: 680px;
+    margin: 0 0 40px;
+  }
   .foot {
     margin-top: 80px;
     font-family: 'Inter', sans-serif;
@@ -77,8 +110,16 @@
 <body>
 <div class="wrap">
   <div class="course">ENES-222 · Signals &amp; Systems</div>
-  <h1>Unit One · Foundations.</h1>
-  <p class="lede">Nine lectures on the complex plane, sinusoids, sampling, and linear algebra — built on Chapter 1-2 of the textbook. Click any title to open its deck.</p>
+  <h1>Lecture Decks.</h1>
+  <p class="lede">Twenty-four lectures spanning the complex plane, sinusoids, linear algebra, the DFT, Fourier series, and linear filtering. Click any title to open its deck.</p>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PART I · Lectures 1–9
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Part I · Foundations</h2>
+    <p>Complex numbers, sinusoids in continuous and discrete time, sampling, aliasing, and the foundations of linear algebra.</p>
+  </div>
 
   <ol class="list">
     <li><a href="Lecture%2001%20-%20Complex%20Numbers.html">
@@ -146,126 +187,134 @@
     </a></li>
   </ol>
 
+  <!-- ═══════════════════════════════════════════════════════
+       PART II · Lectures 10–17
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Part II · Inner Products &amp; the DFT</h2>
+    <p>Projections, complex matrices, and the full theory of the Discrete Fourier Transform — from orthogonality through structural properties, circular convolution, and sinusoid detection.</p>
+  </div>
 
-  <br>
-  <h1>Unit Two · A bit more than before.</h1>
-  <p class="lede">Eight lectures on the matrices, projections, DFT, circular shifts, reversal, modulation, and zero padding — built on Chapters 2-3 of the textbook. Click any title to open its deck.</p>
   <ol class="list">
-    <li><a href="Lecture 10 - Inner Products, Norms, Projection.html">
+    <li><a href="Lecture%2010%20-%20Inner%20Products%2C%20Norms%2C%20Projection.html">
       <span class="num">10</span>
-      <span class="title">Inner Products, Norms, Projection
-        <span class="sub">The inner product; norm; orthogonal vectors; projection.</span>
+      <span class="title">Inner Products, Norms &amp; Projection
+        <span class="sub">Dot product; angle between vectors; orthogonal projection onto a subspace.</span>
       </span>
-      <span class="ref">§2.10.1 – §2.10.4, §2.12.1</span>
+      <span class="ref">§2.10</span>
     </a></li>
-    <li><a href="Lecture 11 - Complex Matrices and Vectors.html">
+    <li><a href="Lecture%2011%20-%20Complex%20Matrices%20and%20Vectors.html">
       <span class="num">11</span>
-      <span class="title">Complex Matrices and Vectors
-        <span class="sub">Complex matrices; vector operations in $\mathbb{C}^n$.</span>
+      <span class="title">Complex Matrices &amp; Vectors
+        <span class="sub">Hermitian transpose $V^H$; complex inner product; $V^HV = NI$ for the Fourier matrix.</span>
       </span>
-      <span class="ref">§2.7 – §2.8</span>
+      <span class="ref">§2.13</span>
     </a></li>
-    <li><a href="Lecture 12 - Introduction to the DFT.html">
+    <li><a href="Lecture%2012%20-%20Introduction%20to%20the%20DFT.html">
       <span class="num">12</span>
       <span class="title">Introduction to the DFT
-        <span class="sub">The discrete Fourier transform; its properties and applications.</span>
+        <span class="sub">Analysis and synthesis equations; the DFT as a change of basis; $N$-point examples.</span>
       </span>
       <span class="ref">§3.1 – §3.2</span>
     </a></li>
-    <li><a href="Lecture 13 - DFT of Real Signals.html">
+    <li><a href="Lecture%2013%20-%20DFT%20of%20Real%20Signals.html">
       <span class="num">13</span>
       <span class="title">DFT of Real Signals
-        <span class="sub">Real signals and their DFT properties; even and odd signals.</span>
+        <span class="sub">Conjugate symmetry $S[N-k]=S[k]^*$; amplitude spectrum; reading a spectrum.</span>
       </span>
-      <span class="ref">§3.3</span>
+      <span class="ref">§3.3.1</span>
     </a></li>
-    <li><a href="Lecture 14 - Circular Shift and Reversal.html">
+    <li><a href="Lecture%2014%20-%20Circular%20Shift%20and%20Reversal.html">
       <span class="num">14</span>
-      <span class="title">Circular Shift and Reversal
-        <span class="sub">Circular shifts; reversal; zero padding.</span>
+      <span class="title">Circular Shift &amp; Reversal
+        <span class="sub">Permutation matrix $P$; reversal matrix $R$; DFT-shift and DFT-reversal properties.</span>
+      </span>
+      <span class="ref">§3.2.2, §3.3.2, §3.4</span>
+    </a></li>
+    <li><a href="Lecture%2015%20-%20Shift%2C%20Modulation%2C%20Duality.html">
+      <span class="num">15</span>
+      <span class="title">Shift, Modulation &amp; Duality
+        <span class="sub">Modulation matrix $F^k$; DFT-modulation; duality $S \leftrightarrow NR\mathbf{x}$.</span>
       </span>
       <span class="ref">§3.4</span>
     </a></li>
-    <li><a href="Lecture 15 - Shift, Modulation, Duality.html">
-      <span class="num">15</span>
-      <span class="title">Shift, Modulation, Duality
-        <span class="sub">Time shifts; frequency modulation; duality.</span>
-      </span>
-      <span class="ref">§3.5</span>
-    </a></li>
-    <li><a href="Lecture 16 - Circular Convolution.html">
+    <li><a href="Lecture%2016%20-%20Circular%20Convolution.html">
       <span class="num">16</span>
       <span class="title">Circular Convolution
-        <span class="sub">The circular convolution; its properties and applications.</span>
+        <span class="sub">Element-wise product $\leftrightarrow$ circular convolution; DFT-based computation.</span>
       </span>
       <span class="ref">§3.6</span>
     </a></li>
-    <li><a href="Lecture 17 - Zero-Padding and Detecting Sinusoids.html">
+    <li><a href="Lecture%2017%20-%20Zero-Padding%20and%20Detecting%20Sinusoids.html">
       <span class="num">17</span>
-      <span class="title">Zero-Padding and Detecting Sinusoids
-        <span class="sub">Zero padding; detecting sinusoids.</span>
+      <span class="title">Zero-Padding &amp; Detecting Sinusoids
+        <span class="sub">Zero-padded extension; spectral interpolation; locating a sinusoid from its DFT peak.</span>
       </span>
       <span class="ref">§3.7 – §3.8</span>
     </a></li>
   </ol>
 
-<br>
-  <h1>Unit Three · The final push.</h1>
-  <p class="lede">Seven lectures on the Fourier Series, FIR filters, linear convolution, Z-transforms and Frequency selective filters — built on Chapters 3-4 of the textbook. Click any title to open its deck.</p>
+  <!-- ═══════════════════════════════════════════════════════
+       PART III · Lectures 18–24
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Part III · Fourier Series &amp; Linear Filtering</h2>
+    <p>Periodic signals in continuous time, FIR filter design, linear convolution, and the z-transform connecting the time and frequency domains.</p>
+  </div>
+
   <ol class="list">
-    <li><a href="Lecture 18 - Fourier Series Introduction.html">
+    <li><a href="Lecture%2018%20-%20Fourier%20Series%20Introduction.html">
       <span class="num">18</span>
       <span class="title">Fourier Series Introduction
-        <span class="sub">Introduction to the Fourier series; its properties and applications.</span>
+        <span class="sub">Synthesis and analysis equations; FS coefficients of common periodic signals.</span>
       </span>
-      <span class="ref">§4.1 – §4.2</span>
+      <span class="ref">§FS</span>
     </a></li>
-    <li><a href="Lecture 19 - Fourier Series Coefficients.html">
+    <li><a href="Lecture%2019%20-%20Fourier%20Series%20Coefficients.html">
       <span class="num">19</span>
       <span class="title">Fourier Series Coefficients
-        <span class="sub">The Fourier series coefficients; their calculation and properties.</span>
+        <span class="sub">Computing $X_k$ by integration; time-shift property; Parseval's theorem.</span>
       </span>
-      <span class="ref">§4.3</span>
+      <span class="ref">§FS</span>
     </a></li>
-    <li><a href="Lecture 20 - Fourier Series Properties.html">
+    <li><a href="Lecture%2020%20-%20Fourier%20Series%20Properties.html">
       <span class="num">20</span>
       <span class="title">Fourier Series Properties
-        <span class="sub">The properties of the Fourier series; their applications.</span>
+        <span class="sub">Linearity, time shift, conjugate symmetry; even/odd signal decomposition.</span>
       </span>
-      <span class="ref">§4.4</span>
+      <span class="ref">§FS</span>
     </a></li>
-    <li><a href="Lecture 21 - FIR Filters and Frequency Response.html">
+    <li><a href="Lecture%2021%20-%20FIR%20Filters%20and%20Frequency%20Response.html">
       <span class="num">21</span>
-      <span class="title">FIR Filters and Frequency Response
-        <span class="sub">Finite impulse response filters; frequency response.</span>
+      <span class="title">FIR Filters &amp; Frequency Response
+        <span class="sub">Input–output relation; system function $H(z)$; frequency response $H(e^{j\Omega})$; amplitude and phase.</span>
       </span>
-      <span class="ref">§4.5</span>
+      <span class="ref">§4.3 – §4.4.1</span>
     </a></li>
-    <li><a href="Lecture 22 - FIR Filters for Periodic Inputs.html">
+    <li><a href="Lecture%2022%20-%20FIR%20Filters%20for%20Periodic%20Inputs.html">
       <span class="num">22</span>
       <span class="title">FIR Filters for Periodic Inputs
-        <span class="sub">Finite impulse response filters for periodic inputs.</span>
+        <span class="sub">Response to sinusoidal and exponential inputs; cascaded filters; circular convolution via DFT.</span>
       </span>
-      <span class="ref">§4.6</span>
+      <span class="ref">§4.4.2, §4.4.4 – §4.4.5</span>
     </a></li>
-    <li><a href="Lecture 23 - Linear Convolution.html">
+    <li><a href="Lecture%2023%20-%20Linear%20Convolution.html">
       <span class="num">23</span>
       <span class="title">Linear Convolution
-        <span class="sub">The linear convolution; its properties and applications.</span>
+        <span class="sub">Convolution sum; polynomial multiplication; linear vs. circular; block convolution.</span>
       </span>
-      <span class="ref">§4.7</span>
+      <span class="ref">§4.6 – §4.7</span>
     </a></li>
-    <li><a href="Lecture 24 - Z-Transform and Frequency-Selective Filters.html">
+    <li><a href="Lecture%2024%20-%20Z-Transform%20and%20Frequency-Selective%20Filters.html">
       <span class="num">24</span>
-      <span class="title">Z-Transform and Frequency-Selective Filters
-        <span class="sub">The Z-transform; frequency-selective filters.</span>
+      <span class="title">Z-Transform &amp; Frequency-Selective Filters
+        <span class="sub">$Y(z)=H(z)X(z)$; ideal and practical FIR filters; amplitude response and filter design.</span>
       </span>
-      <span class="ref">§4.8</span>
+      <span class="ref">§4.5 – §4.6.5</span>
     </a></li>
   </ol>
 
   <p class="foot">Use ← / → to navigate within each deck. Press P to print.</p>
-
 </div>
 </body>
 </html>

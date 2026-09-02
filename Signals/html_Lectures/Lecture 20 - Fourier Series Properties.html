@@ -32,8 +32,8 @@
       </div>
       <ol class="numbered">
         <li><strong>Use</strong> $x^{*}(t) \leftrightarrow X^{*}_{-k}$ and $x(-t) \leftrightarrow X_{-k}$.</li>
-        <li><strong>Apply</strong> the time-shift rule $x(t - T) \leftrightarrow e^{-j k\Omega_0 T}\, X_k$.</li>
-        <li><strong>Apply</strong> the modulation rule $x(t)\,e^{j K\Omega_0 t} \leftrightarrow X_{k-K}$.</li>
+        <li><strong>Apply</strong> the time-shift rule $x(t - T) \leftrightarrow e^{-j k\omega_0 T}\, X_k$.</li>
+        <li><strong>Apply</strong> the modulation rule $x(t)\,e^{j K\omega_0 t} \leftrightarrow X_{k-K}$.</li>
         <li><strong>Recognise</strong> that <em>time scaling</em> by $\beta > 0$ leaves $X_k$ unchanged.</li>
       </ol>
     </div>
@@ -103,7 +103,7 @@
       </div>
       <div class="cols even">
         <div class="bordered-math huge-math">
-          $$y(t) = x(t - T) \,\Rightarrow\, Y_k = e^{-j k \Omega_0 T}\, X_k$$
+          $$y(t) = x(t - T) \,\Rightarrow\, Y_k = e^{-j k \omega_0 T}\, X_k$$
         </div>
         <div class="stack gap-item">
           <p>$|Y_k| = |X_k|$ — magnitudes preserved.</p>
@@ -142,7 +142,7 @@
       </div>
       <div class="cols even">
         <div class="bordered-math huge-math">
-          $$y(t) = x(t)\, e^{j K \Omega_0 t} \,\Rightarrow\, Y_k = X_{k-K}$$
+          $$y(t) = x(t)\, e^{j K \omega_0 t} \,\Rightarrow\, Y_k = X_{k-K}$$
         </div>
         <div class="stack gap-item">
           <p>Each Fourier coefficient slides $K$ slots to the right.</p>
@@ -160,7 +160,7 @@
         <div class="eyebrow">Worked example</div>
         <h1>Cosine times a half-duty pulse.</h1>
         <p>Let $s(t)$ be a symmetric pulse train of unit height, duty $\alpha = 1/2$.</p>
-        $$x(t) = s(t)\cos(\Omega_0 t) = s(t)\,\tfrac{e^{j\Omega_0 t} + e^{-j\Omega_0 t}}{2}$$
+        $$x(t) = s(t)\cos(\omega_0 t) = s(t)\,\tfrac{e^{j\omega_0 t} + e^{-j\omega_0 t}}{2}$$
       </div>
       <div class="stack gap-item">
         <div class="defn">
@@ -211,7 +211,7 @@
           $$y(t) = x(\beta t),\;\; \beta > 0 \,\Rightarrow\, Y_k = X_k$$
         </div>
         <div class="stack gap-item">
-          <p>Squeezing the time axis squeezes the period too — the harmonics ride along with $\Omega_0 \to \beta\Omega_0$.</p>
+          <p>Squeezing the time axis squeezes the period too — the harmonics ride along with $\omega_0 \to \beta\omega_0$.</p>
           <p>The coefficient values are unchanged. Only the underlying frequency grid shifts.</p>
           <p class="muted" style="font-size: var(--type-small);">No DFT analogue — the DFT lives on a fixed grid of size $N$.</p>
         </div>
@@ -234,7 +234,7 @@
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 1 · FS of $y$</div>
-          $\Omega_0=2\pi/4=\pi/2$
+          $\omega_0=2\pi/4=\pi/2$
           $$Y_k=e^{-jk\pi/2}\cdot\frac{1}{k}$$
         </div>
         <div class="step" style="margin-bottom:14px;">
@@ -304,12 +304,12 @@
         </div>
         <div class="cell">
           <div class="num">SHIFT</div>
-          <div class="what">$x(t-T) \leftrightarrow e^{-jk\Omega_0 T} X_k$</div>
+          <div class="what">$x(t-T) \leftrightarrow e^{-jk\omega_0 T} X_k$</div>
           <div class="how">Magnitude preserved; phase tilts.</div>
         </div>
         <div class="cell">
           <div class="num">MODULATE</div>
-          <div class="what">$x(t)e^{jK\Omega_0 t} \leftrightarrow X_{k-K}$</div>
+          <div class="what">$x(t)e^{jK\omega_0 t} \leftrightarrow X_{k-K}$</div>
           <div class="how">Slide the spectrum.</div>
         </div>
         <div class="cell">

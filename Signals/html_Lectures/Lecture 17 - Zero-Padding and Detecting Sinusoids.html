@@ -34,7 +34,7 @@
         <li><strong>Compute</strong> $Y$ from $S$ when $y$ is $s$ zero-padded to $N = ML$: $Y[kM] = S[k]$.</li>
         <li><strong>Use</strong> zero-padding as <em>spectral interpolation</em>: more $N$ ⇒ denser frequency samples.</li>
         <li><strong>Detect</strong> the frequency of a noisy sinusoid as a peak in the amplitude spectrum.</li>
-        <li><strong>Derive</strong> $|\langle v(\omega), s\rangle| = |\sin(L(\omega - \omega_0)/2) / \sin((\omega - \omega_0)/2)|$ — the spectral mainlobe.</li>
+        <li><strong>Derive</strong> $|\langle v(\Omega), s\rangle| = |\sin(L(\Omega - \Omega_0)/2) / \sin((\Omega - \Omega_0)/2)|$ — the spectral mainlobe.</li>
       </ol>
     </div>
     <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
@@ -98,11 +98,11 @@
       </div>
       <div class="cols even">
         <div class="bordered-math huge-math">
-          $$\omega_k \,=\, k\,\tfrac{2\pi}{N}$$
+          $$\Omega_k \,=\, k\,\tfrac{2\pi}{N}$$
         </div>
         <div class="stack gap-item">
           <p>Zero-padding does not add information — it interpolates the existing spectrum onto a finer grid.</p>
-          <p>For $N \gg L$, the amplitude spectrum looks almost continuous when plotted against $\omega$.</p>
+          <p>For $N \gg L$, the amplitude spectrum looks almost continuous when plotted against $\Omega$.</p>
           <p class="muted" style="font-size: var(--type-small);">Use it to <em>look</em> at the spectrum, not to gain resolution from new data.</p>
         </div>
       </div>
@@ -117,13 +117,13 @@
         <div class="eyebrow">Detecting a sinusoid</div>
         <h1>Peak in $|S|$ ⇒ frequency of $s$.</h1>
       </div>
-      <p>Sample a continuous sinusoid: $s[n] = A\cos(\omega_0 n + \phi) + \epsilon[n]$.</p>
+      <p>Sample a continuous sinusoid: $s[n] = A\cos(\Omega_0 n + \phi) + \epsilon[n]$.</p>
       <ul class="clean">
         <li>The two prominent peaks of $|S|$ sit at indices $k_0$ and $L - k_0$ — the symmetric DT frequency pair.</li>
         <li>$A$ and $\phi$ follow from the amplitude and phase at the peak.</li>
         <li>Noise scatters into a flat floor; if SNR is decent, the peaks stick out.</li>
       </ul>
-      <p class="muted" style="font-size: var(--type-small);">Aliasing concern: $\omega_0$ must be in $[0, \pi]$ for the sampled signal to faithfully represent the continuous one (L06).</p>
+      <p class="muted" style="font-size: var(--type-small);">Aliasing concern: $\Omega_0$ must be in $[0, \pi]$ for the sampled signal to faithfully represent the continuous one (L06).</p>
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
   </section>
@@ -132,19 +132,19 @@
     <div class="slide-chrome"><span class="left">Concept</span><span class="right">Spectral Mainlobe</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
-        <div class="eyebrow">When $\omega_0$ is not a Fourier frequency</div>
+        <div class="eyebrow">When $\Omega_0$ is not a Fourier frequency</div>
         <h1>The DFT samples a continuous mainlobe.</h1>
       </div>
       <div class="bordered-math big-math">
-        $$\langle v(\omega), s\rangle \,=\, \sum_{n=0}^{L-1} e^{j(\omega_0 - \omega)n} \,=\, e^{-j(L-1)(\omega-\omega_0)/2}\,\frac{\sin(L(\omega-\omega_0)/2)}{\sin((\omega-\omega_0)/2)}$$
+        $$\langle v(\Omega), s\rangle \,=\, \sum_{n=0}^{L-1} e^{j(\Omega_0 - \Omega)n} \,=\, e^{-j(L-1)(\Omega-\Omega_0)/2}\,\frac{\sin(L(\Omega-\Omega_0)/2)}{\sin((\Omega-\Omega_0)/2)}$$
       </div>
       <div class="cols even">
         <div class="defn">
           <div class="term">Modulus</div>
-          $$|\langle v(\omega),s\rangle| \,=\, \left|\frac{\sin(L(\omega-\omega_0)/2)}{\sin((\omega-\omega_0)/2)}\right|$$
+          $$|\langle v(\Omega),s\rangle| \,=\, \left|\frac{\sin(L(\Omega-\Omega_0)/2)}{\sin((\Omega-\Omega_0)/2)}\right|$$
         </div>
         <div class="stack gap-item">
-          <p>Max value $L$, reached at $\omega = \omega_0$.</p>
+          <p>Max value $L$, reached at $\Omega = \Omega_0$.</p>
           <p>Width of the mainlobe shrinks like $\sim 2\pi/L$ — longer sample, sharper peak.</p>
           <p class="muted" style="font-size: var(--type-small);">This is the <em>Dirichlet kernel</em> in disguise.</p>
         </div>
@@ -154,11 +154,11 @@
   </section>
 
   <section data-label="08 Practice">
-    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Locate $\omega_0$</span></div>
+    <div class="slide-chrome"><span class="left">Practice</span><span class="right">Locate $\Omega_0$</span></div>
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Practice</div>
-        <h1>Detect $\omega_0$ from samples of<br/>a complex sinusoid.</h1>
+        <h1>Detect $\Omega_0$ from samples of<br/>a complex sinusoid.</h1>
       </div>
       <div class="defn">
         <div class="term">Setup</div>
@@ -167,7 +167,7 @@
       <ul class="clean">
         <li>Compute the length-$L$ DFT. Where is the peak?</li>
         <li>Zero-pad to $N = 1000$. Where is the peak now?</li>
-        <li>Compare the two peak positions to $\omega_0/2\pi$.</li>
+        <li>Compare the two peak positions to $\Omega_0/2\pi$.</li>
       </ul>
     </div>
     <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L17</span></div>
@@ -185,7 +185,7 @@
         </div>
         <div class="step">
           <div class="step-label">Zero-padded to 1000</div>
-          <p style="margin: 0;">Now $f_k = k/1000$. The peak lands at $k = 317$ — i.e. $f = 0.317$, the exact $\omega_0/2\pi$.</p>
+          <p style="margin: 0;">Now $f_k = k/1000$. The peak lands at $k = 317$ — i.e. $f = 0.317$, the exact $\Omega_0/2\pi$.</p>
         </div>
       </div>
       <div class="defn">
@@ -237,22 +237,22 @@
     <div class="cols" style="margin-top: 24px;">
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example B · §3.8.2</div>
-        <h1>Detect $\omega_0$ from a short<br/>sinusoidal vector.</h1>
+        <h1>Detect $\Omega_0$ from a short<br/>sinusoidal vector.</h1>
         <p style="font-size:16px; margin: 4px 0 8px;">$s[n]=\cos(0.7\pi n)$, $n=0{:}7$ ($L=8$). Zero-pad to $N=32$.</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 1 · True peak bin</div>
-          $k_0=\omega_0 N/(2\pi)=0.7\pi\cdot32/(2\pi)=11.2$ (non-integer)
+          $k_0=\Omega_0 N/(2\pi)=0.7\pi\cdot32/(2\pi)=11.2$ (non-integer)
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · Nearest bin</div>
-          Closest Fourier frequency: $k=11$ ($\omega=0.6875\pi$).
-          $$\hat\omega_0=11\cdot2\pi/32\approx0.6875\pi$$
+          Closest Fourier frequency: $k=11$ ($\Omega=0.6875\pi$).
+          $$\hat\Omega_0=11\cdot2\pi/32\approx0.6875\pi$$
         </div>
         <div class="defn" style="margin-top:8px;">
           <div class="term">Resolution</div>
-          <p style="margin:0; font-size:15px;">$\Delta\omega=2\pi/N=\pi/16$.&ensp;Larger $N$ $\Rightarrow$ finer resolution.</p>
+          <p style="margin:0; font-size:15px;">$\Delta\Omega=2\pi/N=\pi/16$.&ensp;Larger $N$ $\Rightarrow$ finer resolution.</p>
         </div>
       </div>
     </div>
@@ -276,7 +276,7 @@
         </div>
         <div class="cell">
           <div class="num">02 · INTERPOLATION</div>
-          <div class="what">Larger $N$ ⇒ denser $\omega_k$.</div>
+          <div class="what">Larger $N$ ⇒ denser $\Omega_k$.</div>
           <div class="how">Spectrum becomes near-continuous.</div>
         </div>
         <div class="cell">

@@ -119,42 +119,41 @@
             <!-- axes -->
             <line x1="30" y1="240" x2="670" y2="240" stroke="#1A1A1A" stroke-width="1.5" marker-end="url(#aL5a)"/>
             <text x="640" y="265" font-size="18">t</text>
-            <!-- continuous curve: cos(400pi/3 * t - pi/8); plot over t in [0, 0.045]. amplitude=100, baseline=240; map t->x: 0..640 => 50..650 -->
-            <path d="M 50,140 Q 70,340 130,140 Q 190,-60 250,140 Q 310,340 370,140 Q 430,-60 490,140 Q 550,340 610,140"
+            <!-- continuous curve: x(t) = cos(400pi/3 * t - pi/8); t in [0, 0.043] s; baseline=240, amplitude=100; x_px = 50 + t_ms*(40/3); y_px = 240 - 100*x(t) -->
+            <path d="M 50.0,147.6 L 54.4,143.2 L 58.9,140.6 L 63.3,140.0 L 67.8,141.4 L 72.2,144.6 L 76.7,149.7 L 81.1,156.6 L 85.6,165.1 L 90.0,175.1 L 94.4,186.3 L 98.9,198.5 L 103.3,211.6 L 107.8,225.2 L 112.2,239.1 L 116.7,253.1 L 121.1,266.7 L 125.6,279.9 L 130.0,292.2 L 134.4,303.6 L 138.9,313.7 L 143.3,322.4 L 147.8,329.5 L 152.2,334.8 L 156.7,338.3 L 161.1,339.9 L 165.6,339.5 L 170.0,337.2 L 174.4,333.0 L 178.9,327.0 L 183.3,319.3 L 187.8,310.1 L 192.2,299.5 L 196.7,287.7 L 201.1,275.0 L 205.6,261.6 L 210.0,247.8 L 214.4,233.9 L 218.9,220.1 L 223.3,206.6 L 227.8,193.8 L 232.2,181.9 L 236.7,171.2 L 241.1,161.7 L 245.6,153.8 L 250.0,147.6 L 254.4,143.2 L 258.9,140.6 L 263.3,140.0 L 267.8,141.4 L 272.2,144.6 L 276.7,149.7 L 281.1,156.6 L 285.6,165.1 L 290.0,175.1 L 294.4,186.3 L 298.9,198.5 L 303.3,211.6 L 307.8,225.2 L 312.2,239.1 L 316.7,253.1 L 321.1,266.7 L 325.6,279.9 L 330.0,292.2 L 334.4,303.6 L 338.9,313.7 L 343.3,322.4 L 347.8,329.5 L 352.2,334.8 L 356.7,338.3 L 361.1,339.9 L 365.6,339.5 L 370.0,337.2 L 374.4,333.0 L 378.9,327.0 L 383.3,319.3 L 387.8,310.1 L 392.2,299.5 L 396.7,287.7 L 401.1,275.0 L 405.6,261.6 L 410.0,247.8 L 414.4,233.9 L 418.9,220.1 L 423.3,206.6 L 427.8,193.8 L 432.2,181.9 L 436.7,171.2 L 441.1,161.7 L 445.6,153.8 L 450.0,147.6 L 454.4,143.2 L 458.9,140.6 L 463.3,140.0 L 467.8,141.4 L 472.2,144.6 L 476.7,149.7 L 481.1,156.6 L 485.6,165.1 L 490.0,175.1 L 494.4,186.3 L 498.9,198.5 L 503.3,211.6 L 507.8,225.2 L 512.2,239.1 L 516.7,253.1 L 521.1,266.7 L 525.6,279.9 L 530.0,292.2 L 534.4,303.6 L 538.9,313.7 L 543.3,322.4 L 547.8,329.5 L 552.2,334.8 L 556.7,338.3 L 561.1,339.9 L 565.6,339.5 L 570.0,337.2 L 574.4,333.0 L 578.9,327.0 L 583.3,319.3 L 587.8,310.1 L 592.2,299.5 L 596.7,287.7 L 601.1,275.0 L 605.6,261.6 L 610.0,247.8 L 614.4,233.9 L 618.9,220.1 L 623.3,206.6"
                   fill="none" stroke="#1A1A1A" stroke-width="2"/>
-            <!-- Smooth approximation; we'll show two rounds of samples -->
 
-            <!-- T_s = 3 ms samples (blue): n=0,1,2,...; t = 0, 3, 6, 9, 12, 15... ms; x-positions every 40px -->
+            <!-- T_s = 3 ms samples (blue): n=0..14; t = 0,3,...,42 ms; x_px = 50 + n*40, y_px computed exactly on x(t) -->
             <g fill="#2A4A7A">
-              <circle cx="50" cy="184" r="6"/>
-              <circle cx="90" cy="320" r="6"/>
-              <circle cx="130" cy="140" r="6"/>
-              <circle cx="170" cy="280" r="6"/>
-              <circle cx="210" cy="40" r="6"/>
-              <circle cx="250" cy="200" r="6"/>
-              <circle cx="290" cy="300" r="6"/>
-              <circle cx="330" cy="100" r="6"/>
-              <circle cx="370" cy="240" r="6"/>
-              <circle cx="410" cy="50" r="6"/>
-              <circle cx="450" cy="180" r="6"/>
-              <circle cx="490" cy="320" r="6"/>
-              <circle cx="530" cy="140" r="6"/>
-              <circle cx="570" cy="280" r="6"/>
-              <circle cx="610" cy="40" r="6"/>
+              <circle cx="50.0" cy="147.6" r="6"/>
+              <circle cx="90.0" cy="175.1" r="6"/>
+              <circle cx="130.0" cy="292.2" r="6"/>
+              <circle cx="170.0" cy="337.2" r="6"/>
+              <circle cx="210.0" cy="247.8" r="6"/>
+              <circle cx="250.0" cy="147.6" r="6"/>
+              <circle cx="290.0" cy="175.1" r="6"/>
+              <circle cx="330.0" cy="292.2" r="6"/>
+              <circle cx="370.0" cy="337.2" r="6"/>
+              <circle cx="410.0" cy="247.8" r="6"/>
+              <circle cx="450.0" cy="147.6" r="6"/>
+              <circle cx="490.0" cy="175.1" r="6"/>
+              <circle cx="530.0" cy="292.2" r="6"/>
+              <circle cx="570.0" cy="337.2" r="6"/>
+              <circle cx="610.0" cy="247.8" r="6"/>
             </g>
             <text x="50" y="450" font-size="20" fill="#2A4A7A">● $T_s$ = 3.0 ms (denser)</text>
 
-            <!-- T_s = 5 ms samples (red squares): every 66.6px -->
+            <!-- T_s = 5 ms samples (red squares): n=0..8; t = 0,5,...,40 ms; x_px = 50 + n*(200/3), y_px computed exactly on x(t) -->
             <g fill="#7A1A1A">
-              <rect x="44" y="178" width="12" height="12"/>
-              <rect x="111" y="282" width="12" height="12"/>
-              <rect x="178" y="48" width="12" height="12"/>
-              <rect x="244" y="270" width="12" height="12"/>
-              <rect x="311" y="110" width="12" height="12"/>
-              <rect x="378" y="244" width="12" height="12"/>
-              <rect x="444" y="60" width="12" height="12"/>
-              <rect x="511" y="288" width="12" height="12"/>
-              <rect x="578" y="98" width="12" height="12"/>
+              <rect x="44.0" y="141.6" width="12" height="12"/>
+              <rect x="110.7" y="247.1" width="12" height="12"/>
+              <rect x="177.3" y="313.3" width="12" height="12"/>
+              <rect x="244.0" y="141.6" width="12" height="12"/>
+              <rect x="310.7" y="247.1" width="12" height="12"/>
+              <rect x="377.3" y="313.3" width="12" height="12"/>
+              <rect x="444.0" y="141.6" width="12" height="12"/>
+              <rect x="510.7" y="247.1" width="12" height="12"/>
+              <rect x="577.3" y="313.3" width="12" height="12"/>
             </g>
             <text x="340" y="450" font-size="20" fill="#7A1A1A">■ $T_s$ = 5.0 ms (sparser)</text>
           </svg>
@@ -264,16 +263,16 @@
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example A · §1.6.2</div>
         <h1>Sample $x(t)=\cos(400\pi t/3)$<br/>at $f_s=200$ Hz.</h1>
-        <p style="font-size:16px; margin: 4px 0 8px;">Find the discrete-time frequency $\omega$.</p>
+        <p style="font-size:16px; margin: 4px 0 8px;">Find the discrete-time frequency $\Omega$.</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 1 · Continuous-time frequency</div>
-          $\Omega=400\pi/3$ rad/s, so $f=\Omega/2\pi=200/3\approx66.7$ Hz
+          $\omega=400\pi/3$ rad/s, so $f=\omega/2\pi=200/3\approx66.7$ Hz
         </div>
         <div class="step" style="margin-bottom:14px;">
-          <div class="step-label">Step 2 · Apply $\omega=\Omega T_s$</div>
-          $$\omega=\frac{400\pi}{3}\cdot\frac{1}{200}=\frac{2\pi}{3}\text{ rad/sample}$$
+          <div class="step-label">Step 2 · Apply $\Omega=\omega T_s$</div>
+          $$\Omega=\frac{400\pi}{3}\cdot\frac{1}{200}=\frac{2\pi}{3}\text{ rad/sample}$$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 3 · Discrete-time sinusoid</div>
@@ -281,7 +280,7 @@
         </div>
         <div class="defn" style="margin-top:8px;">
           <div class="term">Formula</div>
-          <p style="margin:0; font-size:15px;">$\omega=2\pi f/f_s$. Here $f/f_s=(200/3)/200=1/3$, so $\omega=2\pi/3$.</p>
+          <p style="margin:0; font-size:15px;">$\Omega=2\pi f/f_s$. Here $f/f_s=(200/3)/200=1/3$, so $\Omega=2\pi/3$.</p>
         </div>
       </div>
     </div>

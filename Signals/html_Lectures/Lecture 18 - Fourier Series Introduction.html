@@ -31,8 +31,8 @@
         <h1>Identify harmonics<br/>and write down Fourier series.</h1>
       </div>
       <ol class="numbered">
-        <li><strong>Identify</strong> the fundamental period $T_0$, fundamental frequency $\Omega_0 = 2\pi/T_0$, and harmonics $k\Omega_0$.</li>
-        <li><strong>Write</strong> the complex Fourier series $s(t) = \sum_{k\in\mathbb{Z}} S_k e^{jk\Omega_0 t}$.</li>
+        <li><strong>Identify</strong> the fundamental period $T_0$, fundamental frequency $\omega_0 = 2\pi/T_0$, and harmonics $k\omega_0$.</li>
+        <li><strong>Write</strong> the complex Fourier series $s(t) = \sum_{k\in\mathbb{Z}} S_k e^{jk\omega_0 t}$.</li>
         <li><strong>Recognise</strong> real signals via $S_{-k} = S_{k}^{*}$.</li>
         <li><strong>Anticipate</strong> the analysis equation — an inner product as an integral.</li>
       </ol>
@@ -49,7 +49,7 @@
       </div>
       <div class="cols even">
         <div class="bordered-math big-math">
-          $$T_0 \;\;\to\;\; f_0 = \tfrac{1}{T_0}\;\text{(Hz)},\;\; \Omega_0 = \tfrac{2\pi}{T_0}\;\text{(rad/s)}$$
+          $$T_0 \;\;\to\;\; f_0 = \tfrac{1}{T_0}\;\text{(Hz)},\;\; \omega_0 = \tfrac{2\pi}{T_0}\;\text{(rad/s)}$$
         </div>
         <div class="stack gap-item">
           <p>The <strong>fundamental period</strong> is the smallest $T_0 > 0$ for which the identity holds.</p>
@@ -65,15 +65,15 @@
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Harmonics</div>
-        <h1>$v^{(k)}(t) = e^{j k \Omega_0 t}$ for $k \in \mathbb{Z}$.</h1>
+        <h1>$v^{(k)}(t) = e^{j k \omega_0 t}$ for $k \in \mathbb{Z}$.</h1>
       </div>
       <div class="cols even">
         <div class="bordered-math big-math">
-          $$\Omega_k \,=\, k\,\Omega_0$$
+          $$\omega_k \,=\, k\,\omega_0$$
         </div>
         <div class="stack gap-item">
-          <p>The positive multiples $2\Omega_0, 3\Omega_0, \ldots$ are the <strong>harmonics</strong> of $\Omega_0$.</p>
-          <p>These are the <em>only</em> complex sinusoids $e^{j\Omega t}$ periodic with period $T_0$.</p>
+          <p>The positive multiples $2\omega_0, 3\omega_0, \ldots$ are the <strong>harmonics</strong> of $\omega_0$.</p>
+          <p>These are the <em>only</em> complex sinusoids $e^{j\omega t}$ periodic with period $T_0$.</p>
           <p class="muted" style="font-size: var(--type-small);">Compare with the discrete case (L04, L11): both have a discrete set of "allowed" frequencies, but here the set is infinite.</p>
         </div>
       </div>
@@ -129,7 +129,7 @@
         <h1>Periodic $s(t)$ as a sum<br/>of harmonics.</h1>
       </div>
       <div class="bordered-math huge-math">
-        $$s(t) \,=\, \sum_{k=-\infty}^{\infty} S_k\, e^{j k \Omega_0 t}$$
+        $$s(t) \,=\, \sum_{k=-\infty}^{\infty} S_k\, e^{j k \omega_0 t}$$
       </div>
       <div class="cols even">
         <div class="defn">
@@ -159,7 +159,7 @@
       <div class="stack gap-item">
         <div class="step">
           <div class="step-label">Convert each cosine to two exponentials</div>
-          $$A\cos(\Omega t + \phi) = \tfrac{A}{2}\,e^{j\phi}\,e^{j\Omega t} + \tfrac{A}{2}\,e^{-j\phi}\,e^{-j\Omega t}$$
+          $$A\cos(\omega t + \phi) = \tfrac{A}{2}\,e^{j\phi}\,e^{j\omega t} + \tfrac{A}{2}\,e^{-j\phi}\,e^{-j\omega t}$$
         </div>
         <div class="defn">
           <div class="term">Nonzero coefficients</div>
@@ -180,7 +180,7 @@
         <div class="eyebrow">Sawtooth wave</div>
         <h1>Infinitely many harmonics —<br/>and Gibbs ringing at the jumps.</h1>
         <div class="bordered-math big-math" style="margin-top: 4px;">
-          $$s(t) \,=\, \sum_{k=1}^{\infty}\, \tfrac{2(-1)^{k+1}}{\pi k}\,\sin(k\Omega_0 t)$$
+          $$s(t) \,=\, \sum_{k=1}^{\infty}\, \tfrac{2(-1)^{k+1}}{\pi k}\,\sin(k\omega_0 t)$$
         </div>
         <p style="margin-top: 14px;">Truncating to $K$ terms approximates the sawtooth $s(t) = 2t/T_0$ on $(-T_0/2, T_0/2)$.</p>
         <p>Near each discontinuity the partial sums overshoot by ~$9\%$ — the <strong>Gibbs phenomenon</strong>. More terms narrow the ripple but do not eliminate the overshoot.</p>
@@ -249,7 +249,7 @@
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 1 · Analysis integral</div>
-          $$X_k=\frac{1}{T_0}\int_{-T_0/2}^{T_0/2}x(t)e^{-jk\Omega_0 t}dt,\;\Omega_0=2\pi/T_0$$
+          $$X_k=\frac{1}{T_0}\int_{-T_0/2}^{T_0/2}x(t)e^{-jk\omega_0 t}dt,\;\omega_0=2\pi/T_0$$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · Integrate piecewise</div>
@@ -285,12 +285,12 @@
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 1 · Synthesis (keeping $|k|\leq3$)</div>
-          $$\hat x(t)=\sum_{|k|\leq3}X_k e^{jk\Omega_0 t}$$
+          $$\hat x(t)=\sum_{|k|\leq3}X_k e^{jk\omega_0 t}$$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · Apply $X_{-k}=X_k^*$ for real signals</div>
-          $$\hat x(t)=2\mathrm{Re}\{X_1 e^{j\Omega_0 t}\}+2\mathrm{Re}\{X_3 e^{j3\Omega_0 t}\}$$
-          $$=\frac{4}{\pi}\cos(\Omega_0 t)-\frac{4}{3\pi}\cos(3\Omega_0 t)$$
+          $$\hat x(t)=2\mathrm{Re}\{X_1 e^{j\omega_0 t}\}+2\mathrm{Re}\{X_3 e^{j3\omega_0 t}\}$$
+          $$=\frac{4}{\pi}\cos(\omega_0 t)-\frac{4}{3\pi}\cos(3\omega_0 t)$$
         </div>
         <div class="defn" style="margin-top:8px;">
           <div class="term">Gibbs phenomenon</div>
@@ -313,12 +313,12 @@
       <div class="summary-grid">
         <div class="cell">
           <div class="num">01 · HARMONICS</div>
-          <div class="what">$\Omega_k = k\Omega_0$</div>
-          <div class="how">Integer multiples of $\Omega_0 = 2\pi/T_0$.</div>
+          <div class="what">$\omega_k = k\omega_0$</div>
+          <div class="how">Integer multiples of $\omega_0 = 2\pi/T_0$.</div>
         </div>
         <div class="cell">
           <div class="num">02 · SYNTHESIS</div>
-          <div class="what">$s(t) = \sum_k S_k e^{j k \Omega_0 t}$</div>
+          <div class="what">$s(t) = \sum_k S_k e^{j k \omega_0 t}$</div>
           <div class="how">Infinite sum — convergence required.</div>
         </div>
         <div class="cell">

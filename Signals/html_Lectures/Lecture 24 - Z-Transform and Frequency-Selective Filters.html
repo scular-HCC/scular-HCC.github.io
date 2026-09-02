@@ -54,7 +54,7 @@
         <div class="stack gap-item">
           <p>For finite-duration $x$, always well-defined.</p>
           <p>For infinite-duration $x$, convergence depends on $|z|$ — that's the <em>region of convergence</em>.</p>
-          <p class="muted" style="font-size: var(--type-small);">$X(e^{j\omega})$ is the $z$-transform restricted to the unit circle — the DTFT.</p>
+          <p class="muted" style="font-size: var(--type-small);">$X(e^{j\Omega})$ is the $z$-transform restricted to the unit circle — the DTFT.</p>
         </div>
       </div>
     </div>
@@ -115,7 +115,7 @@
       </div>
       <div class="cols" style="grid-template-columns: 1fr 1.2fr; gap: 60px;">
         <div class="stack gap-item">
-          <p>$H(e^{j\omega}) = 1$ for $|\omega| \leq \omega_c$, $0$ otherwise.</p>
+          <p>$H(e^{j\Omega}) = 1$ for $|\Omega| \leq \Omega_c$, $0$ otherwise.</p>
           <p>A finite sum of cosines is smooth — no flat sections, no discontinuities. So no FIR filter (and in fact, <em>no</em> realisable filter) can achieve this exactly.</p>
         </div>
         <div>
@@ -125,14 +125,14 @@
               <desc id="l24f1-d">A piecewise constant rectangle: the response is the constant value A from minus omega-c to plus omega-c, and zero outside that interval, plotted against omega from minus pi to pi. The corners at plus and minus omega-c are sharp.</desc>
               <line x1="30" y1="220" x2="510" y2="220" stroke="#1A1A1A" stroke-width="1.5"/>
               <line x1="270" y1="240" x2="270" y2="40" stroke="#1A1A1A" stroke-width="1.5"/>
-              <text x="490" y="240" font-size="16" font-style="italic">ω</text>
-              <text x="278" y="56" font-size="14" font-family="Inter, sans-serif">|H(e^{jω})|</text>
+              <text x="490" y="240" font-size="16" font-style="italic">Ω</text>
+              <text x="278" y="56" font-size="14" font-family="Inter, sans-serif">|H(e^{jΩ})|</text>
               <!-- ideal rectangle -->
               <path d="M 90,220 L 190,220 L 190,80 L 350,80 L 350,220 L 450,220" fill="none" stroke="#7A1A1A" stroke-width="3"/>
               <line x1="190" y1="220" x2="190" y2="80" stroke="#7A1A1A" stroke-width="3" stroke-dasharray="3 3"/>
               <line x1="350" y1="220" x2="350" y2="80" stroke="#7A1A1A" stroke-width="3" stroke-dasharray="3 3"/>
-              <text x="172" y="244" font-size="14" fill="#7A746B">−ω_c</text>
-              <text x="334" y="244" font-size="14" fill="#7A746B">ω_c</text>
+              <text x="172" y="244" font-size="14" fill="#7A746B">−Ω_c</text>
+              <text x="334" y="244" font-size="14" fill="#7A746B">Ω_c</text>
               <text x="60" y="244" font-size="14" fill="#7A746B">−π</text>
               <text x="448" y="244" font-size="14" fill="#7A746B">π</text>
               <text x="200" y="75" font-size="14" fill="#7A1A1A">A</text>
@@ -155,17 +155,17 @@
       <div class="summary-grid">
         <div class="cell">
           <div class="num">PASSBAND</div>
-          <div class="what">$[0,\, \omega_p]$</div>
+          <div class="what">$[0,\, \Omega_p]$</div>
           <div class="how">$|H| \in [A(1-\delta),\, A(1+\delta)]$. $\delta$ = ripple.</div>
         </div>
         <div class="cell">
           <div class="num">STOPBAND</div>
-          <div class="what">$[\omega_s,\, \pi]$</div>
+          <div class="what">$[\Omega_s,\, \pi]$</div>
           <div class="how">$|H| \leq A\,\epsilon$. $1/\epsilon$ = attenuation.</div>
         </div>
         <div class="cell">
           <div class="num">TRANSITION</div>
-          <div class="what">$[\omega_p,\, \omega_s]$</div>
+          <div class="what">$[\Omega_p,\, \Omega_s]$</div>
           <div class="how">$|H|$ drops from $A(1-\delta)$ to $A\,\epsilon$.</div>
         </div>
         <div class="cell">
@@ -187,11 +187,11 @@
       </div>
       <div class="cols even">
         <div class="bordered-math huge-math">
-          $$H(e^{j\omega}) \,=\, e^{-j\omega M/2}\,F(\omega)$$
+          $$H(e^{j\Omega}) \,=\, e^{-j\Omega M/2}\,F(\Omega)$$
         </div>
         <div class="stack gap-item">
-          <p>$F(\omega)$ is a real-valued sum of cosines — its sign and magnitude do all the spectral shaping.</p>
-          <p>Phase response in the passband is exactly $-M\omega/2$: uniform delay of $M/2$ samples.</p>
+          <p>$F(\Omega)$ is a real-valued sum of cosines — its sign and magnitude do all the spectral shaping.</p>
+          <p>Phase response in the passband is exactly $-M\Omega/2$: uniform delay of $M/2$ samples.</p>
           <p class="muted" style="font-size: var(--type-small);">Bigger $M$ ⇒ better approximation, longer delay. The trade-off.</p>
         </div>
       </div>
@@ -210,7 +210,7 @@
         <div class="bordered-math big-math">
           $$\tilde{b}_n = (-1)^{n}\, b_n$$
           <div style="height: 10px;"></div>
-          $$\tilde{H}(e^{j\omega}) \,=\, H(e^{j(\omega - \pi)})$$
+          $$\tilde{H}(e^{j\Omega}) \,=\, H(e^{j(\Omega - \pi)})$$
         </div>
         <div class="stack gap-item">
           <p>Multiplication by $(-1)^{n}$ is modulation by the highest discrete-time frequency $\pi$ — shifts the spectrum by $\pi$ radians per sample.</p>
@@ -226,14 +226,14 @@
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Practice</div>
-        <h1>Express $|H(e^{j\omega})|^{2}$<br/>as a sum of cosines.</h1>
+        <h1>Express $|H(e^{j\Omega})|^{2}$<br/>as a sum of cosines.</h1>
       </div>
       <div class="defn">
         <div class="term">Filter</div>
         $$b = (1, 2)^{\top},\;\; H(z) = 1 + 2 z^{-1}$$
       </div>
       <ul class="clean">
-        <li>Use $|H|^{2} = H(e^{j\omega})\,H^{*}(e^{j\omega}) = H(e^{j\omega})\,H(e^{-j\omega})$.</li>
+        <li>Use $|H|^{2} = H(e^{j\Omega})\,H^{*}(e^{j\Omega}) = H(e^{j\Omega})\,H(e^{-j\Omega})$.</li>
         <li>Expand the product and collect.</li>
       </ul>
     </div>
@@ -241,23 +241,23 @@
   </section>
 
   <section data-label="11 Solution">
-    <div class="slide-chrome"><span class="left">Solution</span><span class="right">$|H|^{2} = 5 + 4\cos\omega$</span></div>
+    <div class="slide-chrome"><span class="left">Solution</span><span class="right">$|H|^{2} = 5 + 4\cos\Omega$</span></div>
     <div class="cols even" style="margin-top: 28px;">
       <div class="stack gap-item">
         <div class="step">
           <div class="step-label">Product</div>
-          $$H(e^{j\omega})\,H(e^{-j\omega}) \,=\, (1 + 2 e^{-j\omega})(1 + 2 e^{j\omega})$$
+          $$H(e^{j\Omega})\,H(e^{-j\Omega}) \,=\, (1 + 2 e^{-j\Omega})(1 + 2 e^{j\Omega})$$
         </div>
         <div class="step">
           <div class="step-label">Expand</div>
-          $$=\, 1 + 2 e^{j\omega} + 2 e^{-j\omega} + 4$$
-          $$=\, 5 + 4\cos\omega$$
+          $$=\, 1 + 2 e^{j\Omega} + 2 e^{-j\Omega} + 4$$
+          $$=\, 5 + 4\cos\Omega$$
         </div>
       </div>
       <div class="defn">
         <div class="term">Sanity check</div>
-        <p style="margin: 0;">At $\omega = 0$: $|H|^{2} = 5 + 4 = 9 = 3^{2}$. And $H(1) = 1 + 2 = 3$. $\checkmark$</p>
-        <p style="margin: 8px 0 0;">At $\omega = \pi$: $|H|^{2} = 5 - 4 = 1 = 1^{2}$. And $H(-1) = 1 - 2 = -1$. $\checkmark$</p>
+        <p style="margin: 0;">At $\Omega = 0$: $|H|^{2} = 5 + 4 = 9 = 3^{2}$. And $H(1) = 1 + 2 = 3$. $\checkmark$</p>
+        <p style="margin: 8px 0 0;">At $\Omega = \pi$: $|H|^{2} = 5 - 4 = 1 = 1^{2}$. And $H(-1) = 1 - 2 = -1$. $\checkmark$</p>
         <p style="margin: 8px 0 0;" class="muted">$|H|^{2}$ as a finite cosine sum: always available, always real, no quadrant issues.</p>
       </div>
     </div>
@@ -272,7 +272,7 @@
     <div class="cols" style="margin-top: 24px;">
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example A · §4.5</div>
-        <h1>3-point moving average:<br/>find $|H(e^{j\omega})|$ and zeros.</h1>
+        <h1>3-point moving average:<br/>find $|H(e^{j\Omega})|$ and zeros.</h1>
         <p style="font-size:16px; margin: 4px 0 8px;">$y[n]=\frac{1}{3}(x[n]+x[n-1]+x[n-2])$.</p>
       </div>
       <div class="stack gap-item">
@@ -282,12 +282,12 @@
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · Frequency response</div>
-          $H(e^{j\omega})=\frac{e^{-j\omega}}{3}(e^{j\omega}+1+e^{-j\omega})=\frac{e^{-j\omega}(1+2\cos\omega)}{3}$
-          $$|H(e^{j\omega})|=\frac{|1+2\cos\omega|}{3}$$
+          $H(e^{j\Omega})=\frac{e^{-j\Omega}}{3}(e^{j\Omega}+1+e^{-j\Omega})=\frac{e^{-j\Omega}(1+2\cos\Omega)}{3}$
+          $$|H(e^{j\Omega})|=\frac{|1+2\cos\Omega|}{3}$$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 3 · Zeros</div>
-          $1+2\cos\omega=0\Rightarrow\cos\omega=-1/2\Rightarrow\omega=2\pi/3,4\pi/3$
+          $1+2\cos\Omega=0\Rightarrow\cos\Omega=-1/2\Rightarrow\Omega=2\pi/3,4\pi/3$
         </div>
       </div>
     </div>

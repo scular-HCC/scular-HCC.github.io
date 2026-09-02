@@ -34,8 +34,8 @@
       <ol class="numbered">
         <li><strong>Write</strong> $A\cos(\omega t + \phi)$ as $\Re\{A e^{j\phi}\, e^{j\omega t}\}$ — the stationary phasor is $A e^{j\phi}$.</li>
         <li><strong>Add</strong> sinusoids of the same frequency by adding their phasors.</li>
-        <li><strong>Recognise</strong> that DT frequencies $\omega$ and $\omega + 2\pi$, or $\omega$ and $-\omega$, are equivalent — the effective range is $[0, \pi]$.</li>
-        <li><strong>Determine</strong> when a DT sinusoid is periodic: $\omega = (k/N)\,2\pi$.</li>
+        <li><strong>Recognise</strong> that DT frequencies $\Omega$ and $\Omega + 2\pi$, or $\Omega$ and $-\Omega$, are equivalent — the effective range is $[0, \pi]$.</li>
+        <li><strong>Determine</strong> when a DT sinusoid is periodic: $\Omega = (k/N)\,2\pi$.</li>
       </ol>
     </div>
     <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
@@ -131,12 +131,12 @@
       </div>
       <div class="cols even">
         <div class="bordered-math huge-math">
-          $$x[n] \,=\, A\cos(\omega n + \phi)$$
+          $$x[n] \,=\, A\cos(\Omega n + \phi)$$
         </div>
         <div class="stack gap-item">
           <dl class="kv">
             <dt>$n$</dt><dd>integer sample index</dd>
-            <dt>$\omega$</dt><dd>radians <em>per sample</em></dd>
+            <dt>$\Omega$</dt><dd>radians <em>per sample</em></dd>
             <dt>$A,\,\phi$</dt><dd>amplitude, initial phase</dd>
           </dl>
           <p class="muted" style="font-size: var(--type-small);">Seconds, Hz, periods/sec — none of it appears in this formula.</p>
@@ -151,21 +151,21 @@
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Which frequencies are the same?</div>
-        <h1>Mod $2\pi$. And $\omega \leftrightarrow -\omega$<br/>for real-valued signals.</h1>
+        <h1>Mod $2\pi$. And $\Omega \leftrightarrow -\Omega$<br/>for real-valued signals.</h1>
       </div>
       <div class="cols even">
         <div class="defn">
           <div class="term">Mod $2\pi$ (complex or real)</div>
-          $$e^{j(\omega + 2\pi)n} = e^{j\omega n}\, e^{j 2\pi n} = e^{j\omega n}$$
+          $$e^{j(\Omega + 2\pi)n} = e^{j\Omega n}\, e^{j 2\pi n} = e^{j\Omega n}$$
         </div>
         <div class="defn">
           <div class="term">Sign flip (real only)</div>
-          $$\cos(\omega n + \phi) = \cos(-\omega n - \phi)$$
+          $$\cos(\Omega n + \phi) = \cos(-\Omega n - \phi)$$
         </div>
       </div>
       <div class="defn">
         <div class="term">Effective range for real DT sinusoids</div>
-        $$\omega \in [0,\, \pi] \qquad 0 = \text{lowest (DC)},\;\; \pi = \text{highest (alternating)}$$
+        $$\Omega \in [0,\, \pi] \qquad 0 = \text{lowest (DC)},\;\; \pi = \text{highest (alternating)}$$
       </div>
     </div>
     <div class="slide-footer"><span class="label">Convention</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
@@ -176,7 +176,7 @@
     <div class="cols" style="margin-top: 28px;">
       <div class="stack gap-item">
         <div class="eyebrow">Worked example</div>
-        <h1>Find the smallest equivalent $\omega$.</h1>
+        <h1>Find the smallest equivalent $\Omega$.</h1>
 
         <div class="step" style="margin-top: 8px;">
           <div class="step-label">Complex case</div>
@@ -203,11 +203,11 @@
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Practice</div>
-        <h1>What does $x[n]$ look like<br/>at $\omega = 0$ and $\omega = \pi$?</h1>
+        <h1>What does $x[n]$ look like<br/>at $\Omega = 0$ and $\Omega = \pi$?</h1>
       </div>
       <ul class="clean">
-        <li>$\omega = 0$ — the lowest frequency. What's the simplest closed-form for $x[n]$?</li>
-        <li>$\omega = \pi$ — the highest. What pattern do consecutive samples follow?</li>
+        <li>$\Omega = 0$ — the lowest frequency. What's the simplest closed-form for $x[n]$?</li>
+        <li>$\Omega = \pi$ — the highest. What pattern do consecutive samples follow?</li>
       </ul>
     </div>
     <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
@@ -217,12 +217,12 @@
     <div class="slide-chrome"><span class="left">Solution</span><span class="right">Endpoints of $[0, \pi]$</span></div>
     <div class="cols even" style="margin-top: 28px;">
       <div class="defn">
-        <div class="term">$\omega = 0$ — DC</div>
+        <div class="term">$\Omega = 0$ — DC</div>
         $$x[n] = A\cos\phi$$
         <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">A constant sequence. Every sample takes the same value $A\cos\phi$. The signal does not oscillate at all.</p>
       </div>
       <div class="defn">
-        <div class="term">$\omega = \pi$ — Nyquist</div>
+        <div class="term">$\Omega = \pi$ — Nyquist</div>
         $$x[n] = A\cos(\pi n + \phi) = A(-1)^{n}\cos\phi$$
         <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Alternating sequence: $+, -, +, -, \ldots$ — the fastest oscillation a DT sinusoid can produce.</p>
       </div>
@@ -235,20 +235,20 @@
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Discrete-time periodicity</div>
-        <h1>Periodic only if $\omega/2\pi$<br/>is rational.</h1>
+        <h1>Periodic only if $\Omega/2\pi$<br/>is rational.</h1>
       </div>
       <div class="cols even">
         <div class="bordered-math huge-math">
-          $$\omega \,=\, \tfrac{k}{N}\,2\pi$$
+          $$\Omega \,=\, \tfrac{k}{N}\,2\pi$$
         </div>
         <div class="stack gap-item">
-          <p>The smallest $N$ for which $\omega N = 2k\pi$ holds for some integer $k$ is the <strong>fundamental period</strong>.</p>
-          <p class="muted" style="font-size: var(--type-small);">If $\omega/2\pi$ is irrational, $x[n]$ is <em>aperiodic</em> — even though it still looks oscillatory.</p>
+          <p>The smallest $N$ for which $\Omega N = 2k\pi$ holds for some integer $k$ is the <strong>fundamental period</strong>.</p>
+          <p class="muted" style="font-size: var(--type-small);">If $\Omega/2\pi$ is irrational, $x[n]$ is <em>aperiodic</em> — even though it still looks oscillatory.</p>
         </div>
       </div>
       <div class="defn">
         <div class="term">Beware</div>
-        <p style="margin: 0;">Unlike the continuous case, the DT period is <em>not</em> simply $2\pi/\omega$.</p>
+        <p style="margin: 0;">Unlike the continuous case, the DT period is <em>not</em> simply $2\pi/\Omega$.</p>
       </div>
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L04</span></div>
@@ -263,33 +263,33 @@
       </div>
       <div class="summary-grid">
         <div class="cell">
-          <div class="num">$\omega = 0$</div>
+          <div class="num">$\Omega = 0$</div>
           <div class="what">$N = 1$</div>
           <div class="how">Constant sequence.</div>
         </div>
         <div class="cell">
-          <div class="num">$\omega = \pi$</div>
+          <div class="num">$\Omega = \pi$</div>
           <div class="what">$N = 2$</div>
           <div class="how">Alternates each sample.</div>
         </div>
         <div class="cell">
-          <div class="num">$\omega = 1.0$</div>
+          <div class="num">$\Omega = 1.0$</div>
           <div class="what">aperiodic</div>
           <div class="how">$1/(2\pi)$ is irrational.</div>
         </div>
         <div class="cell">
-          <div class="num">$\omega = 10\pi/13$</div>
+          <div class="num">$\Omega = 10\pi/13$</div>
           <div class="what">$N = 13$</div>
-          <div class="how">$k = 5$, $\omega N = 10\pi$.</div>
+          <div class="how">$k = 5$, $\Omega N = 10\pi$.</div>
         </div>
         <div class="cell">
-          <div class="num">$\omega = 11\pi/13$</div>
+          <div class="num">$\Omega = 11\pi/13$</div>
           <div class="what">$N = 26$</div>
           <div class="how">$k = 11$; $11/26$ already in lowest terms.</div>
         </div>
         <div class="cell">
           <div class="num">Rule</div>
-          <div class="what">Reduce $\omega/(2\pi)$ to $k/N$.</div>
+          <div class="what">Reduce $\Omega/(2\pi)$ to $k/N$.</div>
           <div class="how">$N$ is the denominator in lowest terms.</div>
         </div>
       </div>
@@ -340,12 +340,12 @@
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example B · §1.5.4</div>
         <h1>Find the period of<br/>$x[n]=\cos(3\pi n/7)$.</h1>
-        <p style="font-size:16px; margin: 4px 0 8px;">$x[n]$ periodic iff $\omega=(k/N)\cdot2\pi$ for integers $k,N$.</p>
+        <p style="font-size:16px; margin: 4px 0 8px;">$x[n]$ periodic iff $\Omega=(k/N)\cdot2\pi$ for integers $k,N$.</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
-          <div class="step-label">Step 1 · Read $\omega$</div>
-          $$\omega=3\pi/7$$
+          <div class="step-label">Step 1 · Read $\Omega$</div>
+          $$\Omega=3\pi/7$$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · Solve for $N$</div>
@@ -382,17 +382,17 @@
         </div>
         <div class="cell">
           <div class="num">02 · DT SINUSOID</div>
-          <div class="what">$x[n] = A\cos(\omega n + \phi)$</div>
-          <div class="how">$\omega$ is radians per sample. No time.</div>
+          <div class="what">$x[n] = A\cos(\Omega n + \phi)$</div>
+          <div class="how">$\Omega$ is radians per sample. No time.</div>
         </div>
         <div class="cell">
           <div class="num">03 · EQUIVALENCE</div>
-          <div class="what">$\omega \equiv \omega + 2\pi$; $\omega \equiv -\omega$ (real).</div>
+          <div class="what">$\Omega \equiv \Omega + 2\pi$; $\Omega \equiv -\Omega$ (real).</div>
           <div class="how">Effective range: $[0, \pi]$.</div>
         </div>
         <div class="cell">
           <div class="num">04 · PERIODICITY</div>
-          <div class="what">$\omega = (k/N)\, 2\pi$</div>
+          <div class="what">$\Omega = (k/N)\, 2\pi$</div>
           <div class="how">Smallest $N$ is the fundamental period.</div>
         </div>
       </div>

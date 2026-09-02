@@ -33,7 +33,7 @@
       <ol class="numbered">
         <li><strong>Define</strong> the inner product $\langle f, g\rangle = \tfrac{1}{T_0}\int_{T_0} f^{*}(t) g(t)\,dt$.</li>
         <li><strong>Verify</strong> orthonormality of the harmonics: $\langle v^{(k)}, v^{(\ell)}\rangle = \delta_{k\ell}$.</li>
-        <li><strong>Apply</strong> the analysis equation $S_k = \tfrac{1}{T_0}\int_{T_0} s(t) e^{-j k \Omega_0 t}\,dt$.</li>
+        <li><strong>Apply</strong> the analysis equation $S_k = \tfrac{1}{T_0}\int_{T_0} s(t) e^{-j k \omega_0 t}\,dt$.</li>
         <li><strong>Compute</strong> the Fourier coefficients of a rectangular pulse train.</li>
       </ol>
     </div>
@@ -73,7 +73,7 @@
         </div>
         <div class="stack gap-item">
           <p>For $k = \ell$, the integrand is $1$, average over the period is $1$.</p>
-          <p>For $k \neq \ell$, the integrand is a complex sinusoid with nonzero integer frequency $(\ell - k)\Omega_0$ — averages to zero over one full period.</p>
+          <p>For $k \neq \ell$, the integrand is a complex sinusoid with nonzero integer frequency $(\ell - k)\omega_0$ — averages to zero over one full period.</p>
           <p class="muted" style="font-size: var(--type-small);">DFT analogue: $V^{H}V = N\,I$. Here we get $I$ directly because the inner product is normalised.</p>
         </div>
       </div>
@@ -89,7 +89,7 @@
         <h1>Project $s$ onto each harmonic.</h1>
       </div>
       <div class="bordered-math huge-math">
-        $$S_k \,=\, \langle v^{(k)}, s\rangle \,=\, \tfrac{1}{T_0}\,\int_{T_0} s(t)\, e^{-j k \Omega_0 t}\,dt$$
+        $$S_k \,=\, \langle v^{(k)}, s\rangle \,=\, \tfrac{1}{T_0}\,\int_{T_0} s(t)\, e^{-j k \omega_0 t}\,dt$$
       </div>
       <p>Take inner products of both sides of the synthesis equation with $v^{(k)}$. Orthonormality kills all but the $k$-th term, leaving $S_k$.</p>
       <p class="muted" style="font-size: var(--type-small);">Any interval of length $T_0$ — pick the one that makes the integral easiest.</p>
@@ -113,11 +113,11 @@
       <div class="stack gap-item">
         <div class="step">
           <div class="step-label">For $k \neq 0$</div>
-          $$S_k \,=\, \tfrac{1}{T_0}\,\int_{-\alpha T_0/2}^{\alpha T_0/2} e^{-j k \Omega_0 t}\,dt$$
+          $$S_k \,=\, \tfrac{1}{T_0}\,\int_{-\alpha T_0/2}^{\alpha T_0/2} e^{-j k \omega_0 t}\,dt$$
         </div>
         <div class="step">
           <div class="step-label">Integrate and simplify</div>
-          $$S_k \,=\, \tfrac{2\sin(k\alpha\Omega_0 T_0 /2)}{k\Omega_0 T_0} \,=\, \tfrac{\sin(k\alpha\pi)}{k\pi}$$
+          $$S_k \,=\, \tfrac{2\sin(k\alpha\omega_0 T_0 /2)}{k\omega_0 T_0} \,=\, \tfrac{\sin(k\alpha\pi)}{k\pi}$$
         </div>
         <div class="defn">
           <div class="term">Note</div>
@@ -240,15 +240,15 @@
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 1 · Substitute into analysis equation</div>
-          $$Y_k=\frac{1}{T_0}\int_0^{T_0}x(t-t_0)e^{-jk\Omega_0 t}dt$$
+          $$Y_k=\frac{1}{T_0}\int_0^{T_0}x(t-t_0)e^{-jk\omega_0 t}dt$$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · Change variable $u=t-t_0$</div>
-          $$Y_k=\frac{1}{T_0}\int_0^{T_0}x(u)e^{-jk\Omega_0(u+t_0)}du=e^{-jk\Omega_0 t_0}X_k$$
+          $$Y_k=\frac{1}{T_0}\int_0^{T_0}x(u)e^{-jk\omega_0(u+t_0)}du=e^{-jk\omega_0 t_0}X_k$$
         </div>
         <div class="defn" style="margin-top:8px;">
           <div class="term">Time-shift property</div>
-          <p style="margin:0; font-size:15px;">$y(t)=x(t-t_0)\Rightarrow Y_k=e^{-jk\Omega_0 t_0}X_k$.&ensp;Magnitudes unchanged; only phases rotate.</p>
+          <p style="margin:0; font-size:15px;">$y(t)=x(t-t_0)\Rightarrow Y_k=e^{-jk\omega_0 t_0}X_k$.&ensp;Magnitudes unchanged; only phases rotate.</p>
         </div>
       </div>
     </div>
@@ -265,7 +265,7 @@
     <div class="cols" style="margin-top: 24px;">
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example B · §FS</div>
-        <h1>Power via Parseval's theorem:<br/>$x(t)=3\cos(\Omega_0 t)+4\sin(2\Omega_0 t)$.</h1>
+        <h1>Power via Parseval's theorem:<br/>$x(t)=3\cos(\omega_0 t)+4\sin(2\omega_0 t)$.</h1>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
@@ -308,7 +308,7 @@
         </div>
         <div class="cell">
           <div class="num">03 · ANALYSIS</div>
-          <div class="what">$S_k = \tfrac{1}{T_0}\int_{T_0} s(t) e^{-jk\Omega_0 t}\, dt$</div>
+          <div class="what">$S_k = \tfrac{1}{T_0}\int_{T_0} s(t) e^{-jk\omega_0 t}\, dt$</div>
           <div class="how">Project on each harmonic.</div>
         </div>
         <div class="cell">

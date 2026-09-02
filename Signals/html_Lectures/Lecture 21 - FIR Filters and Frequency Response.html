@@ -19,7 +19,7 @@
     <div class="course">ENES-222 · Signals &amp; Systems</div>
     <div class="lecture-number">21</div>
     <div class="topic">FIR Filters &amp;<br/>Frequency Response</div>
-    <div class="sub">A few coefficients $b_0, \ldots, b_M$ define an LTI system. Feed it a sinusoid — out comes the same sinusoid, scaled and phase-shifted by $H(e^{j\omega})$.</div>
+    <div class="sub">A few coefficients $b_0, \ldots, b_M$ define an LTI system. Feed it a sinusoid — out comes the same sinusoid, scaled and phase-shifted by $H(e^{j\Omega})$.</div>
     <div class="reference">Reading · <em>§4.2.2, §4.3, §4.4</em></div>
   </section>
 
@@ -32,8 +32,8 @@
       </div>
       <ol class="numbered">
         <li><strong>Recognise</strong> the FIR input-output relationship $y[n] = \sum_{k=0}^{M} b_k\, x[n-k]$.</li>
-        <li><strong>Derive</strong> the frequency response $H(e^{j\omega}) = \sum_k b_k\, e^{-j\omega k}$.</li>
-        <li><strong>Extract</strong> amplitude $|H(e^{j\omega})|$ and phase $\angle H(e^{j\omega})$, especially for symmetric $b$.</li>
+        <li><strong>Derive</strong> the frequency response $H(e^{j\Omega}) = \sum_k b_k\, e^{-j\Omega k}$.</li>
+        <li><strong>Extract</strong> amplitude $|H(e^{j\Omega})|$ and phase $\angle H(e^{j\Omega})$, especially for symmetric $b$.</li>
         <li><strong>Compute</strong> $H$ at $N$ uniformly spaced frequencies by taking <code>fft(b, N)</code>.</li>
       </ol>
     </div>
@@ -65,21 +65,21 @@
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Sinusoid in, sinusoid out</div>
-        <h1>$x[n] = e^{j\omega n} \,\Rightarrow\, y[n] = H(e^{j\omega})\, e^{j\omega n}$.</h1>
+        <h1>$x[n] = e^{j\Omega n} \,\Rightarrow\, y[n] = H(e^{j\Omega})\, e^{j\Omega n}$.</h1>
       </div>
       <div class="cols even">
         <div class="bordered-math huge-math">
-          $$H(e^{j\omega}) \,=\, b_0 + b_1\, e^{-j\omega} + \cdots + b_M\, e^{-j M\omega}$$
+          $$H(e^{j\Omega}) \,=\, b_0 + b_1\, e^{-j\Omega} + \cdots + b_M\, e^{-j M\Omega}$$
         </div>
         <div class="stack gap-item">
-          <p>The output is the same complex sinusoid, scaled by the complex factor $H(e^{j\omega})$.</p>
-          <p>$H$ depends on $\omega$ only — that's the entire fingerprint of the filter at sinusoidal inputs.</p>
+          <p>The output is the same complex sinusoid, scaled by the complex factor $H(e^{j\Omega})$.</p>
+          <p>$H$ depends on $\Omega$ only — that's the entire fingerprint of the filter at sinusoidal inputs.</p>
         </div>
       </div>
       <div class="defn">
         <div class="term">System function — anywhere in $\mathbb{C}$</div>
         $$H(z) \,=\, b_0 + b_1\, z^{-1} + \cdots + b_M\, z^{-M}$$
-        <p style="margin: 6px 0 0; font-size: var(--type-small);" class="muted">$H(e^{j\omega})$ is just $H(z)$ restricted to the unit circle.</p>
+        <p style="margin: 6px 0 0; font-size: var(--type-small);" class="muted">$H(e^{j\Omega})$ is just $H(z)$ restricted to the unit circle.</p>
       </div>
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L21</span></div>
@@ -91,18 +91,18 @@
       <div class="stack gap-item">
         <div class="eyebrow">Worked example</div>
         <h1>Symmetric coefficients ⇒<br/>linear phase.</h1>
-        <p>Factor out $e^{-j 3\omega/2}$:</p>
-        $$H(e^{j\omega}) \,=\, e^{-j 3\omega/2}\big(4\cos(\omega/2) + 2\cos(3\omega/2)\big)$$
+        <p>Factor out $e^{-j 3\Omega/2}$:</p>
+        $$H(e^{j\Omega}) \,=\, e^{-j 3\Omega/2}\big(4\cos(\Omega/2) + 2\cos(3\Omega/2)\big)$$
       </div>
       <div class="stack gap-item">
         <div class="defn">
           <div class="term">Amplitude response</div>
-          $$|H(e^{j\omega})| \,=\, |4\cos(\omega/2) + 2\cos(3\omega/2)|$$
-          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Symmetric about $\omega = \pi$. Three zeros in $[0, 2\pi)$: at $2\pi/3$, $\pi$, $4\pi/3$.</p>
+          $$|H(e^{j\Omega})| \,=\, |4\cos(\Omega/2) + 2\cos(3\Omega/2)|$$
+          <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Symmetric about $\Omega = \pi$. Three zeros in $[0, 2\pi)$: at $2\pi/3$, $\pi$, $4\pi/3$.</p>
         </div>
         <div class="defn">
           <div class="term">Phase response</div>
-          $$\angle H(e^{j\omega}) \,=\, -\tfrac{3\omega}{2} + (0 \text{ or } \pi)$$
+          $$\angle H(e^{j\Omega}) \,=\, -\tfrac{3\Omega}{2} + (0 \text{ or } \pi)$$
           <p style="margin: 8px 0 0; font-size: var(--type-small);" class="muted">Piecewise linear with $\pi$ jumps wherever the real factor changes sign.</p>
         </div>
       </div>
@@ -116,7 +116,7 @@
       <div class="stack gap-item">
         <div class="eyebrow">Reading the plot</div>
         <h1>Three nulls,<br/>linear phase ramp.</h1>
-        <p>Zeros of $|H|$ at $\omega = 2\pi/3,\, \pi,\, 4\pi/3$. Any input frequency at these values is completely killed by the filter.</p>
+        <p>Zeros of $|H|$ at $\Omega = 2\pi/3,\, \pi,\, 4\pi/3$. Any input frequency at these values is completely killed by the filter.</p>
         <p>The phase line has slope $-3/2$ — group delay $1.5$ samples for every component in the passband.</p>
       </div>
       <div>
@@ -125,7 +125,7 @@
             <title id="l21f1-t">Amplitude and phase response of the b equals one two two one filter</title>
             <desc id="l21f1-d">Top panel — amplitude response: a curve that starts high at omega equals zero, dips to zero at two pi over three, rises slightly, dips to zero again at pi, then mirrors symmetrically. Bottom panel — phase response: a piecewise-linear staircase with constant negative slope and three pi-radian jumps at the three nulls.</desc>
             <!-- Top: amplitude -->
-            <text x="20" y="32" font-size="16" font-family="Inter, sans-serif" font-weight="600">|H(e^{jω})|</text>
+            <text x="20" y="32" font-size="16" font-family="Inter, sans-serif" font-weight="600">|H(e^{jΩ})|</text>
             <line x1="40" y1="160" x2="580" y2="160" stroke="#1A1A1A" stroke-width="1.2"/>
             <path d="M 40,50 Q 90,80 140,130 Q 180,160 220,160 Q 260,160 290,140 Q 310,160 350,160 Q 390,160 420,130 Q 470,80 520,50 L 580,40"
                   fill="none" stroke="#7A1A1A" stroke-width="2.5"/>
@@ -134,7 +134,7 @@
             <text x="370" y="180" font-size="13" fill="#7A746B">4π/3</text>
 
             <!-- Bottom: phase -->
-            <text x="20" y="212" font-size="16" font-family="Inter, sans-serif" font-weight="600">∠H(e^{jω})</text>
+            <text x="20" y="212" font-size="16" font-family="Inter, sans-serif" font-weight="600">∠H(e^{jΩ})</text>
             <line x1="40" y1="330" x2="580" y2="330" stroke="#1A1A1A" stroke-width="1.2"/>
             <line x1="40" y1="230" x2="220" y2="320" stroke="#2A4A7A" stroke-width="2.5"/>
             <line x1="220" y1="240" x2="300" y2="290" stroke="#2A4A7A" stroke-width="2.5"/>
@@ -156,15 +156,15 @@
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Real coefficients</div>
-        <h1>$|H|$ even, $\angle H$ odd<br/>about $\omega = 0$ and $\pi$.</h1>
+        <h1>$|H|$ even, $\angle H$ odd<br/>about $\Omega = 0$ and $\pi$.</h1>
       </div>
       <div class="cols even">
         <div class="bordered-math big-math">
-          $$H(e^{-j\omega}) \,=\, H^{*}(e^{j\omega})$$
+          $$H(e^{-j\Omega}) \,=\, H^{*}(e^{j\Omega})$$
         </div>
         <div class="stack gap-item">
           <p>Just like the DFT of a real signal. So we only need to plot $H$ over $[0, \pi]$.</p>
-          <p>And $H(e^{j(\omega + 2\pi)}) = H(e^{j\omega})$ — period $2\pi$, automatic.</p>
+          <p>And $H(e^{j(\Omega + 2\pi)}) = H(e^{j\Omega})$ — period $2\pi$, automatic.</p>
         </div>
       </div>
     </div>
@@ -176,7 +176,7 @@
     <div class="stack gap-title" style="margin-top: 28px;">
       <div>
         <div class="eyebrow">Computing $H$ on a grid</div>
-        <h1>$\mathtt{fft(b, N)}$ samples $H(e^{j\omega})$<br/>at $N$ equally spaced frequencies.</h1>
+        <h1>$\mathtt{fft(b, N)}$ samples $H(e^{j\Omega})$<br/>at $N$ equally spaced frequencies.</h1>
       </div>
       <div class="cols even">
         <div class="bordered-math big-math">
@@ -250,21 +250,21 @@
     <div class="cols" style="margin-top: 24px;">
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example A · §4.3.2</div>
-        <h1>Find $H(e^{j\omega})$ for<br/>$y[n]=x[n]-x[n-1]+x[n-2]$.</h1>
+        <h1>Find $H(e^{j\Omega})$ for<br/>$y[n]=x[n]-x[n-1]+x[n-2]$.</h1>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 1 · Frequency response</div>
-          $$H(e^{j\omega})=1-e^{-j\omega}+e^{-j2\omega}$$
+          $$H(e^{j\Omega})=1-e^{-j\Omega}+e^{-j2\Omega}$$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · Factor</div>
-          $=e^{-j\omega}(e^{j\omega}-1+e^{-j\omega})=e^{-j\omega}(2\cos\omega-1)$
-          $$|H(e^{j\omega})|=|2\cos\omega-1|$$
+          $=e^{-j\Omega}(e^{j\Omega}-1+e^{-j\Omega})=e^{-j\Omega}(2\cos\Omega-1)$
+          $$|H(e^{j\Omega})|=|2\cos\Omega-1|$$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 3 · Key values</div>
-          $\omega=0$: $|H|=1$.&ensp;$\omega=\pi/3$: $|H|=0$ (null).&ensp;$\omega=\pi$: $|H|=3$.
+          $\Omega=0$: $|H|=1$.&ensp;$\Omega=\pi/3$: $|H|=0$ (null).&ensp;$\Omega=\pi$: $|H|=3$.
         </div>
       </div>
     </div>
@@ -286,7 +286,7 @@
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
-          <div class="step-label">Step 1 · Evaluate $H$ at $\omega_0=\pi/3$</div>
+          <div class="step-label">Step 1 · Evaluate $H$ at $\Omega_0=\pi/3$</div>
           $$H(e^{j\pi/3})=1-e^{-j\pi/3}+e^{-j2\pi/3}=0$$
         </div>
         <div class="step" style="margin-bottom:14px;">
@@ -298,8 +298,8 @@
           $$y[n]=0\quad\forall n$$
         </div>
         <div class="defn" style="margin-top:8px;">
-          <div class="term">Null at $\omega=\pi/3$</div>
-          <p style="margin:0; font-size:15px;">This filter completely rejects sinusoids at $\omega=\pi/3$. Designing filters with prescribed zeros at specific frequencies is a key tool.</p>
+          <div class="term">Null at $\Omega=\pi/3$</div>
+          <p style="margin:0; font-size:15px;">This filter completely rejects sinusoids at $\Omega=\pi/3$. Designing filters with prescribed zeros at specific frequencies is a key tool.</p>
         </div>
       </div>
     </div>
@@ -323,7 +323,7 @@
         </div>
         <div class="cell">
           <div class="num">02 · EIGEN</div>
-          <div class="what">$e^{j\omega n}$ passes through scaled by $H(e^{j\omega})$.</div>
+          <div class="what">$e^{j\Omega n}$ passes through scaled by $H(e^{j\Omega})$.</div>
           <div class="how">More generally: $z^{n} \to H(z)\,z^{n}$.</div>
         </div>
         <div class="cell">
