@@ -210,9 +210,10 @@
             <rect x="580" y="290" width="120" height="40" fill="#7A1A1A" opacity="0.65"/>
             <text x="608" y="280" font-size="16" fill="#7A1A1A">at 3 f_s</text>
 
-            <!-- bracket showing no overlap region -->
-            <line x1="220" y1="225" x2="300" y2="225" stroke="#1A1A1A" stroke-width="2"/>
-            <text x="225" y="218" font-size="16" font-family="Inter, sans-serif" fill="#1A1A1A">gap = f_s − 2f_B</text>
+            <!-- bracket showing the overlap between the baseband (top, ends at f_B, x=220) and its
+                 reflected image (bottom, starts at f_s - f_B, x=180): width = 2f_B - f_s -->
+            <line x1="180" y1="225" x2="220" y2="225" stroke="#1A1A1A" stroke-width="2"/>
+            <text x="95" y="218" font-size="16" font-family="Inter, sans-serif" fill="#1A1A1A">overlap = 2f_B − f_s</text>
           </svg>
         </div>
         <div class="diagram-caption">FIG. · Sampling creates infinite frequency-axis replicas. No-overlap ⇔ Nyquist.</div>
@@ -282,7 +283,7 @@
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example A · §1.6.3</div>
         <h1>List aliases of $f=150$ Hz<br/>at $f_s=400$ samples/s.</h1>
-        <p style="font-size:16px; margin: 4px 0 8px;">Find all aliases in $[0,1000]$ Hz.</p>
+        <p style="font-size:24px; margin: 4px 0 8px;">Find all aliases in $[0,1000]$ Hz.</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
@@ -296,7 +297,7 @@
         </div>
         <div class="defn" style="margin-top:8px;">
           <div class="term">Common DT frequency</div>
-          <p style="margin:0; font-size:15px;">All produce $\Omega=2\pi\cdot150/400=3\pi/4$ rad/sample.</p>
+          <p style="margin:0; font-size:24px;">All produce $\Omega=2\pi\cdot150/400=3\pi/4$ rad/sample.</p>
         </div>
       </div>
     </div>
@@ -314,7 +315,7 @@
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example B · §1.6.4</div>
         <h1>Aliasing in a sum of two sinusoids:</h1>
-        <p style="font-size:16px; margin: 4px 0 8px;">$x(t)=\cos(2\pi\cdot50\,t)+\cos(2\pi\cdot350\,t)$, $f_s=400$ s/s.</p>
+        <p style="font-size:24px; margin: 4px 0 8px;">$x(t)=\cos(2\pi\cdot50\,t)+\cos(2\pi\cdot350\,t)$, $f_s=400$ s/s.</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">

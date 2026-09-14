@@ -119,11 +119,11 @@
         </div>
         <div class="step">
           <div class="step-label">$k = 1$</div>
-          $$c_1 = -1 + j\sqrt{3}$$
+          $$c_1 = -1 + \tfrac{j}{\sqrt{3}}$$
         </div>
         <div class="step">
           <div class="step-label">$k = 5$ — conjugate of $c_1$</div>
-          $$c_5 = -1 - j\sqrt{3}$$
+          $$c_5 = -1 - \tfrac{j}{\sqrt{3}}$$
         </div>
         <p class="muted" style="font-size: var(--type-small);">$c_k$ and $c_{N-k}$ are complex conjugates because $s$ is real — preview of L13.</p>
       </div>
@@ -187,7 +187,7 @@
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example A · §3.2.1</div>
         <h1>Compute $S[0]$, $S[1]$, $S[5]$<br/>for $\mathbf{s}=(1,2,3,6,5,4)^\top$.</h1>
-        <p style="font-size:16px; margin: 4px 0 8px;">$N=6$.&ensp;Analysis equation: $S[k]=\sum_{n=0}^{5}s[n]e^{-j2\pi kn/6}$.</p>
+        <p style="font-size:24px; margin: 4px 0 8px;">$N=6$.&ensp;Analysis equation: $S[k]=\sum_{n=0}^{5}s[n]e^{-j2\pi kn/6}$.</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
@@ -197,15 +197,15 @@
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · $S[1]$ ($w=e^{-j\pi/3}$)</div>
           $S[1]=1+2w+3w^2+6w^3+5w^4+4w^5$
-          $w^3=-1$, substitute: $S[1]\approx-3-2.598j$
+          $w^3=-1$, substitute: $S[1]=-6+2\sqrt3\,j\approx-6+3.464j$
         </div>
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 3 · $S[5]$ by conjugate symmetry</div>
-          $$S[5]=S[N-1]=S[1]^*\approx-3+2.598j$$
+          $$S[5]=S[N-1]=S[1]^*=-6-2\sqrt3\,j\approx-6-3.464j$$
         </div>
         <div class="defn" style="margin-top:8px;">
           <div class="term">Rule</div>
-          <p style="margin:0; font-size:15px;">For real $\mathbf{s}$: $S[N-k]=S[k]^*$.</p>
+          <p style="margin:0; font-size:24px;">For real $\mathbf{s}$: $S[N-k]=S[k]^*$.</p>
         </div>
       </div>
     </div>
@@ -223,7 +223,7 @@
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example B · §3.2.1</div>
         <h1>Invert: find $\mathbf{s}$ from<br/>$S=(4,0,0,0)^\top$, $N=4$.</h1>
-        <p style="font-size:16px; margin: 4px 0 8px;">Synthesis equation: $s[n]=\frac{1}{N}\sum_k S[k]e^{j2\pi kn/N}$.</p>
+        <p style="font-size:24px; margin: 4px 0 8px;">Synthesis equation: $s[n]=\frac{1}{N}\sum_k S[k]e^{j2\pi kn/N}$.</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
@@ -236,7 +236,7 @@
         </div>
         <div class="defn" style="margin-top:8px;">
           <div class="term">DC interpretation</div>
-          <p style="margin:0; font-size:15px;">Energy only at $k=0$ $\Leftrightarrow$ constant signal. $S[0]/N$ equals the signal's average value.</p>
+          <p style="margin:0; font-size:24px;">Energy only at $k=0$ $\Leftrightarrow$ constant signal. $S[0]/N$ equals the signal's average value.</p>
         </div>
       </div>
     </div>

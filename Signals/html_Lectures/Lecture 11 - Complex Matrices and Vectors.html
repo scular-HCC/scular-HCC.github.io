@@ -126,8 +126,8 @@
         <div class="step">
           <div class="step-label">Example</div>
           $$s = (2, -3, 1, 1)^{\top}$$
-          $$c = (2,\, -1+2j,\, -3,\, -1-2j)^{\top}$$
-          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">So $s = 2 v^{(0)} + (-1+2j) v^{(1)} - 3 v^{(2)} + (-1-2j) v^{(3)}$.</p>
+          $$c = (\tfrac14,\, \tfrac14+j,\, \tfrac54,\, \tfrac14-j)^{\top}$$
+          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">So $s = \tfrac14 v^{(0)} + (\tfrac14+j) v^{(1)} + \tfrac54 v^{(2)} + (\tfrac14-j) v^{(3)}$.</p>
         </div>
       </div>
     </div>
@@ -167,7 +167,7 @@
         <div class="defn">
           <div class="term">Setup</div>
           <p style="margin: 0;">From the previous slide:</p>
-          $$s = (2, -3, 1, 1)^{\top},\;\; c = (2, -1+2j, -3, -1-2j)^{\top}$$
+          $$s = (2, -3, 1, 1)^{\top},\;\; c = (\tfrac14,\, \tfrac14+j,\, \tfrac54,\, \tfrac14-j)^{\top}$$
         </div>
         <div class="defn">
           <div class="term">Tasks</div>
@@ -188,19 +188,17 @@
       <div class="stack gap-item">
         <div class="step">
           <div class="step-label">Direct</div>
-          $$\|s\|^{2} = (-3)^{2} + 1^{2} + 1^{2} + ?$$
-          <p class="muted" style="font-size: var(--type-small); margin: 4px 0 0;">Wait — the example uses $s = (2, -3, 1, 9)^{\top}$ to get $\|s\|^{2} = 92$. Let's evaluate both ways carefully:</p>
-          $$\|s\|^{2} = 2^{2} + (-3)^{2} + 1^{2} + ?$$
+          $$\|s\|^{2} = 2^{2} + (-3)^{2} + 1^{2} + 1^{2} = 15$$
         </div>
         <div class="step">
           <div class="step-label">Coefficient form</div>
           $$\sum_j |c_j|^{2} \|v^{(j)}\|^{2} = 4\,\big(|c_0|^{2}+|c_1|^{2}+|c_2|^{2}+|c_3|^{2}\big)$$
-          $$= 4\,(4 + 5 + 9 + 5) = 92$$
+          $$= 4\,\big(\tfrac{1}{16} + \tfrac{17}{16} + \tfrac{25}{16} + \tfrac{17}{16}\big) = 4 \cdot \tfrac{60}{16} = 15$$
         </div>
       </div>
       <div class="defn">
         <div class="term">Conclusion</div>
-        <p style="margin: 0;">The two methods agree to a constant: $\|s\|^{2} = \sum_j |c_j|^{2}\,\|v^{(j)}\|^{2}$.</p>
+        <p style="margin: 0;">The two methods agree: $\|s\|^{2} = \sum_j |c_j|^{2}\,\|v^{(j)}\|^{2} = 15$.</p>
         <p style="margin: 8px 0 0;">Because all columns of the $N=4$ Fourier matrix have $\|v^{(j)}\|^{2} = 4$, the inner-product / Pythagoras relation simplifies to</p>
         $$\|s\|^{2} = 4\,\|c\|^{2}.$$
         <p class="muted" style="font-size: var(--type-small); margin: 8px 0 0;">This is the seed of <strong>Parseval's identity</strong> for the DFT.</p>
@@ -241,7 +239,7 @@
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example A · §2.13.2</div>
         <h1>Compute $\|\mathbf{v}\|$ and $\langle\mathbf{v},\mathbf{w}\rangle$ for<br/>complex vectors.</h1>
-        <p style="font-size:16px; margin: 4px 0 8px;">$\mathbf{v}=(1+j,\,2-j)^\top$, $\mathbf{w}=(j,\,1+2j)^\top$</p>
+        <p style="font-size:24px; margin: 4px 0 8px;">$\mathbf{v}=(1+j,\,2-j)^\top$, $\mathbf{w}=(j,\,1+2j)^\top$</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
@@ -251,8 +249,8 @@
         <div class="step" style="margin-bottom:14px;">
           <div class="step-label">Step 2 · Hermitian inner product $\mathbf{v}^H\mathbf{w}$</div>
           $v_1^*w_1=(1-j)(j)=j-j^2=1+j$
-          $v_2^*w_2=(2+j)(1+2j)=2+4j+j-2=2j$
-          $$\langle\mathbf{v},\mathbf{w}\rangle=(1+j)+2j=1+3j$$
+          $v_2^*w_2=(2+j)(1+2j)=2+4j+j-2=5j$
+          $$\langle\mathbf{v},\mathbf{w}\rangle=(1+j)+5j=1+6j$$
         </div>
       </div>
     </div>
@@ -270,7 +268,7 @@
       <div class="stack gap-item">
         <div class="eyebrow">Solved Example B · §2.13.1</div>
         <h1>Verify $V^HV=4I$ for two<br/>columns of $N{=}4$ Fourier matrix.</h1>
-        <p style="font-size:16px; margin: 4px 0 8px;">$w=e^{-j\pi/2}=-j$.&ensp; Check $\mathbf{v}^{(0)}$ and $\mathbf{v}^{(1)}$.</p>
+        <p style="font-size:24px; margin: 4px 0 8px;">$w=e^{-j\pi/2}=-j$.&ensp; Check $\mathbf{v}^{(0)}$ and $\mathbf{v}^{(1)}$.</p>
       </div>
       <div class="stack gap-item">
         <div class="step" style="margin-bottom:14px;">
@@ -284,7 +282,7 @@
         </div>
         <div class="defn" style="margin-top:8px;">
           <div class="term">Result</div>
-          <p style="margin:0; font-size:15px;">$V^HV=NI=4I$ — columns orthogonal with norm $\sqrt{N}$.</p>
+          <p style="margin:0; font-size:24px;">$V^HV=NI=4I$ — columns orthogonal with norm $\sqrt{N}$.</p>
         </div>
       </div>
     </div>
