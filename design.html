@@ -1,3 +1,6 @@
+---
+footer: "Introduction to Engineering Design — Stefan"
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,25 +15,7 @@
 
 <body>
 
-<!-- SITE-WIDE HEADER -->
-  <header class="site-header">
-  <div class="header-content">
-    <img
-        src="images\SC_Logo_White.png"
-        alt="Stefan Cular Logo"
-        class="site-logo"
-      />
-
-  <nav class="navbar">
-    <a href="index.html">Home</a>
-    <a href="design.html">Intro to Engg. Design</a>
-	<a href="circuits.html">Circuits</a>
-	<a href="signals.html">Signals</a>
-	<a href="ac-dcdifference.html">AC-DC Difference</a>
-	<a href="projects.html">Projects</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-</header>
+{% include header.html %}
 
  <!-- PAGE CONTENT -->
   <div class="section">
@@ -109,10 +94,7 @@
     </div>
   </div>
 
- <!-- SITE-WIDE FOOTER -->
-  <footer>
-    © 2026 Introduction to Engineering Design — Stefan
-  </footer>
+ {% include footer.html %}
 
 </body>
 </html>
