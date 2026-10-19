@@ -51,9 +51,9 @@
             $$Y[k] \,=\, e^{-j(2\pi/N)\, m k}\, X[k]$$
           </div>
           <p>Each bin picks up a phase factor, linear in $k$. The magnitude is <em>unchanged</em>: $|Y[k]| = |X[k]|$.</p>
-          <p class="muted" style="margin: 0;">$F^{-m} = F^{N-m}$ is the same statement.</p>
-<div class="step"><div class="step-label">Result</div>
-$$Y[k]=e^{-j2\pi mk/N}X[k]=(F^{-m}X)[k]$$
+          <p class="muted" style="margin: 0;">That is $Y = F^{-m}X$, and $F^{-m} = F^{N-m}$.</p>
+<div class="step"><div class="step-label">Notation: mod N</div>
+$a \bmod N$ is the remainder of $a \div N$, in $0,\dots,N-1$, so indices wrap: $-1 \bmod N = N-1$. Example, $N=8$, $m=3$: $y[0]=x[5]$, $y[1]=x[6]$, $y[3]=x[0]$.
 </div>
 
         </div>
