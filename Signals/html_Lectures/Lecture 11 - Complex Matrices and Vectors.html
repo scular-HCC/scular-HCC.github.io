@@ -19,7 +19,6 @@
     <div class="lecture-number">11</div>
     <div class="topic">Complex Matrices<br/>&amp; Vectors</div>
     <div class="sub">Everything from L10 still works — replace the transpose with the Hermitian transpose. The Fourier matrix makes its first appearance.</div>
-    <div class="reference">Reading · <em>§2.13</em></div>
   </section>
 
   <section data-topic="complex_matrix" data-label="02 Objectives">
@@ -263,7 +262,7 @@
         <div class="eyebrow">Worked example · ≈ 3 min</div>
         <h1>Entry $(n,k)$ is $j^{kn}$: reduce the exponent mod 4.</h1>
       </div>
-<p style="margin:0;">Powers of $j$: $j^{0}=1,\;j^{1}=j,\;j^{2}=-1,\;j^{3}=-j,\;j^{4}=1$, so only $kn \bmod 4$ matters.</p><div class="cols even">
+<p style="margin:0;">Powers of $j$: $j^{0}=1,\;j^{1}=j,\;j^{2}=-1,\;j^{3}=-j,\;j^{4}=1$, so only $kn \bmod 4$ matters.</p><p class="muted" style="margin:6px 0 0;">$a \bmod 4$ is the remainder when $a$ is divided by 4, one of $0,1,2,3$: $6 \bmod 4=2$ (since $6=1\cdot4+2$) and $9 \bmod 4=1$.</p><div class="cols even">
 <div class="step">
   <div class="step-label">1 · The exponent products, then reduced mod 4</div>
   $$\begin{bmatrix}0&0&0&0\\0&1&2&3\\0&2&4&6\\0&3&6&9\end{bmatrix}\;\xrightarrow{\bmod 4}\;\begin{bmatrix}0&0&0&0\\0&1&2&3\\0&2&0&2\\0&3&2&1\end{bmatrix}$$
@@ -289,9 +288,10 @@
       <div class="stack gap-item">
         <div class="step">
           <div class="step-label">Columns are orthogonal, norm 2</div>
-          $$\|v^{(k)}\|^{2} = 1+1+1+1 = 4,\;\; \langle v^{(k)},v^{(l)}\rangle = 0\;(k\ne l)$$
+          $$\|v^{(k)}\|^{2} = 1+1+1+1 = 4$$
+          $$\langle v^{(k)},v^{(l)}\rangle = 0\;\;(k\ne l)$$
           $$V^{H} V \,=\, 4\,I \;\Longrightarrow\; V^{-1} \,=\, \tfrac{1}{4}\, V^{H}$$
-          <p class="muted" style="margin: 4px 0 0;">Entry $(k,l)$ of $V^HV$ is $\langle v^{(k)},v^{(l)}\rangle$. All six pairs are checked in Solved Example B.</p>
+          <p class="muted" style="margin: 4px 0 0;">Entry $(k,l)$ of $V^HV$ is $\langle v^{(k)},v^{(l)}\rangle$. All six pairs are checked in Solved Example B. $I$ is the identity matrix (1 on the diagonal, 0 elsewhere), so $V^HV=4I$ has 4 on the diagonal and 0 off it.</p>
         </div>
         <div class="step">
           <div class="step-label">Representation of s</div>

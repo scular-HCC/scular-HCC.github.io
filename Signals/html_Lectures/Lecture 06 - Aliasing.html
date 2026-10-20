@@ -21,7 +21,6 @@
     <div class="lecture-number">06</div>
     <div class="topic">Aliasing</div>
     <div class="sub">Two different continuous-time sinusoids can produce identical samples. The fix — the Nyquist rate.</div>
-    <div class="reference">Reading · <em>Textbook §1.6</em></div>
   </section>
 
   <section data-topic="alias" data-label="02 Objectives">
@@ -194,6 +193,10 @@
         $$\small\def\arraystretch{1.5}\begin{array}{c|cccc}f&k&d&f_a&\text{flip?}\\\hline150&0&150&150&\text{no}\\550&1&150&150&\text{no}\\250&1&-150&150&\text{yes}\\650&2&-150&150&\text{yes}\\1050&3&-150&150&\text{yes}\end{array}$$
         <p style="margin:0;" class="muted">All five are aliases of 150 Hz: they land on the same $f_a$.</p>
         </div>
+        <div class="step">
+          <div class="step-label">Notation</div>
+          <p style="margin:0;"><strong>round(x)</strong> is the nearest integer to $x$: $\operatorname{round}(550/400)=\operatorname{round}(1.375)=1$ and $\operatorname{round}(650/400)=\operatorname{round}(1.625)=2$. <strong>$\equiv$</strong> means equal up to whole turns ($2\pi$): $2.75\pi\equiv0.75\pi$ because they differ by $2\pi$.</p>
+        </div>
       </div>
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L06</span></div>
@@ -317,7 +320,7 @@
         <p style="margin:0;">From the samples ($n=1$):</p>
         $$x[1]=4.2\cos(2.0562)=-1.9596$$
         <p style="margin:0;">From the 650 Hz signal at $t=\tfrac{1}{400}$ s:</p>
-        $$x(\tfrac1{400})=4.2\cos(10.509)=-1.9596\ \checkmark$$
+        $$x(\tfrac1{400})=4.2\cos(10.510)=-1.9596\ \checkmark$$
         <p style="margin:4px 0 0;">With the wrong sign, $4.2\cos(3.25\pi-0.3)=-3.7149\neq x[1]$.</p>
         </div>
       </div>

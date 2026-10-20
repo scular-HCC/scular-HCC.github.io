@@ -66,6 +66,10 @@
         <div class="step-label">3 · Combine</div>
         <p style="margin:0;">With $w=H(e^{j\Omega_0})e^{j(\Omega_0 n+\phi)}=|H|\,e^{j(\Omega_0 n+\phi+\angle H)}$: $\;y[n]=\tfrac12(w+w^{*})=\Re\{w\}=|H|\cos(\Omega_0 n+\phi+\angle H)$. Frequency is preserved — that is why FIR filters are <em>frequency-selective</em>.</p>
       </div>
+      <div class="step" style="margin:12px 0 0;">
+        <div class="step-label">Notation · $w^{*}$ and $\Re\{\cdot\}$</div>
+        <p style="margin:0; font-size:0.8em;">$w^{*}$ flips the sign of $j$; $\Re\{w\}$ is the real part. Example $w=3+4j$: $w^{*}=3-4j$, so $\tfrac12(w+w^{*})=3=\Re\{w\}$.</p>
+      </div>
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
   </section>
@@ -230,6 +234,10 @@ n & x[n] & \text{filter} & \text{formula}\\\hline
       </div>
       <p>$X[k]=\sum_{n=0}^{L-1}x[n]e^{-j2\pi kn/L}$ is the DFT of one period. Inverse DFT: $x[n]=\tfrac1L\sum_k X[k]e^{j\Omega_k n}$ with $\Omega_k=2\pi k/L$. Each term is a complex exponential, so the filter multiplies it by $H(e^{j\Omega_k})$: that gives $Y[k]$ (transient ignored; period $L$ in ⇒ period $L$ out).</p>
       <p class="muted" style="font-size: var(--type-small); font-family: 'JetBrains Mono', monospace;">X = fft(x); H = fft(b, L); Y = H .* X; y = ifft(Y);</p>
+      <div class="step" style="margin:0;">
+        <div class="step-label">Notation · <span style="font-family:'JetBrains Mono',monospace;">.*</span> and fft(b, L)</div>
+        <p style="margin:0; font-size:0.8em;"><span style="font-family:'JetBrains Mono',monospace;">.*</span> multiplies entry by entry: $(1,2,3)\ \texttt{.*}\ (4,5,6)=(4,10,18)$. fft(b, L) pads $b$ with zeros to length $L$ first, e.g. $b=(1,-4,1)$, $L=4$ gives $(1,-4,1,0)$.</p>
+      </div>
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
   </section>
@@ -297,6 +305,7 @@ n & x[n] & \text{filter} & \text{formula}\\\hline
         <p style="margin: 0;">Bins $k_i=Lf_i$: $120\cdot\tfrac18=15$, $120\cdot\tfrac3{20}=18$, $120\cdot\tfrac5{12}=50$. Each cosine puts energy at $k_i$ and $L-k_i$: $\{15,105\}$, $\{18,102\}$, $\{50,70\}$.</p>
         <p style="margin: 8px 0 0;">So <strong>six nonzero DFT bins</strong> out of $120$.</p>
         <p style="margin: 8px 0 0;" class="muted">DT factoid: a finite sum of periodic DT signals is always periodic. Not true in CT.</p>
+        <p style="margin: 12px 0 0; font-size:0.8em;"><strong>Notation.</strong> $\gcd(p,q)$ is the greatest common divisor, e.g. $\gcd(6,20)=2$, so $\tfrac6{20}=\tfrac3{10}$ has period $10$, not $20$. $\mathrm{lcm}$ is the least common multiple, e.g. $\mathrm{lcm}(4,6)=12$.</p>
       </div>
     </div>
     <div class="slide-footer"><span class="label">Solution</span><span class="rule"></span><span class="author">ENES-222 · L22</span></div>
@@ -369,6 +378,7 @@ n & x[n] & \text{filter} & \text{formula}\\\hline
           $$\begin{aligned}y[0]&=2-4(5)+(-3)=-21\\ y[1]&=1-4(2)+5=-2\\ y[2]&=-3-4(1)+2=-5\\ y[3]&=5-4(-3)+1=18\end{aligned}$$
           <p style="margin:0;">Both routes: $y=(-21,-2,-5,18)^{\top}$ ✓</p>
         </div>
+        <p style="margin:0 0 10px; font-size:0.8em;"><strong>Notation.</strong> $a\bmod 4$ is the remainder after dividing by $4$, always one of $0,1,2,3$: $(0-1)\bmod4=3$ and $(0-2)\bmod4=2$, so $y[0]$ uses $x[3]$ and $x[2]$ (the input repeats every $4$).</p>
         <p class="muted" style="margin:0;">Pointwise multiplication of DFTs ⇔ <strong>circular</strong> convolution; for an $L$-periodic input the steady-state output is the circular convolution of one period.</p>
       </div>
     </div>

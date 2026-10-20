@@ -20,7 +20,6 @@
     <div class="lecture-number">12</div>
     <div class="topic">The Discrete<br/>Fourier Transform</div>
     <div class="sub">Decompose any $N$-point signal into $N$ sinusoids. Synthesis and analysis equations — two sides of one orthogonal basis.</div>
-    <div class="reference">Reading · <em>§3.1 – §3.2</em></div>
   </section>
 
   <section data-topic="dft_basis" data-label="02 Objectives">
@@ -145,6 +144,7 @@
             <li>$k \neq \ell$: $\ell-k$ is a nonzero integer with $|\ell-k| < N$, not a multiple of $N$, so $z \neq 1$. Also $z^{N} = (w^{N})^{\ell-k} = 1$, so the sum is $\tfrac{1-1}{1-z} = 0$.</li>
           </ul>
           <p>Hence $\langle v^{(k)}, v^{(\ell)}\rangle = N\,\delta_{k\ell}$, i.e. $V^{H}V = N I$.</p>
+          <p class="muted" style="margin:6px 0 0;">$\delta_{k\ell}$ (Kronecker delta) is $1$ when $k=\ell$ and $0$ otherwise; $I$ is the $N\times N$ identity matrix. So $V^HV=NI$ has $N$ on the diagonal and $0$ off it.</p>
         </div>
       </div>
     </div>
@@ -272,6 +272,7 @@
         $$S[1] = 1(1) + 2\big(\tfrac12 - j\tfrac{\sqrt3}{2}\big) + 3\big(-\tfrac12 - j\tfrac{\sqrt3}{2}\big) + 6(-1) + 5\big(-\tfrac12 + j\tfrac{\sqrt3}{2}\big) + 4\big(\tfrac12 + j\tfrac{\sqrt3}{2}\big)$$
         $$\mathrm{Re}\,S[1] = 1 + 1 - \tfrac32 - 6 - \tfrac52 + 2 = -6,\qquad \mathrm{Im}\,S[1] = \tfrac{\sqrt3}{2}(-2 - 3 + 5 + 4) = 2\sqrt3$$
         $$S[1] = -6 + 2\sqrt3\,j,\qquad c_1 = \tfrac{S[1]}{6} = -1 + \tfrac{\sqrt3}{3}\,j = -1 + \tfrac{j}{\sqrt3}$$
+        <p class="muted" style="margin:6px 0 0;">$\mathrm{Re}\,z$ and $\mathrm{Im}\,z$ are the real and imaginary parts: for $z=-6+2\sqrt3\,j$, $\mathrm{Re}\,z=-6$ and $\mathrm{Im}\,z=2\sqrt3$.</p>
       </div>
       <div class="step">
         <div class="step-label">k = 5: conjugate weights</div>
@@ -319,7 +320,7 @@
       </div>
 <p style="margin:0;">Spectrum: $S=(21,\;-6+2\sqrt3\,j,\;0,\;-3,\;0,\;-6-2\sqrt3\,j)$, the notebook's $(21,\,-6+3.4641j,\,0,\,-3,\,0,\,-6-3.4641j)$.</p><div class="step" style="margin-bottom:12px;">
   <div class="step-label">Synthesis with the factor 1/6</div>
-  $$s[0]=\tfrac16(21-6+2\sqrt3j+0-3+0-6-2\sqrt3j)=\tfrac66=1\;\checkmark$$$$s[3]=\tfrac16\sum_kS[k](-1)^{k}=\tfrac16(21+6-2\sqrt3j-3+6+2\sqrt3j)=\tfrac{36}{6}=6\;\checkmark$$
+  $$s[0]=\tfrac16(21-6+2\sqrt3j+0-3+0-6-2\sqrt3j)=\tfrac66=1\;\checkmark$$$$s[3]=\tfrac16\sum_kS[k](-1)^{k}=\tfrac16\big(21+(6-2\sqrt3j)+0+3+0+(6+2\sqrt3j)\big)=\tfrac{36}{6}=6\;\checkmark$$
 </div><div class="step" style="margin-bottom:0;">
   <div class="step-label">Energy</div>
   $$\|s\|^{2}=1+4+9+36+25+16=91,\;\;|S[1]|^{2}=36+12=48=|S[5]|^{2}$$$$\tfrac16\|S\|^{2}=\tfrac16(441+48+0+9+0+48)=\tfrac{546}{6}=91\;\checkmark$$
@@ -359,6 +360,7 @@
         <li>Which column is $v^{(0)}$, and which frequency is $\Omega_0 = 2\pi\cdot 0/8$?</li>
         <li>Apply the synthesis equation $s = \tfrac{1}{8}VS$.</li>
       </ul>
+      <p class="muted" style="margin:4px 0 0;">$e_0=(1,0,\dots,0)^{\top}$ is the first unit vector: a $1$ in position $0$ and zeros elsewhere (the $S$ in the setup).</p>
     </div>
     <div class="slide-footer"><span class="label">Practice</span><span class="rule"></span><span class="author">ENES-222 · L12</span></div>
   </section>

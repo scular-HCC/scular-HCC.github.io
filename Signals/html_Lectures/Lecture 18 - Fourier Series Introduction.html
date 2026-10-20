@@ -83,6 +83,8 @@ Periods of the parts: $T_1=\tfrac16$ s and $T_2=\tfrac19$ s. And $T_0=\tfrac13=2
 </div><div class="defn">
 <div class="term">Counter-example</div>
 <p style="margin:0;">$\cos(2\pi t)+\cos(2\pi\sqrt2\,t)$: the ratio $\sqrt2$ is irrational, no integers $a,b$ give $a\cdot1=b\sqrt2$, so the sum is <em>not</em> periodic.</p>
+</div><div class="step"><div class="step-label">Notation: gcd</div>
+$\gcd(a,b)$ is the largest number that fits into both $a$ and $b$ a whole number of times: $\gcd(6,9)=3$, since $6=2\cdot3$ and $9=3\cdot3$. It also works for decimals: $\gcd(50,87.5)=12.5$.
 </div>
       </div>
     </div>
@@ -195,6 +197,7 @@ $$\begin{aligned}k=1&:\;220\text{ Hz},\;\omega_1=1382.3\text{ rad/s}\\k=2&:\;440
         <div class="defn">
           <div class="term">Convergence</div>
           <p style="margin: 0;">Infinite sum — may not converge for all $s$. We'll work with signals for which it does.</p>
+          <p class="muted" style="margin: 8px 0 0;">Notation: $z^*$ is the complex conjugate, $(a+jb)^*=a-jb$, so $(3e^{j0.3})^*=3e^{-j0.3}$. $\mathrm{Re}\,z=a$ is the real part. $\mathbb{Z}$ = all integers.</p>
         </div>
       </div>
     </div>
@@ -251,7 +254,7 @@ $$\begin{aligned}k=1&:\;220\text{ Hz},\;\omega_1=1382.3\text{ rad/s}\\k=2&:\;440
           <div class="step-label">Step 3 · Coefficients, term by term</div>
           <p style="margin: 0;">Each amplitude halves: $6.2/2 = 3.1$, $4.6/2 = 2.3$, $2.8/2 = 1.4$; the DC term is its own $S_0$.</p>
           $$\begin{aligned}5.0 &\Rightarrow S_0 = 5\\ 6.2\cos(\omega_0 t+0.3) &\Rightarrow S_{\pm1} = 3.1\,e^{\pm j0.3}\\ 4.6\cos(4\omega_0 t-1.9) &\Rightarrow S_{\pm4} = 2.3\,e^{\mp j1.9}\\ 2.8\cos(7\omega_0 t+2.5) &\Rightarrow S_{\pm7} = 1.4\,e^{\pm j2.5}\end{aligned}$$
-          <p style="margin: 4px 0 0;">Rectangular: $S_1 = 2.962 + 0.916j$, $S_4 = -0.744 - 2.177j$, $S_7 = -1.122 + 0.838j$; $S_{-k} = S_k^*$. All other $S_k = 0$.</p>
+          <p style="margin: 4px 0 0;">Rectangular: $S_1 = 2.962 + 0.916j$, $S_4 = -0.744 - 2.176j$, $S_7 = -1.122 + 0.838j$; $S_{-k} = S_k^*$. All other $S_k = 0$.</p>
         </div>
       </div>
     </div>

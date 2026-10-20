@@ -63,7 +63,7 @@
         <div class="defn">
           <div class="term">Associativity</div>
           $$(AB)\,C \,=\, A\,(BC) \,\stackrel{\text{def}}{=}\, ABC$$
-          <p style="margin: 6px 0 0;" class="muted">Both mean "$C$, then $B$, then $A$". Parentheses don't matter — order does.</p>
+          <p style="margin: 6px 0 0;" class="muted">Both mean "$C$, then $B$, then $A$". Parentheses don't matter — order does. ($\stackrel{\text{def}}{=}$ means "is defined as".)</p>
         </div>
       </div>
     </div>
@@ -320,11 +320,11 @@
         <div class="defn">
           <div class="term">Row $i$: left-multiply</div>
           $$\bigl(\mathbf{e}^{(i)}\bigr)^{\top}A=\text{row } i \text{ of } A$$
-          <p class="muted" style="margin:0;">The row vector $(0,\dots,1,\dots,0)$ dotted with each column picks its $i$-th entry.</p>
+          <p class="muted" style="margin:0;">$(\mathbf{e}^{(i)})^{\top}$ is $\mathbf{e}^{(i)}$ as a row ($^{\top}$ = transpose); it picks the $i$-th entry of each column.</p>
         </div>
       </div>
         <div class="defn">
-          <div class="term">Example with the notebook matrix (columns $(1,5,9)$, $(2,6,10)$, $(3,7,11)$, $(4,8,12)$)</div>
+          <div class="term">Notebook matrix, columns $(1,5,9)$, $(2,6,10)$, $(3,7,11)$, $(4,8,12)$</div>
           $$A\,\mathbf{e}^{(2)}=0\begin{bmatrix}1\\5\\9\end{bmatrix}+1\begin{bmatrix}2\\6\\10\end{bmatrix}+0\begin{bmatrix}3\\7\\11\end{bmatrix}+0\begin{bmatrix}4\\8\\12\end{bmatrix}=\begin{bmatrix}2\\6\\10\end{bmatrix}$$
           $$\bigl(\mathbf{e}^{(1)}\bigr)^{\top}A=1\,[1,2,3,4]+0\,[5,6,7,8]+0\,[9,10,11,12]=[1,\,2,\,3,\,4]$$
         </div>

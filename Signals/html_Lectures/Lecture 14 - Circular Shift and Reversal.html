@@ -59,7 +59,7 @@
         </div>
         <div class="defn">
           <div class="term">F · Modulation</div>
-          <p style="margin: 0;">$F = \mathrm{diag}(v^{(1)})$, built from the first Fourier sinusoid $v^{(1)}[n] = e^{j 2\pi n/N}$.</p>
+          <p style="margin: 0;">$F = \mathrm{diag}(v^{(1)})$: the diagonal matrix with the entries of the first Fourier sinusoid $v^{(1)}[n] = e^{j 2\pi n/N}$ on its diagonal and $0$ elsewhere.</p>
           $$y = F^{k} x:\;\; y[n] = e^{j k(2\pi/N) n}\,x[n]$$
         </div>
       </div>
@@ -311,6 +311,9 @@ $(I-F^{3})$ has diagonal $1-(-1)^{n}=(0,2,0,2,0,2)$: it zeroes the even slots an
             $$W = V^{*},\;\; V = W R = R W$$
           </div>
           <p class="muted" style="margin: 0;">$W = V^{*}$ is the analysis (DFT) matrix, $X = Wx$. Consequences: $RVR = R(RV) = V$ and $RWR = W$.</p>
+          <div class="step"><div class="step-label">Notation: conjugate, transpose, unit vector</div>
+$V^{*}$ conjugates every entry of $V$ (no transpose); $V^{\top}$ swaps rows and columns. $e_i$ is the vector with a $1$ in position $i$ and $0$ elsewhere, e.g. $e_3=(0,0,0,1)^{\top}$ for $N=4$; $Ve_i$ is column $i$ of $V$.
+          </div>
         </div>
         <div class="stack gap-item">
           <div class="step"><div class="step-label">Columns of the matrix V</div>

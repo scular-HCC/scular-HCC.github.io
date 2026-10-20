@@ -19,7 +19,6 @@
     <div class="lecture-number">16</div>
     <div class="topic">Multiplication &amp;<br/>Circular Convolution</div>
     <div class="sub">Pointwise product in one domain ⇔ circular convolution in the other. And periodic extension by $M$ copies turns a length-$L$ spectrum into a sparse length-$ML$ one.</div>
-    <div class="reference">Reading · <em>§3.6 – §3.7</em></div>
   </section>
 
   <section data-topic="circ_conv" data-label="02 Objectives">
@@ -418,11 +417,14 @@ With only $N=2$, the entry $-2$ wraps onto index 0: $(3+(-2),\,5)=(1,5)$.
         <div class="bordered-math big-math">
           $$x = \underbrace{[s; s; \ldots; s]}_{M \text{ copies}}$$
           <div style="height: 10px;"></div>
-          $$X = M\,[S[0], 0_{M-1}, S[1], 0_{M-1}, \ldots, S[L-1], 0_{M-1}]^{\top}$$
+          $$\begin{aligned}X = M\,[&S[0], 0_{M-1}, S[1], 0_{M-1}, \ldots,\\&S[L-1], 0_{M-1}]^{\top}\end{aligned}$$
         </div>
         <div class="stack gap-item">
           <p>When $N = ML$, the $kM$-th Fourier sinusoid of length $N$ is just the $k$-th Fourier sinusoid of length $L$, periodically repeated. So only those bins fire.</p>
           <p>Scaling factor $M$: each of the $M$ copies contributes the same amount, so the $M$ equal contributions add (derived on the next slide). Hands-on check two slides later.</p>
+          <div class="step" style="margin-bottom: 0;"><div class="step-label">Notation: zeros and stacking</div>
+$0_{M-1}$ is a block of $M-1$ zeros; $[a;\,b]$ puts $a$ above $b$. Example $M=2$, $s=(1,3)$: $x=(1,3,1,3)^{\top}$.
+          </div>
         </div>
       </div>
     </div>
@@ -443,7 +445,7 @@ $$X[k]=\sum_{r=0}^{M-1}\sum_{n=0}^{L-1}s[n]\,e^{-j2\pi k(n+rL)/(ML)}$$
           $$=\Big[\sum_{n}s[n]e^{-j2\pi kn/N}\Big]\sum_{r=0}^{M-1}e^{-j2\pi kr/M}$$
 </div>
 <div class="step"><div class="step-label">Step 2 · geometric sum over r</div>
-Ratio $\rho=e^{-j2\pi k/M}$, $\rho^{M}=1$. If $M\nmid k$ then $\rho\neq1$ and the sum is $\tfrac{1-\rho^{M}}{1-\rho}=0$. If $k=iM$ then $\rho=1$ and the sum is $M$.
+Ratio $\rho=e^{-j2\pi k/M}$, $\rho^{M}=1$. If $M$ does not divide $k$ ($M\nmid k$) then $\rho\neq1$ and the sum is $\tfrac{1-\rho^{M}}{1-\rho}=0$. If $k=iM$ then $\rho=1$ and the sum is $M$.
 </div>
 <div class="step"><div class="step-label">Step 3 · surviving bins</div>
 For $k=iM$: $e^{-j2\pi iMn/(ML)}=e^{-j2\pi in/L}$, so $X[iM]=M\,S[i]$.

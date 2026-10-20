@@ -75,6 +75,7 @@
         <div class="stack gap-item">
           <div class="step"><div class="step-label">Start: the exponential series</div>$$e^{t} = 1 + t + \frac{t^{2}}{2!} + \frac{t^{3}}{3!} + \frac{t^{4}}{4!} + \frac{t^{5}}{5!} + \cdots$$</div>
           <div class="step"><div class="step-label">Powers of the imaginary unit</div>$$j^{2}=-1,\;\; j^{3}=j^{2}\cdot j=-j,\;\; j^{4}=(j^{2})^{2}=1,\;\; j^{5}=j$$<p class="muted" style="margin:4px 0 0;">The pattern $j,-1,-j,1$ then repeats.</p></div>
+          <div class="step"><div class="step-label">Notation: factorial</div>$n!$ ("$n$ factorial") is the product $n(n-1)\cdots2\cdot1$. Example: $3!=3\cdot2\cdot1=6$, $5!=120$.</div>
         </div>
         <div class="stack gap-item">
           <div class="step"><div class="step-label">Substitute and replace each power</div>$$e^{j\theta} = 1 + j\theta - \frac{\theta^{2}}{2!} - j\frac{\theta^{3}}{3!} + \frac{\theta^{4}}{4!} + j\frac{\theta^{5}}{5!} - \cdots$$</div>
@@ -403,6 +404,7 @@
           </ul>
           <p class="muted" style="margin:0;">Unknowns: amplitude $A$, angular frequency $\omega$, phase $\phi$. Let $\theta=\omega t+\phi$, so $x=A\cos\theta$.</p>
           <div class="step"><div class="step-label">Where the signal is high</div>$x\ge1.5\iff\cos\theta\ge c$ with $c=1.5/A$. Per period, cosine is even and decreasing on $[0,\pi]$: $$\cos\theta\ge c\iff |\theta|\le\cos^{-1}(c)$$</div>
+          <p class="muted" style="margin:6px 0 0;"><strong>Notation.</strong> $\cos^{-1}(c)$ is the inverse cosine (arccos): the angle in $[0,\pi]$ whose cosine is $c$, not $1/\cos c$. E.g. $\cos^{-1}(0.75)=0.7227=0.23\pi$.</p>
         </div>
         <div class="stack gap-item">
           <div class="step"><div class="step-label">Fraction of the period</div>The interval has width $2\cos^{-1}(c)$ out of $2\pi$: $$\frac{2\cos^{-1}(c)}{2\pi}=\frac{\cos^{-1}(c)}{\pi}=0.23$$$$\cos^{-1}\!\left(\tfrac{1.5}{A}\right)=0.23\pi$$</div>

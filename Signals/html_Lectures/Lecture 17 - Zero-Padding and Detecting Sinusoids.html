@@ -54,6 +54,10 @@
             $$\text{If } N = ML: \;\; S[k] = Y[kM]$$
           </div>
           <p>Take every $M$-th entry of $Y$ to recover $S$. The other entries are <em>extra</em> samples of a denser frequency grid.</p>
+          <div class="step">
+            <div class="step-label">Notation</div>
+            <p style="margin: 0;">$[s; 0_{N-L}]$ is $s$ followed by $N-L$ zeros: $(1,2,-1)$, $N=5$ gives $(1,2,-1,0,0)$. $S$, $Y$ are the DFTs of $s$, $y$.</p>
+          </div>
         </div>
         <div class="step">
           <div class="step-label">Proof, one line at a time</div>
@@ -228,6 +232,7 @@
         <div class="term">Given</div>
         <p style="margin: 0 0 6px;">A real sinusoid $s[n]=A\cos(\Omega_0 n+\phi)$ is sampled for $L=16$ points. Its DFT has a peak at $k_0=3$ with</p>
         $$S[3]=16.97+16.97j$$
+        <p class="muted" style="margin: 0;">$\angle z$ is the angle (phase) of $z=a+jb$ from the positive real axis, e.g. $\angle(1+j)=\pi/4$; $|z|=\sqrt{a^2+b^2}$ is its length.</p>
       </div>
       <ul class="clean">
         <li>Find $|S[3]|$ and $\angle S[3]$ in radians and degrees.</li>

@@ -269,6 +269,7 @@ y[5]&=1\cdot3=3
       </div>
       <p>Pad each vector to length $K + L - 1$ (or more). The circular convolution of the padded vectors equals the linear convolution of the originals.</p>
       <p class="muted" style="font-size: var(--type-small); font-family: 'JetBrains Mono', monospace;">B = fft(b, K+L-1); S = fft(s, K+L-1); y = ifft(B .* S);</p>
+      <div class="step" style="margin:0;"><div class="step-label">Notation</div><p style="margin:0;">$[b;\,0_{L-1}]$ is $b$ with $L-1$ zeros stacked below it: $b=(1,2)$, $L=3$ gives $(1,2,0,0)$. $\circledast$ is circular convolution: indices wrap around, $n \bmod N$ is the remainder of $n$ divided by $N$.</p></div>
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
   </section>
@@ -278,7 +279,7 @@ y[5]&=1\cdot3=3
     <div class="cols" style="margin-top: 28px; grid-template-columns: 1fr 1fr; gap: 40px;">
       <div class="stack gap-item" style="min-width: 0;">
 <div class="eyebrow">Too short a DFT</div>
-<h1>Circular convolution wraps the tail.</h1><div class="step" style="margin:0;"><div class="step-label">Same b and x, DFT length 4</div><p style="margin:0;">The linear result $c=(2,3,5,-5,0,-7,2)$ has 7 samples, but a length-4 circular convolution has only 4 slots: samples $n=4,5,6$ wrap onto $n=0,1,2$.</p></div><div class="step" style="margin:0;"><div class="step-label">Wrapped values</div>$$\begin{aligned}n=0:&\ 2+0=2\\n=1:&\ 3+(-7)=-4\\n=2:&\ 5+2=7\\n=3:&\ -5\end{aligned}$$
+<h1>Circular convolution wraps the tail.</h1><div class="step" style="margin:0;"><div class="step-label">Same b and x, DFT length 4</div><p style="margin:0;">The linear result $c=(2,3,5,-5,0,-7,2)$ has 7 samples, but a length-4 circular convolution has only 4 slots: samples $n=4,5,6$ wrap onto $n=0,1,2$ (index $n \bmod 4$: the remainder after dividing by 4).</p></div><div class="step" style="margin:0;"><div class="step-label">Wrapped values</div>$$\begin{aligned}n=0:&\ 2+0=2\\n=1:&\ 3+(-7)=-4\\n=2:&\ 5+2=7\\n=3:&\ -5\end{aligned}$$
  <p style="margin:0;">Circular result $(2,-4,7,-5)$: the linear one cannot be recovered.</p></div>
       </div>
       <div class="stack gap-item" style="min-width: 0;">
@@ -313,6 +314,7 @@ y[5]&=1\cdot3=3
         $$b * [s^{(1)};\, s^{(2)}] \,=\, [b * s^{(1)};\, 0_{L_2}] \,+\, [0_{L_1};\, b * s^{(2)}]$$
       </div>
       <p>Real-time filters use this to run with fixed-length FFTs no matter how long the input. The overlap region is where consecutive blocks' tails sum.</p>
+      <div class="step" style="margin:0;"><div class="step-label">Notation</div><p style="margin:0;">$s^{(1)}$, $s^{(2)}$ are the first and second block of $s$, of lengths $L_1$, $L_2$; $0_m$ is a column of $m$ zeros. For $s=(1,-2,3,4)$ split in halves: $s^{(1)}=(1,-2)$, $s^{(2)}=(3,4)$, $L_1=L_2=2$.</p></div>
     </div>
     <div class="slide-footer"><span class="label">Concept</span><span class="rule"></span><span class="author">ENES-222 · L23</span></div>
   </section>
