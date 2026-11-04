@@ -169,6 +169,7 @@ ol.numbered li::before {
 }
 
 .cols { display: grid; grid-template-columns: 1.05fr 1fr; gap: 80px; align-items: start; }
+.cols > * { min-width: 0; }
 .cols.tight { gap: 60px; }
 .cols.even  { grid-template-columns: 1fr 1fr; }
 
@@ -243,7 +244,7 @@ ol.numbered li::before {
   justify-content: center;
 }
 .diagram-wrap.tight { padding: 12px; }
-.diagram-wrap svg { width: 100%; height: auto; display: block; }
+.diagram-wrap svg, .diagram-wrap img { width: 100%; max-width: 100%; height: auto; display: block; }
 .diagram-caption {
   font-family: 'Inter', sans-serif;
   font-size: var(--type-small);
