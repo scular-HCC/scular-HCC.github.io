@@ -10,7 +10,28 @@ footer: "AC-DC Difference — Stefan"
 
     <!-- Link to shared stylesheet -->
   <link rel="stylesheet" href="styles.css" />
-  
+
+  <!-- MathJax for equations -->
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] } };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Page-specific styles -->
+  <style>
+    .card h3 { color: #0a3d62; margin-top: 1.4em; margin-bottom: 0.4em; }
+    .card h3:first-child { margin-top: 0; }
+    .card table { width: 100%; border-collapse: collapse; margin: 1em 0; text-align: left; font-size: 0.95rem; }
+    .card th, .card td { border: 1px solid #d5dde8; padding: 6px 10px; vertical-align: top; }
+    .card th { background: #eef3f9; color: #0a3d62; }
+    .card figure { margin: 1.2em 0; text-align: center; }
+    .card figure svg { max-width: 100%; height: auto; }
+    .card figcaption { font-size: 0.9rem; color: #555; margin-top: 0.4em; text-align: center; }
+    .note { background: #fff8e6; border-left: 4px solid #f0a500; padding: 10px 14px; margin: 1em 0; border-radius: 4px; }
+    .toc ul { columns: 2; margin: 0; }
+    @media (max-width: 600px) { .toc ul { columns: 1; } }
+  </style>
+
 </head>
 
 <body>
@@ -24,11 +45,39 @@ footer: "AC-DC Difference — Stefan"
       <p>
         AC-DC Difference is a measurement used to determine the thermal equivalence between DC and AC values.  This is most accurately done using a thermal transfer standard (TTS) which can take on many forms.
       </p>
-      
+      <p>
+        The root-mean-square (RMS) value of an ac signal is defined by its heating effect: an ac voltage has an RMS value of 1 V when it dissipates the same average power in a resistor as 1 V dc.  DC voltage and current can be measured very accurately, all the way back to quantum standards (the Josephson voltage standard and the quantum Hall resistance standard).  AC quantities are much harder to measure directly.  A thermal converter bridges this gap: it lets us compare an ac signal to a known dc signal by their heating effect, so the accuracy of dc measurements can be "transferred" to ac.
+      </p>
+      <p>
+        No real transfer device is perfect, so the ac and dc inputs that give the same output are never exactly equal.  The ac-dc difference, \(\delta\), quantifies this imperfection:
+      </p>
+      \[
+        \delta = \frac{Q_{ac} - Q_{dc}}{Q_{dc}}, \qquad Q_{dc} = \frac{Q_{dc+} + Q_{dc-}}{2}
+      \]
+      <p>
+        where \(Q_{ac}\) is the RMS ac input (voltage or current) and \(Q_{dc}\) is the dc input, averaged over both polarities, that produces the <em>same output</em> from the device.  The value is very small and is normally expressed in µV/V (parts per million) for voltage or µA/A for current.  If \(\delta\) is positive, the device needs slightly more ac than dc to give the same output.
+      </p>
+      <p>
+        Once the ac-dc difference of a converter is known, the converter can be used to measure an unknown ac quantity in terms of dc:  \(Q_{ac} = Q_{dc}(1 + \delta)\).
+      </p>
+    </div>
+
+    <div class="card toc">
+      <strong>On this page</strong>
+      <ul>
+        <li><a href="#devices">AC-DC Difference Devices</a></li>
+        <li><a href="#errors">Sources of AC-DC Difference</a></li>
+        <li><a href="#concepts">General Concepts</a></li>
+        <li><a href="#procedure">Measurement Procedure</a></li>
+        <li><a href="#requirements">Requirements</a></li>
+        <li><a href="#uncertainty">Uncertainty</a></li>
+        <li><a href="#traceability">Traceability</a></li>
+        <li><a href="#additional">Additional Information</a></li>
+      </ul>
     </div>
   </div>
 
-  <div class="section">
+  <div class="section" id="devices">
     <h2>AC-DC Difference Devices</h2>
     <div class="card">
       <ul>
@@ -39,7 +88,7 @@ footer: "AC-DC Difference — Stefan"
 			<li>Holt Instruments</li>
 			<li>Precision Metrology Instruments (PMI)</li>
 			<li>Hewlett-Packard (HP) later Agilent then Keysight</li>
-			<li>Note these device use vacuum thermocouples from <a href="https://www.besttech.com/">Best Technology International</a>
+			<li>Note these devices use vacuum thermocouples from <a href="https://www.besttech.com/">Best Technology International</a></li>
 		</ul>
         <li>MultiJunction Thermal Voltage Converters</li>
 			<ul>
@@ -50,45 +99,253 @@ footer: "AC-DC Difference — Stefan"
         <li>Solid State Based</li>
 			<ul>
 			<li><a href="https://www.fluke.com/en-us/product/calibration-tools/electrical-calibration/electrical-standards/792a">Fluke 792A</a></li>
+			<li>Fluke 5790A / 5790B AC Measurement Standard</li>
 			</ul>
-		
+
         <li>Photonics Based</li>
 			<ul>
 			<li><a href="https://www.nist.gov/programs-projects/photonic-thermometry">NIST Photonic Thermometry Project</a></li>
 			</ul>
-			
+
       </ul>
+
+      <h3>Single Junction Thermal Converters (SJTC)</h3>
+      <p>
+        An SJTC is a thermoelement: a short heater wire with a single thermocouple bonded to its midpoint, sealed in an evacuated glass bulb to reduce heat loss and air currents.  Current through the heater raises its temperature and the thermocouple produces a small dc output, typically 7 mV to 12 mV at rated input.  The heater is usually rated for a few milliamps (commonly 5 mA or 10 mA), so higher voltages require a series <strong>range resistor</strong>.  The thermoelement and range resistor together make a thermal voltage converter (TVC).  For current, the thermoelement is placed in parallel with a <strong>shunt</strong>, forming a thermal current converter (TCC).
+      </p>
+      <p>
+        SJTCs are inexpensive and reliable, with ac-dc differences of a few µV/V to tens of µV/V in the audio range.  They are fragile: a modest overload can burn out the heater, so always know the rated input before applying a signal.
+      </p>
+
+      <h3>Multijunction Thermal Converters (MJTC)</h3>
+      <p>
+        An MJTC uses many thermocouples (tens to hundreds) in series along the heater.  The larger number of junctions gives an output of roughly 100 mV and spreads the heater temperature measurement over its length, which greatly reduces thermoelectric effects.  Modern MJTCs are built with thin-film techniques on a membrane.  MJTCs have the lowest ac-dc differences available, below 1 µV/V at audio frequencies, and are the primary standards at national labs.
+      </p>
+
+      <h3>Solid State Converters</h3>
+      <p>
+        Solid state transfer standards replace the vacuum thermoelement with an integrated RMS sensor (heater resistors and temperature-sensing transistors on a chip) and electronic feedback.  They have a much larger and more convenient output (e.g. 2 V full scale on the 792A), much better overload tolerance, and faster settling.  They are the workhorse of most commercial calibration labs.  Their ac-dc difference is larger and less stable than a good MJTC, so they need regular calibration.
+      </p>
+
+      <h3>Photonic Based</h3>
+      <p>
+        Photonic thermometry replaces the thermocouple with an optical temperature sensor (for example a silicon photonic ring resonator whose resonant wavelength shifts with temperature).  Optical readout isolates the measurement electrically from the heater circuit, which is attractive for reducing coupling and for very high frequencies.  This is an active research area.
+      </p>
     </div>
   </div>
 
-  <div class="section">
+  <div class="section" id="errors">
+    <h2>Sources of AC-DC Difference</h2>
+    <div class="card">
+      <p>
+        The ac-dc difference of a thermal converter is not constant with frequency.  It is generally smallest in the mid-audio range (roughly 100 Hz to 20 kHz) and grows at both low and high frequencies.
+      </p>
+
+      <figure>
+        <svg viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Qualitative plot of ac-dc difference versus frequency">
+          <line x1="60" y1="210" x2="530" y2="210" stroke="#333" stroke-width="1.5"/>
+          <line x1="60" y1="20" x2="60" y2="210" stroke="#333" stroke-width="1.5"/>
+          <text x="295" y="245" font-size="13" text-anchor="middle" fill="#333">Frequency (log scale)</text>
+          <text x="20" y="115" font-size="13" text-anchor="middle" fill="#333" transform="rotate(-90 20 115)">|δ|</text>
+          <text x="70" y="228" font-size="11" fill="#555">10 Hz</text>
+          <text x="180" y="228" font-size="11" fill="#555">1 kHz</text>
+          <text x="300" y="228" font-size="11" fill="#555">100 kHz</text>
+          <text x="440" y="228" font-size="11" fill="#555">10 MHz</text>
+          <path d="M 75 40 C 110 160, 140 190, 190 192 S 300 185, 340 165 S 440 90, 520 30" fill="none" stroke="#0a3d62" stroke-width="2.5"/>
+          <text x="90" y="70" font-size="12" fill="#b03a2e">Thermal ripple</text>
+          <text x="165" y="182" font-size="12" fill="#1e8449">Flat region</text>
+          <text x="275" y="50" font-size="12" fill="#b03a2e">Reactance, skin</text>
+          <text x="275" y="66" font-size="12" fill="#b03a2e">effect, transmission</text>
+          <text x="275" y="82" font-size="12" fill="#b03a2e">line effects</text>
+        </svg>
+        <figcaption>Qualitative shape of ac-dc difference versus frequency (not to scale).</figcaption>
+      </figure>
+
+      <table>
+        <tr><th>Region</th><th>Effect</th><th>Description</th></tr>
+        <tr>
+          <td>DC</td>
+          <td>Thermoelectric effects (Thomson and Peltier)</td>
+          <td>DC current flowing through the heater and junction moves heat in one direction depending on polarity, so the output differs for DC+ and DC−.  This is the <strong>dc reversal error</strong>.  Averaging both polarities cancels it to first order, which is why \(Q_{dc}\) is always the average of DC+ and DC−.</td>
+        </tr>
+        <tr>
+          <td>Low frequency (below ~40 Hz)</td>
+          <td>Thermal ripple</td>
+          <td>The instantaneous heating power varies at twice the signal frequency.  When the heater thermal time constant is not long compared to the period, the heater temperature follows the power, and the nonlinear thermocouple response no longer gives the true average.  The output also becomes noisy.</td>
+        </tr>
+        <tr>
+          <td>Mid frequency</td>
+          <td>Small residual effects</td>
+          <td>Ac-dc difference is smallest and flattest here.  Leakage and dielectric losses still contribute at the µV/V level.</td>
+        </tr>
+        <tr>
+          <td>High frequency (above ~100 kHz)</td>
+          <td>Reactance, skin effect, dielectric loss, transmission line effects</td>
+          <td>Stray capacitance and inductance of the range resistor and leads, skin effect in the heater, losses in insulating materials, and the electrical length of the connector and tee cause the voltage at the heater to differ from the voltage at the reference plane.  Above about 1 MHz these effects dominate.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section" id="concepts">
     <h2>General Concepts</h2>
     <div class="card">
       <p>There are two main uses for ac-dc difference devices: measurement of other types of devices and measurement of another ac-dc device.  Measurements of other types of devices can be anything from a source to a meter.  I will not delve into this topic at this time.</p>
 	  <p>Measurements of another ac-dc device is the most common calibration configuration.  For this measurement, two ac-dc devices are connected using a tee and measure the same electrical signal (constant voltage or current).  The signal is applied through a timed sequence switching through both dc polarities and ac values (DC+, AC, DC-,...).  During the measurement sequence the average of the dc polarities is matched with the ac signal based on one of the devices.  The difference in the output of the second device with the correction of the first considered is the ac-dc difference.</p>
-	  
-	  <p>More to be added later</p>
 
-      
+      <figure>
+        <svg viewBox="0 0 640 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Block diagram of an ac-dc difference comparison using a tee">
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 z" fill="#333"/>
+            </marker>
+          </defs>
+          <g font-size="13" text-anchor="middle" fill="#1a1a1a">
+            <rect x="10" y="40" width="110" height="45" rx="6" fill="#eef3f9" stroke="#0a3d62"/>
+            <text x="65" y="67">AC Source</text>
+            <rect x="10" y="155" width="110" height="45" rx="6" fill="#eef3f9" stroke="#0a3d62"/>
+            <text x="65" y="176">DC Source</text>
+            <text x="65" y="192" font-size="11">(±)</text>
+            <rect x="170" y="95" width="100" height="55" rx="6" fill="#eef3f9" stroke="#0a3d62"/>
+            <text x="220" y="118">AC/DC</text>
+            <text x="220" y="135">Switch</text>
+            <circle cx="330" cy="122" r="16" fill="#fff8e6" stroke="#f0a500" stroke-width="2"/>
+            <text x="330" y="127">T</text>
+            <text x="330" y="160" font-size="11" fill="#555">reference plane</text>
+            <rect x="400" y="30" width="110" height="45" rx="6" fill="#eef3f9" stroke="#0a3d62"/>
+            <text x="455" y="50">Standard</text>
+            <text x="455" y="66" font-size="11">(TVC, known δ)</text>
+            <rect x="400" y="170" width="110" height="45" rx="6" fill="#eef3f9" stroke="#0a3d62"/>
+            <text x="455" y="190">Test</text>
+            <text x="455" y="206" font-size="11">(TVC, unknown δ)</text>
+            <rect x="550" y="30" width="80" height="45" rx="6" fill="#ffffff" stroke="#333"/>
+            <text x="590" y="58">DVM 1</text>
+            <rect x="550" y="170" width="80" height="45" rx="6" fill="#ffffff" stroke="#333"/>
+            <text x="590" y="198">DVM 2</text>
+          </g>
+          <g stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#arr)">
+            <path d="M120 62 L170 110"/>
+            <path d="M120 178 L170 135"/>
+            <path d="M270 122 L312 122"/>
+            <path d="M343 112 L400 55"/>
+            <path d="M343 132 L400 190"/>
+            <path d="M510 52 L550 52"/>
+            <path d="M510 192 L550 192"/>
+          </g>
+        </svg>
+        <figcaption>Comparison of a test converter against a standard converter connected in parallel through a tee.</figcaption>
+      </figure>
+
+      <h3>Converter response</h3>
+      <p>
+        The output \(E\) of a thermal converter is approximately proportional to a power of its input:
+      </p>
+      \[ E = k\,V^{\,n} \]
+      <p>
+        For an ideal heater and thermocouple \(n = 2\) (output proportional to power), but real SJTCs typically have \(n\) between about 1.6 and 2.  Solid state devices with feedback have \(n \approx 1\).  Because of this, a small relative change in input gives a relative change in output \(n\) times larger:
+      </p>
+      \[ \frac{\Delta E}{E} = n\,\frac{\Delta V}{V} \]
+      <p>
+        \(n\) is measured by applying dc at the test voltage and at a slightly different level (for example ±0.1 %) and computing \( n = (\Delta E / E) / (\Delta V / V) \).  It only needs to be known to a few percent because it multiplies a very small number.
+      </p>
+
+      <h3>Comparison equation</h3>
+      <p>
+        For each converter, define the normalized output difference between the ac and the averaged dc readings:
+      </p>
+      \[
+        \varepsilon = \frac{E_{ac} - E_{dc}}{n\,E_{dc}}, \qquad E_{dc} = \frac{E_{dc+} + E_{dc-}}{2}
+      \]
+      <p>
+        Both converters see exactly the same ac and dc signals at the tee, so any difference between the ac and dc source levels affects both equally and cancels.  The ac-dc difference of the test converter is then:
+      </p>
+      \[
+        \delta_{T} = \delta_{S} + \varepsilon_{S} - \varepsilon_{T}
+      \]
+      <p>
+        If the ac source is adjusted so the standard's ac output exactly matches its average dc output (as described above), then \(\varepsilon_{S} = 0\) and \(\delta_{T} = \delta_{S} - \varepsilon_{T}\).  In practice the ac is set close to equal and the small residual \(\varepsilon_S\) is included in the calculation.
+      </p>
+      <div class="note">
+        <strong>Why the sources and meters don't need to be calibrated:</strong>  the result depends only on <em>ratios</em> of readings from the same meter, and the source level cancels between the two converters.  The meter's gain error drops out; only its linearity and resolution over a very small range matter.
+      </div>
     </div>
   </div>
-  
-   <div class="section">
+
+  <div class="section" id="procedure">
+    <h2>Measurement Procedure</h2>
+    <div class="card">
+      <h3>Switching sequence</h3>
+      <p>
+        A typical sequence is <strong>AC, DC+, AC, DC−, AC</strong>, repeated several times.  At each step the switch changes the input and the system waits for the converters to settle before taking readings.  Settling for vacuum thermoelements is commonly 30 s to 60 s or more; solid state devices are faster.
+      </p>
+      <p>
+        The symmetric sequence matters: if the converter outputs are drifting linearly, averaging the AC readings on either side of a DC reading cancels the drift.  Similarly, averaging DC+ and DC− removes the dc reversal error.
+      </p>
+
+      <h3>Typical steps</h3>
+      <ol>
+        <li>Connect the standard and test converters to the tee using the correct connectors.  Keep cables short and the setup tidy.</li>
+        <li>Verify the range of each converter and the maximum input of the heaters before applying any signal.</li>
+        <li>Apply dc and allow the converters to warm up and stabilize at the test level.</li>
+        <li>Measure the response exponent \(n\) of each converter if not already known.</li>
+        <li>Set the ac source to the test frequency and adjust its level so that the standard's ac output is close to its dc output.</li>
+        <li>Run the switching sequence, recording both converter outputs at each step.</li>
+        <li>Calculate \(\varepsilon_S\), \(\varepsilon_T\), and \(\delta_T\) for each cycle; report the mean and standard deviation of the mean.</li>
+        <li>Repeat for each voltage and frequency point.  It is good practice to repeat a point after interchanging the converters on the tee (see below).</li>
+      </ol>
+
+      <h3>The tee and the reference plane</h3>
+      <p>
+        The ac-dc difference is defined at a specific point, the <strong>reference plane</strong>, which is normally the center of the tee.  At high frequencies the two arms of the tee are not perfectly identical and the voltage at each converter's input differs slightly from the voltage at the center.  A common check is to swap the standard and the test converter between the arms of the tee and repeat the measurement; the difference indicates the tee asymmetry.  Calibration results are only valid with the same connector type and tee arrangement used when the standard was calibrated (commonly Type N, GR874, or UHF connectors).
+      </p>
+    </div>
+  </div>
+
+   <div class="section" id="requirements">
     <h2>Requirements</h2>
     <div class="card">
       <ul>
 		<li>All instruments in known good condition.</li>
 		<li>Stable normal measurement environment.</li>
-		<li>Note: The sources and meters do not need to be calibrated, but they need to be in good working condition.  A calibration satisfis this condition, but a simple verification and characterization is sufficient.</li>
+		<li>Note: The sources and meters do not need to be calibrated, but they need to be in good working condition.  A calibration satisfies this condition, but a simple verification and characterization is sufficient.</li>
 	  </ul>
-	  
-	  <p>More to be added later</p>
 
-      
+      <h3>Environment</h3>
+      <ul>
+        <li>Stable temperature, typically (23 ± 1) °C, with small short-term variation during the measurement.  Thermal converters are temperature sensors, so room drift appears directly in the output.</li>
+        <li>Controlled relative humidity (commonly below 60 %) to limit leakage in range resistors and insulators.</li>
+        <li>Avoid drafts from HVAC vents and heat from nearby equipment directly on the converters.</li>
+      </ul>
+
+      <h3>Sources</h3>
+      <ul>
+        <li><strong>AC source:</strong> good short-term amplitude stability over the settling and reading time.  Low distortion is helpful; thermal converters respond to true RMS, but harmonics can change the high-frequency behavior.</li>
+        <li><strong>DC source:</strong> low noise, stable, and able to reverse polarity cleanly.  The DC+ and DC− levels should be nearly equal in magnitude.</li>
+        <li>Both sources should be set to nearly the same level so the converters operate at the same point on their response curve.</li>
+      </ul>
+
+      <h3>Meters</h3>
+      <p>
+        The meters must resolve very small changes.  For an SJTC with \(E \approx 7\) mV and \(n \approx 2\), a 1 µV/V change in input produces only
+        \( \Delta E = n\,E\,\delta \approx 2 \times 7\ \text{mV} \times 10^{-6} = 14\ \text{nV} \).
+        This requires a nanovoltmeter or a high-resolution DVM on a low range (or a voltage-offset/difference technique).  MJTCs and solid state standards have larger outputs and are easier to read.
+      </p>
+
+      <h3>Grounding, shielding, and connections</h3>
+      <ul>
+        <li>Use a single ground point (usually at the tee) to avoid ground loops.</li>
+        <li>Keep output leads of the converters shielded and away from the ac signal path.</li>
+        <li>Thermocouple outputs are low-level dc signals: use low-thermal connections and let connections settle after handling.</li>
+        <li>Inspect connectors for wear and damage; connector quality directly affects high-frequency results.</li>
+      </ul>
+
+      <div class="note">
+        <strong>Protect the standards:</strong> vacuum thermoelements burn out with very little overload.  Always confirm the range resistor and the maximum heater current, start from zero, and raise the level slowly.
+      </div>
     </div>
   </div>
-  
-  <div class="section">
+
+  <div class="section" id="uncertainty">
     <h2>Uncertainty</h2>
     <div class="card">
 		<p>Major Uncertainty Components</p>
@@ -102,27 +359,92 @@ footer: "AC-DC Difference — Stefan"
 			<li>Repeatability</li>
 			<li>Environment stability</li>
 	    </ul>
-      <p>More to be added later.</p>
+
+      <h3>Description of components</h3>
+      <table>
+        <tr><th>Component</th><th>Type</th><th>Comment</th></tr>
+        <tr><td>Standard</td><td>B</td><td>The expanded uncertainty from the standard's calibration certificate, divided by its coverage factor.  Include drift since the last calibration if history is available.  This is often the largest component.</td></tr>
+        <tr><td>Meter 1 and Meter 2 linearity</td><td>B</td><td>Only the linearity over the small difference between ac and dc readings matters, not the absolute accuracy.  Estimate from manufacturer specification or by characterizing the meter.</td></tr>
+        <tr><td>DC source stability</td><td>A/B</td><td>Short-term drift and noise of the dc source between readings.  Mostly averaged out by the sequence but adds scatter.</td></tr>
+        <tr><td>AC source stability</td><td>A/B</td><td>Same as dc.  Becomes more important at low and high frequencies where sources are less stable.</td></tr>
+        <tr><td>Connector type / tee</td><td>B</td><td>Differences between the connector arrangement used at calibration and in use, and tee asymmetry.  Small at audio frequencies; can dominate above 1 MHz.</td></tr>
+        <tr><td>Repeatability</td><td>A</td><td>Standard deviation of the mean of repeated cycles: \( s/\sqrt{N} \).</td></tr>
+        <tr><td>Environment stability</td><td>B</td><td>Effect of temperature changes on converter outputs during the measurement.</td></tr>
+        <tr><td>Response exponent \(n\)</td><td>B</td><td>Error in \(n\) multiplies \(\varepsilon\).  Usually small because \(\varepsilon\) is kept small by setting ac close to dc.</td></tr>
+        <tr><td>Level dependence</td><td>B</td><td>If the standard was calibrated at a different voltage than used, the change in ac-dc difference with level.</td></tr>
+      </table>
+
+      <h3>Combining</h3>
+      <p>
+        Following the GUM, each component is converted to a standard uncertainty \(u_i\) (in µV/V).  Assuming the components are independent, they are combined by root-sum-of-squares and expanded with a coverage factor \(k\), usually \(k = 2\) for approximately 95 % confidence:
+      </p>
+      \[
+        u_c = \sqrt{\sum_i u_i^2}, \qquad U = k\,u_c
+      \]
+      <p>
+        Type B components with only limit values (e.g. a specification of ±a) are typically treated as rectangular distributions with \(u = a/\sqrt{3}\).
+      </p>
+
+      <h3>Typical magnitudes</h3>
+      <p>
+        Uncertainties grow quickly at the ends of the frequency range.  As a rough guide only, a commercial lab using a solid state transfer standard might report uncertainties of order 10 µV/V to 30 µV/V near 1 kHz, rising to hundreds of µV/V at 1 MHz.  National labs using MJTCs achieve well under 1 µV/V at audio frequencies for voltages in the volts range.  Actual values come from each lab's own uncertainty budget and scope of accreditation.
+      </p>
     </div>
   </div>
 
-  <div class="section">
+  <div class="section" id="traceability">
     <h2>Traceability</h2>
     <div class="card">
-      <p>Tracebility of ac-dc standards for most labs goes to the calibration certificate that shows the link to a national lab.</p>
-	  <p>Tracebility of ac-dc standards at national labs is complex.  There are a number of well characterized specialized standards that the national lab uses to estabilish ac-dc difference.  These special standards might for example only be for frequencies below 400 Hz or for frequencies over 10 kHz, low voltages, low currents, etc.  The specialized standards are used to create an ensemble ac-dc value which is then assigned to working standards. </p>
-	  <p> More to be added later</p>
+      <p>Traceability of ac-dc standards for most labs goes to the calibration certificate that shows the link to a national lab.</p>
+	  <p>Traceability of ac-dc standards at national labs is complex.  There are a number of well characterized specialized standards that the national lab uses to establish ac-dc difference.  These special standards might for example only be for frequencies below 400 Hz or for frequencies over 10 kHz, low voltages, low currents, etc.  The specialized standards are used to create an ensemble ac-dc value which is then assigned to working standards. </p>
 
-      
+      <h3>Traceability chain</h3>
+      <ol>
+        <li><strong>SI volt and ohm:</strong> dc voltage and resistance are realized with the Josephson voltage standard and quantum Hall resistance standard.</li>
+        <li><strong>Primary ac-dc standards:</strong> MJTCs and specially built converters whose ac-dc difference is determined by calculation, by modeling of individual error sources, and by intercomparison of different designs.</li>
+        <li><strong>Step-up / step-down:</strong> the primary standards work at a limited range of voltage (around a few volts).  To cover higher voltages, converters of adjacent ranges are compared at a voltage both can accept, and the known value is carried up range by range (the step-up process).  A similar process with micropotentiometers or resistive dividers carries values down to millivolts.  Current is built up the same way with a series of shunts.</li>
+        <li><strong>Working standards:</strong> national lab working standards are calibrated against the primary group and used for customer calibrations.</li>
+        <li><strong>Customer standards:</strong> the lab's transfer standard (e.g. an SJTC set or solid state standard) is calibrated at the national lab and in turn used to calibrate the lab's calibrators and meters.</li>
+      </ol>
+
+      <h3>International agreement</h3>
+      <p>
+        National labs compare their ac-dc standards in international key comparisons organized by the Consultative Committee for Electricity and Magnetism (CCEM), for example CCEM-K6.a for ac-dc voltage transfer.  The results support each lab's Calibration and Measurement Capabilities (CMCs), published in the BIPM key comparison database (KCDB), so a calibration traced to one national lab is accepted by others.
+      </p>
+
+      <h3>Quantum ac voltage</h3>
+      <p>
+        Pulse-driven ac Josephson voltage standards (sometimes called JAWS) synthesize ac waveforms with quantum-accurate amplitude.  These provide an independent, quantum-based check of thermal converters at low voltage and are an active area of research at national labs.
+      </p>
     </div>
   </div>
-  
 
-  <div class="section">
+
+  <div class="section" id="additional">
     <h2>Additional information</h2>
     <div class="card">
-      <p>To be added later</p>
+      <h3>Glossary</h3>
+      <table>
+        <tr><th>Term</th><th>Meaning</th></tr>
+        <tr><td>TVC</td><td>Thermal Voltage Converter: thermoelement plus series range resistor.</td></tr>
+        <tr><td>TCC</td><td>Thermal Current Converter: thermoelement plus parallel shunt.</td></tr>
+        <tr><td>SJTC</td><td>Single Junction Thermal Converter.</td></tr>
+        <tr><td>MJTC</td><td>Multijunction Thermal Converter.</td></tr>
+        <tr><td>TTS</td><td>Thermal Transfer Standard: any device used to transfer between ac and dc by heating effect.</td></tr>
+        <tr><td>δ</td><td>AC-DC difference, in µV/V or µA/A.</td></tr>
+        <tr><td>n</td><td>Response exponent of a converter, \(E \propto V^n\).</td></tr>
+        <tr><td>Reference plane</td><td>The point (usually the tee center) where the ac-dc difference is defined.</td></tr>
+        <tr><td>DC reversal error</td><td>Difference in output between DC+ and DC− caused by thermoelectric effects.</td></tr>
+      </table>
 
+      <h3>Further reading</h3>
+      <ul>
+        <li>NIST, <a href="https://www.nist.gov/programs-projects/ac-dc-difference">AC-DC Difference program</a>.</li>
+        <li>J. R. Kinard, T. E. Lipe, C. B. Childers, <em>AC-DC Difference Calibrations</em>, NIST Special Publication 250-27.</li>
+        <li>F. L. Hermach, "Thermal converters as ac-dc transfer standards for current and voltage measurements at audio frequencies," <em>Journal of Research of the National Bureau of Standards</em>, 1952.</li>
+        <li>Fluke Corporation, <em>Calibration: Philosophy in Practice</em> (chapters on ac-dc transfer).</li>
+        <li>JCGM 100:2008, <em>Evaluation of measurement data — Guide to the expression of uncertainty in measurement</em> (GUM).</li>
+      </ul>
     </div>
   </div>
 
