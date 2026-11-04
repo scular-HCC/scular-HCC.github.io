@@ -73,6 +73,7 @@ footer: "AC-DC Difference — Stefan"
         <li><a href="#requirements">Requirements</a></li>
         <li><a href="#uncertainty">Uncertainty</a></li>
         <li><a href="#traceability">Traceability</a></li>
+        <li><a href="#history">History of AC-DC Difference</a></li>
         <li><a href="#additional">Additional Information</a></li>
       </ul>
     </div>
@@ -96,6 +97,7 @@ footer: "AC-DC Difference — Stefan"
 			<li><a href="https://www.nist.gov/programs-projects/ac-dc-difference">NIST AC-DC Project</a></li>
 			<li>SNL</li>
 			<li>PTB</li>
+			<li>Substrate types: silicon membrane, crystalline quartz, fused silica</li>
 			</ul>
         <li>Solid State Based</li>
 			<ul>
@@ -122,6 +124,14 @@ footer: "AC-DC Difference — Stefan"
       <p>
         An MJTC uses many thermocouples (tens to hundreds) in series along the heater.  The larger number of junctions gives an output of roughly 100 mV and spreads the heater temperature measurement over its length, which greatly reduces thermoelectric effects.  Modern MJTCs are built with thin-film techniques on a membrane.  MJTCs have the lowest ac-dc differences available, below 1 µV/V at audio frequencies, and are the primary standards at national labs.  Their response is also very close to ideal square law, with a response exponent typically \(n = 1.97\) to \(2.03\).
       </p>
+      <p>
+        <strong>Substrate materials.</strong>  The substrate that supports the heater and thermocouples sets much of an MJTC's high-frequency behavior:
+      </p>
+      <ul>
+        <li><strong>Silicon membrane:</strong> the heater and thermocouples sit on a thin dielectric membrane etched into a silicon chip, which gives good thermal isolation and high sensitivity.  These perform very well at low and audio frequencies.  At high frequencies, the semiconducting silicon frame causes capacitive coupling and losses.</li>
+        <li><strong>Crystalline quartz:</strong> using an insulating quartz chip instead of silicon removes the conductive substrate and its losses.  This greatly improves high-frequency performance.  Crystalline quartz is fragile, however, and chips crack easily during fabrication and use.</li>
+        <li><strong>Fused silica:</strong> amorphous fused silica (SiO<sub>2</sub>) keeps the excellent dielectric properties of quartz (low permittivity and very low dielectric loss) and is much more robust.  Fused silica MJTCs have been built in bifilar and coaxial heater designs, including 50 Ω versions with on-chip input resistors for RF systems.  They are aimed at ac voltage up to 100 MHz and ac current up to 1 MHz, with reported good performance from 10 Hz to 100 MHz and inputs from about 1 V to 30 V depending on design.  The NIST SRI 6002 standard reference instrument is a bifilar MJTC on fused silica.</li>
+      </ul>
 
       <h3>Solid State Converters</h3>
       <p>
@@ -645,6 +655,74 @@ footer: "AC-DC Difference — Stefan"
   </div>
 
 
+  <div class="section" id="history">
+    <h2>History of AC-DC Difference</h2>
+    <div class="card">
+      <h3>Early ac measurement (late 1800s – early 1900s)</h3>
+      <p>
+        Practical measurement of ac began with the spread of ac power in the late 1800s.  Instruments that respond to the square of the signal, such as electrodynamometers, electrostatic voltmeters, and hot-wire meters, read the RMS value.  They could be calibrated with dc and then used on ac, which is the basic idea of ac-dc transfer.  Their accuracy was limited to roughly 0.1 % at best, and they worked only at power and low audio frequencies.
+      </p>
+      <p>
+        The thermoelement, a heater with a thermocouple attached, appeared in the early 1900s, first for radio-frequency current measurement.  Sealing it in an evacuated bulb (the vacuum thermocouple) made it far more sensitive.  It responds to heating like the earlier instruments but works over a much wider frequency range.
+      </p>
+
+      <h3>Thermal converters become transfer standards (1940s – 1960s)</h3>
+      <p>
+        At the U.S. National Bureau of Standards (NBS, now NIST), F. L. Hermach and colleagues developed thermoelements with range resistors into precision ac-dc transfer standards.  They studied the error sources systematically (thermoelectric effects, dc reversal error, reactance of the range resistors) and introduced the comparison methods still used today.  Hermach's 1952 paper on thermal converters as ac-dc transfer standards is a foundation of the field.  Coaxial TVC designs followed, extending accurate measurements into the megahertz range.
+      </p>
+      <p>
+        Ac-dc difference became a formally calibrated quantity: a national lab assigned values to a lab's SJTCs, which the lab then used to calibrate its own ac instruments.  Commercial SJTC-based instruments, such as the Fluke 540B thermal transfer standard and the Ballantine converter sets listed above, put this capability into ordinary calibration labs.
+      </p>
+
+      <h3>Multijunction thermal converters (1960s – 1990s)</h3>
+      <p>
+        SJTCs are limited by thermoelectric effects and low output.  In the 1960s and 1970s, F. J. Wilkins and colleagues at the UK National Physical Laboratory (NPL) built multijunction thermal converters, with many thermocouples along a long heater.  These cut the dc reversal error and low-frequency error to around 0.1 µV/V, about ten times better than an SJTC.  They were hand-built and hard to reproduce, however.
+      </p>
+      <p>
+        From the 1980s, thin-film fabrication made MJTCs reproducible.  The planar thin-film MJTC developed at PTB (Germany) by M. Klonz and T. Weimann, with the heater and thermocouples on a thin membrane, became the model for the primary standards used at national labs today.  Other national labs, together with Sandia National Laboratories, developed their own thin-film MJTCs.  To improve high-frequency performance, the silicon support was later replaced by insulating substrates: first crystalline quartz, then the more robust fused silica.  Fused silica MJTCs were developed during the 2000s and 2010s for use up to 100 MHz.  Methods such as the fast-reversed dc technique were developed to measure low-frequency ac-dc differences of these converters directly.
+      </p>
+
+      <h3>Solid-state transfer standards (1980s – present)</h3>
+      <p>
+        Integrated-circuit RMS sensors, with heater resistors and temperature-sensing transistors on a single chip, led to solid-state transfer standards such as the Fluke 792A and automated ac measurement standards such as the Fluke 5790A/B.  These traded some of the lowest-level performance for much larger output, overload tolerance, speed, and automation.  They became the standard tool of commercial and military calibration labs.
+      </p>
+
+      <h3>International equivalence (1990s – present)</h3>
+      <p>
+        After the CIPM Mutual Recognition Arrangement (1999), national labs formally showed agreement through key comparisons.  CCEM-K6.a (ac-dc voltage transfer at 3 V, measured 1993 – 1999) and its regional follow-ups showed agreement at the µV/V level in the audio range.  The results support each lab's published Calibration and Measurement Capabilities.  Later comparisons extended this to low voltage, high voltage, and current.
+      </p>
+
+      <h3>Quantum and sampling methods (1990s – present)</h3>
+      <p>
+        Josephson voltage standards made the dc volt quantum-based in the 1980s and 1990s.  Since the 1990s, three related approaches have brought quantum accuracy and sampling techniques to ac:
+      </p>
+      <ul>
+        <li><strong>Sampling (digitizing) measurement of ac waveforms:</strong> in the 1990s, high-resolution digitizing voltmeters and sampling algorithms made it possible to compute RMS directly from samples of the waveform.  Because each sample is a dc-calibrated reading, the result is traceable to dc without a thermal converter.  This works best at low frequencies (power and low audio).  It is limited at higher frequencies by sampling aperture, bandwidth, and timing errors.</li>
+        <li><strong>Programmable Josephson voltage standard (PJVS):</strong> developed starting in the mid-1990s, a PJVS uses binary-divided Josephson junction arrays that can be switched quickly to produce quantum-accurate voltage steps up to about 10 V.  Stepping through levels builds a stepwise approximation of a sine wave.  The transitions between steps are not quantized, so the PJVS is mainly used at low frequencies (up to a few kHz).  It is typically paired with <strong>differential sampling</strong>, where a sampling voltmeter measures only the small difference between an ac source and the synchronized PJVS steps.  This gives quantum-traceable ac at power and low audio frequencies, and is now widely used for ac power and low-frequency ac voltage.</li>
+        <li><strong>Pulse-driven ac Josephson voltage standard (JAWS):</strong> also beginning in the late 1990s, pulse trains drive the junctions to synthesize arbitrary waveforms in which every point is quantum-accurate, not just the steps.  Over the following decades their output grew to about 2 V.  They provide an independent check of thermal converters in the audio band, subject to the limitations described in <a href="#traceability">Traceability</a>.</li>
+      </ul>
+
+      <h3>Photonic thermometry (around 2015 – present)</h3>
+      <p>
+        Starting around 2015, photonic thermometry has been explored as a new way to sense temperature, and as a possible replacement for the thermocouple in a thermal converter.  Silicon photonic sensors, such as ring resonators whose resonant wavelength shifts with temperature, are read out with light instead of an electrical connection.  This separate line of research is about how the heater temperature is measured, not about quantum voltage.  Optical readout removes the electrical connection between the sensing element and the measuring instrument, which may reduce coupling and improve high-frequency behavior.  It remains a research topic and is not yet in use for ac-dc calibrations.
+      </p>
+
+      <h3>Timeline summary</h3>
+      <table>
+        <tr><th>Period</th><th>Development</th><th>Typical best ac-dc uncertainty (audio)</th></tr>
+        <tr><td>Late 1800s – 1930s</td><td>Electrodynamometers, electrostatic and hot-wire instruments; vacuum thermoelements</td><td>~0.1 % (1000 µV/V)</td></tr>
+        <tr><td>1940s – 1960s</td><td>SJTC transfer standards and coaxial TVCs, formal ac-dc calibration services</td><td>~10 – 20 µV/V</td></tr>
+        <tr><td>1960s – 1970s</td><td>Three-dimensional (hand-built) MJTCs</td><td>~1 µV/V</td></tr>
+        <tr><td>1980s – 1990s</td><td>Thin-film planar MJTCs; solid-state transfer standards</td><td>&lt; 1 µV/V (primary)</td></tr>
+        <tr><td>1990s – 2000s</td><td>International key comparisons (CCEM-K6.a) and the CIPM MRA</td><td>0.4 – 2 µV/V across national labs</td></tr>
+        <tr><td>1990s – present</td><td>Sampling (digitizing) ac measurement; PJVS with differential sampling (low frequency); pulse-driven ac Josephson standards (up to ~2 V)</td><td>Quantum- or dc-traceable ac at low and audio frequencies; independent check of thermal converters</td></tr>
+        <tr><td>2000s – 2010s</td><td>Quartz and fused silica MJTCs for high frequency (to 100 MHz)</td><td>&lt; 1 µV/V (audio); extends MJTC use to RF</td></tr>
+        <tr><td>~2015 – present</td><td>Photonic thermometry research for thermal converters</td><td>Research stage</td></tr>
+      </table>
+      <p style="font-size: 0.9rem;">Dates are approximate and the uncertainty column shows broad orders of magnitude.</p>
+    </div>
+  </div>
+
   <div class="section" id="additional">
     <h2>Additional information</h2>
     <div class="card">
@@ -670,6 +748,8 @@ footer: "AC-DC Difference — Stefan"
         <li>Fluke Corporation, <em>Calibration: Philosophy in Practice</em> (chapters on ac-dc transfer).</li>
         <li>BIPM Key Comparison Database, <a href="https://www.bipm.org/kcdb/comparison?id=28">CCEM-K6.a and linked comparisons (ac-dc voltage transfer, 3 V)</a>, and the KCDB CMC listings for each national lab's published ac-dc capabilities.</li>
         <li>M. Klonz et al., CCEM-K6.a final report, <em>Metrologia</em> 39, Tech. Suppl. 01002 (2002).</li>
+        <li>T. E. Lipe, J. R. Kinard, D. B. Novotny, "New high-frequency MJTCs of novel design on fused silica substrates," CPEM 2012.</li>
+        <li>NCSL International <em>Measure</em>, <a href="https://ncsli.org/MJ_V9_A7">article on MJTCs on fused silica substrates for ac voltage metrology</a>.</li>
         <li>JCGM 100:2008, <em>Evaluation of measurement data — Guide to the expression of uncertainty in measurement</em> (GUM).</li>
       </ul>
     </div>
