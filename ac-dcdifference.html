@@ -68,6 +68,7 @@ footer: "AC-DC Difference — Stefan"
         <li><a href="#devices">AC-DC Difference Devices</a></li>
         <li><a href="#errors">Sources of AC-DC Difference</a></li>
         <li><a href="#concepts">General Concepts</a></li>
+        <li><a href="#n-exponent">Measuring the Response Exponent n</a></li>
         <li><a href="#procedure">Measurement Procedure</a></li>
         <li><a href="#requirements">Requirements</a></li>
         <li><a href="#uncertainty">Uncertainty</a></li>
@@ -119,7 +120,7 @@ footer: "AC-DC Difference — Stefan"
 
       <h3>Multijunction Thermal Converters (MJTC)</h3>
       <p>
-        An MJTC uses many thermocouples (tens to hundreds) in series along the heater.  The larger number of junctions gives an output of roughly 100 mV and spreads the heater temperature measurement over its length, which greatly reduces thermoelectric effects.  Modern MJTCs are built with thin-film techniques on a membrane.  MJTCs have the lowest ac-dc differences available, below 1 µV/V at audio frequencies, and are the primary standards at national labs.
+        An MJTC uses many thermocouples (tens to hundreds) in series along the heater.  The larger number of junctions gives an output of roughly 100 mV and spreads the heater temperature measurement over its length, which greatly reduces thermoelectric effects.  Modern MJTCs are built with thin-film techniques on a membrane.  MJTCs have the lowest ac-dc differences available, below 1 µV/V at audio frequencies, and are the primary standards at national labs.  Their response is also very close to ideal square law, with a response exponent typically \(n = 1.97\) to \(2.03\).
       </p>
 
       <h3>Solid State Converters</h3>
@@ -242,11 +243,11 @@ footer: "AC-DC Difference — Stefan"
       </p>
       \[ E = k\,V^{\,n} \]
       <p>
-        For an ideal heater and thermocouple \(n = 2\) (output proportional to power), but real SJTCs typically have \(n\) between about 1.6 and 2.  Solid state devices with feedback have \(n \approx 1\).  Because of this, a small relative change in input gives a relative change in output \(n\) times larger:
+        For an ideal heater and thermocouple \(n = 2\) (output proportional to power).  MJTCs come very close to this, typically \(n = 1.97\) to \(2.03\), while real SJTCs typically have \(n\) between about 1.6 and 2.  Solid state devices with feedback have \(n \approx 1\).  Because of this, a small relative change in input gives a relative change in output \(n\) times larger:
       </p>
       \[ \frac{\Delta E}{E} = n\,\frac{\Delta V}{V} \]
       <p>
-        \(n\) is measured by applying dc at the test voltage and at a slightly different level (for example ±0.1 %) and computing \( n = (\Delta E / E) / (\Delta V / V) \).  It only needs to be known to a few percent because it multiplies a very small number.
+        \(n\) is found by applying dc at the test voltage and at slightly different levels and comparing the change in output to the change in input.  See <a href="#n-exponent">Measuring the Response Exponent n</a> for the procedure and calculation.
       </p>
 
       <h3>Comparison equation</h3>
@@ -271,6 +272,154 @@ footer: "AC-DC Difference — Stefan"
     </div>
   </div>
 
+  <div class="section" id="n-exponent">
+    <h2>Measuring the Response Exponent n</h2>
+    <div class="card">
+      <p>
+        The response exponent \(n\) converts a change in a converter's output into a change in its input.  Each converter's measured output difference \(\Delta E / E\) is divided by \(n\) to get \(\varepsilon\), so every converter in the comparison needs a known \(n\) at each test level.
+      </p>
+
+      <h3>Typical values</h3>
+      <table>
+        <tr><th>Converter type</th><th>Typical n</th><th>Comment</th></tr>
+        <tr><td>Ideal thermal converter</td><td>2</td><td>Output proportional to heater power, \(P \propto V^2\).</td></tr>
+        <tr><td>Multijunction (MJTC)</td><td>1.97 – 2.03</td><td>Very close to ideal and stable with level.</td></tr>
+        <tr><td>Single junction (SJTC)</td><td>about 1.6 – 2</td><td>Varies from unit to unit and changes with input level because the heater resistance and heat loss change with temperature.</td></tr>
+        <tr><td>Solid state (feedback)</td><td>≈ 1</td><td>Feedback makes the output nearly linear with RMS input.</td></tr>
+      </table>
+
+      <h3>Measurement procedure</h3>
+      <ol>
+        <li>Set up the converter exactly as it will be used (same range, same tee and connections) and let it stabilize at the test voltage \(V_0\).</li>
+        <li>Choose a small step, \(\Delta\), typically 0.1 % to 0.5 % of \(V_0\).  The step must be large enough to give a clearly measurable change in output but small enough that the converter stays on the same part of its response curve.</li>
+        <li>Apply dc in the sequence \(V_0,\ V_0(1+\Delta),\ V_0,\ V_0(1-\Delta),\ V_0\), using both polarities at each level, and let the output settle before each reading.  The symmetric sequence cancels linear drift, just as in the ac-dc sequence.</li>
+        <li>Average the DC+ and DC− outputs at each level to get \(E_0\), \(E_{+}\), and \(E_{-}\).  Average the repeated \(V_0\) readings for \(E_0\).</li>
+        <li>Know the applied voltages: either measure them with a DVM or rely on the source's relative step.  Only the <em>ratio</em> \(\Delta V / V\) matters, so the source or meter needs good linearity over the small step, not absolute accuracy.</li>
+        <li>Repeat at each voltage level where the converter will be used.  For SJTCs, \(n\) should be measured at each level, and periodically re-checked.</li>
+      </ol>
+
+      <h3>Calculation</h3>
+      <p>
+        Starting from \(E = k\,V^n\), the ratio of outputs at any two input levels gives \(n\) directly:
+      </p>
+      \[
+        n = \frac{\ln\left(E_{2}/E_{1}\right)}{\ln\left(V_{2}/V_{1}\right)}
+      \]
+      <p>
+        For small steps the logarithms reduce to the familiar relative-change form.  Using the symmetric steps above:
+      </p>
+      \[
+        n \approx \frac{\left(E_{+} - E_{-}\right)/E_0}{\left(V_{+} - V_{-}\right)/V_0}
+      \]
+      <p>
+        Using both the up and down steps (instead of only one) cancels the second-order curvature of the response, so the result is the slope right at \(V_0\).
+      </p>
+
+      <h3>Variation of n with input level (SJTC)</h3>
+      <p>
+        The response exponent is not a constant.  For an SJTC it depends on where on its range the converter is operated.  Near half of full scale (50 % FS) a typical SJTC has \(n\) close to the ideal value of 2.  As the input increases toward full scale, \(n\) falls, reaching about 1.8 at 100 % FS.  The table and plot below show this typical behavior (illustrative values; each converter must be measured).
+      </p>
+      <table>
+        <tr><th>Input (% of full scale)</th><th>Typical n (SJTC)</th></tr>
+        <tr><td>50 %</td><td>2.00</td></tr>
+        <tr><td>60 %</td><td>1.97</td></tr>
+        <tr><td>70 %</td><td>1.93</td></tr>
+        <tr><td>80 %</td><td>1.89</td></tr>
+        <tr><td>90 %</td><td>1.85</td></tr>
+        <tr><td>100 %</td><td>1.80</td></tr>
+      </table>
+
+      <figure>
+        <svg viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plot of SJTC response exponent n versus input level from 50 to 100 percent of full scale">
+          <!-- MJTC band n = 1.97 to 2.03 -->
+          <rect x="60" y="42" width="460" height="36" fill="#eef3f9"/>
+          <text x="515" y="56" font-size="11" fill="#0a3d62" text-anchor="end">typical MJTC range (1.97 – 2.03)</text>
+          <!-- ideal n = 2 -->
+          <line x1="60" y1="60" x2="520" y2="60" stroke="#1e8449" stroke-width="1.2" stroke-dasharray="6 4"/>
+          <text x="515" y="73" font-size="11" fill="#1e8449" text-anchor="end">ideal square law, n = 2</text>
+          <!-- axes -->
+          <line x1="60" y1="210" x2="520" y2="210" stroke="#333" stroke-width="1.5"/>
+          <line x1="60" y1="30" x2="60" y2="210" stroke="#333" stroke-width="1.5"/>
+          <!-- y grid and ticks -->
+          <g font-size="11" fill="#555" text-anchor="end">
+            <line x1="60" y1="180" x2="520" y2="180" stroke="#e3e8ef"/>
+            <line x1="60" y1="120" x2="520" y2="120" stroke="#e3e8ef"/>
+            <text x="54" y="184">1.80</text>
+            <text x="54" y="124">1.90</text>
+            <text x="54" y="64">2.00</text>
+          </g>
+          <!-- x ticks -->
+          <g font-size="11" fill="#555" text-anchor="middle">
+            <text x="80" y="226">50 %</text>
+            <text x="164" y="226">60 %</text>
+            <text x="248" y="226">70 %</text>
+            <text x="332" y="226">80 %</text>
+            <text x="416" y="226">90 %</text>
+            <text x="500" y="226">100 %</text>
+          </g>
+          <text x="290" y="250" font-size="13" text-anchor="middle" fill="#333">Input level (% of full scale)</text>
+          <text x="18" y="120" font-size="13" text-anchor="middle" fill="#333" transform="rotate(-90 18 120)">n</text>
+          <!-- SJTC data -->
+          <polyline points="80,60 164,78 248,102 332,126 416,150 500,180" fill="none" stroke="#b03a2e" stroke-width="2.5"/>
+          <g fill="#b03a2e">
+            <circle cx="80" cy="60" r="4"/>
+            <circle cx="164" cy="78" r="4"/>
+            <circle cx="248" cy="102" r="4"/>
+            <circle cx="332" cy="126" r="4"/>
+            <circle cx="416" cy="150" r="4"/>
+            <circle cx="500" cy="180" r="4"/>
+          </g>
+          <text x="300" y="150" font-size="12" fill="#b03a2e">typical SJTC</text>
+        </svg>
+        <figcaption>Typical SJTC response exponent versus input level (illustrative).  n is near 2 at 50 % FS and near 1.8 at 100 % FS.</figcaption>
+      </figure>
+
+      <p><strong>Why n decreases at higher input:</strong></p>
+      <ul>
+        <li><strong>Heat loss grows faster than the heater temperature.</strong>  At low levels most heat leaves the heater by conduction through its leads, which is roughly linear with temperature rise.  As the heater gets hotter, radiation (proportional to \(T^4\)) becomes significant, so each added milliwatt produces a smaller temperature rise.</li>
+        <li><strong>Heater resistance rises with temperature.</strong>  The heater wire has a positive temperature coefficient, so at higher levels the same applied voltage produces somewhat less power than the ideal \(V^2/R\).</li>
+        <li><strong>Thermocouple nonlinearity.</strong>  The thermocouple's sensitivity (Seebeck coefficient) changes with temperature, which also bends the output curve.</li>
+      </ul>
+      <p>
+        Each of these makes the output grow more slowly than \(V^2\), and the effect becomes stronger as the converter approaches its rated input.  MJTCs operate with a smaller temperature rise and spread the measurement along the heater, so their \(n\) stays within about 1.97 to 2.03.
+      </p>
+      <p><strong>Practical consequences:</strong></p>
+      <ul>
+        <li>Measure \(n\) at the actual level used for each comparison; do not apply a single value of \(n\) to every voltage on a range.</li>
+        <li>If \(n\) from 100 % FS (1.8) were used at 50 % FS (where n ≈ 2), the error in \(n\) would be about 10 %, giving an error of 10 % of \(\varepsilon\).  This is small only if \(\varepsilon\) is kept small.</li>
+        <li>SJTCs are commonly operated between about 50 % and 100 % of full scale.  Below about 50 % the output becomes small (output falls roughly with the square of the input), so resolution and noise get worse.</li>
+      </ul>
+
+      <h3>Worked example (SJTC)</h3>
+      <p>
+        A 1 V TVC is used at full scale, \(V_0 = 1\ \text{V}\), and the step is \(\Delta = 0.1\ \%\), so \(V_{\pm} = 1.001\ \text{V}\) and \(0.999\ \text{V}\).  The averaged outputs are:
+      </p>
+      <table>
+        <tr><th>Input</th><th>Output (mean of DC+ and DC−)</th></tr>
+        <tr><td>\(V_- = 0.999\ \text{V}\)</td><td>\(E_- = 6.9874\ \text{mV}\)</td></tr>
+        <tr><td>\(V_0 = 1.000\ \text{V}\)</td><td>\(E_0 = 7.0000\ \text{mV}\)</td></tr>
+        <tr><td>\(V_+ = 1.001\ \text{V}\)</td><td>\(E_+ = 7.0126\ \text{mV}\)</td></tr>
+      </table>
+      \[
+        n \approx \frac{(7.0126 - 6.9874)/7.0000}{(1.001 - 0.999)/1.000} = \frac{0.003600}{0.002000} = 1.80
+      \]
+      <p>
+        An MJTC measured the same way would give a value within about 1.97 to 2.03.  A value well outside the expected range for the converter type is a sign of a problem: drift during the measurement, an unsettled output, the wrong step size, or a damaged converter.
+      </p>
+
+      <h3>How well does n need to be known?</h3>
+      <p>
+        Because \(\varepsilon = (\Delta E/E)/n\), an error in \(n\) causes a proportional error in \(\varepsilon\):
+      </p>
+      \[
+        u(\varepsilon) = |\varepsilon|\,\frac{u(n)}{n}
+      \]
+      <p>
+        For example, if \(\varepsilon = 20\ \mu\text{V/V}\) and \(n\) is known to 2 %, the contribution is only \(0.4\ \mu\text{V/V}\).  This is why \(n\) needs to be known only to a few percent, and why the ac level is set close to the dc level: keeping \(\varepsilon\) small keeps the effect of any error in \(n\) small.
+      </p>
+    </div>
+  </div>
+
   <div class="section" id="procedure">
     <h2>Measurement Procedure</h2>
     <div class="card">
@@ -287,7 +436,7 @@ footer: "AC-DC Difference — Stefan"
         <li>Connect the standard and test converters to the tee using the correct connectors.  Keep cables short and the setup tidy.</li>
         <li>Verify the range of each converter and the maximum input of the heaters before applying any signal.</li>
         <li>Apply dc and allow the converters to warm up and stabilize at the test level.</li>
-        <li>Measure the response exponent \(n\) of each converter if not already known.</li>
+        <li>Measure the response exponent \(n\) of each converter if not already known (see <a href="#n-exponent">Measuring the Response Exponent n</a>).</li>
         <li>Set the ac source to the test frequency and adjust its level so that the standard's ac output is close to its dc output.</li>
         <li>Run the switching sequence, recording both converter outputs at each step.</li>
         <li>Calculate \(\varepsilon_S\), \(\varepsilon_T\), and \(\delta_T\) for each cycle; report the mean and standard deviation of the mean.</li>
@@ -385,10 +534,77 @@ footer: "AC-DC Difference — Stefan"
         Type B components with only limit values (e.g. a specification of ±a) are typically treated as rectangular distributions with \(u = a/\sqrt{3}\).
       </p>
 
+      <h3>Benchmark: international key comparison results</h3>
+      <p>
+        The best place to see what is realistically achievable is the BIPM key comparison database (KCDB).  In key comparison <a href="https://www.bipm.org/kcdb/comparison?id=28">CCEM-K6.a</a> (ac-dc voltage transfer at 3 V, measured 1993 – 1999, published 2002), about 20 national labs measured the same traveling transfer standards.  The expanded uncertainties (k = 2) the labs reported for their own measurements were:
+      </p>
+      <table>
+        <tr><th>Frequency</th><th>Best NMI</th><th>Median NMI</th><th>Largest NMI</th></tr>
+        <tr><td>1 kHz</td><td>0.4</td><td>1.2</td><td>2.7</td></tr>
+        <tr><td>20 kHz</td><td>0.8</td><td>2.2</td><td>6.0</td></tr>
+        <tr><td>100 kHz</td><td>1.8</td><td>3.8</td><td>10</td></tr>
+        <tr><td>1 MHz</td><td>10</td><td>24</td><td>100</td></tr>
+      </table>
+      <p style="font-size: 0.9rem;">All values in µV/V, k = 2, as reported by each lab in the CCEM-K6.a results on the KCDB.</p>
+      <p>
+        Points to take from the comparison:
+      </p>
+      <ul>
+        <li>At 1 kHz to 20 kHz the best national labs reach a few tenths of a µV/V to about 1 µV/V.  This is the floor for the whole traceability chain.</li>
+        <li>Uncertainty grows by roughly a factor of 2 to 4 from 20 kHz to 100 kHz, and by about 10 from 100 kHz to 1 MHz.  At 1 MHz even national labs are at 10 µV/V to 25 µV/V.</li>
+        <li>The labs' results generally agreed with the reference value within about ±1 µV/V at 1 kHz and 20 kHz, within a few µV/V at 100 kHz, and within about ±25 µV/V at 1 MHz.  This agreement is what supports each lab's published Calibration and Measurement Capabilities (CMCs).</li>
+        <li>Calibrations a national lab performs for customers are usually somewhat larger than its key comparison values, because customer standards are less ideal than the carefully chosen traveling standards.  For example, one national lab's later results in the linked SIM.EM-K6.a regional comparison were 3.2 µV/V at 1 kHz and 20 kHz, 8.5 µV/V at 100 kHz, and 17 µV/V at 1 MHz.</li>
+      </ul>
+
+      <h3>Example uncertainty budget (secondary lab)</h3>
+      <p>
+        The table below is an example budget for a secondary (accredited) lab calibrating a customer TVC at about 3 V by comparison with its own SJTC reference standard, which was calibrated at a national lab.  The values are reasonable estimates chosen to be consistent with the key comparison results above; every lab must determine its own values from its certificates, equipment, and data.
+      </p>
+      <p>
+        The "Value" column gives either an expanded uncertainty from a certificate (k = 2, divided by 2), a half-width limit \(a\) for a rectangular distribution (divided by \(\sqrt{3}\)), or a standard deviation (used directly).  The frequency columns are the resulting standard uncertainties \(u_i\) in µV/V.
+      </p>
+      <table>
+        <tr><th>Component</th><th>Distribution / value basis</th><th>1 kHz</th><th>20 kHz</th><th>100 kHz</th><th>1 MHz</th></tr>
+        <tr><td>Standard (calibration certificate)</td><td>Normal, U = 4, 5, 10, 30 (k = 2)</td><td>2.00</td><td>2.50</td><td>5.00</td><td>15.0</td></tr>
+        <tr><td>Standard drift since calibration</td><td>Rectangular, a = 2, 2, 5, 15</td><td>1.15</td><td>1.15</td><td>2.89</td><td>8.66</td></tr>
+        <tr><td>Level dependence of standard</td><td>Rectangular, a = 1, 1, 2, 5</td><td>0.58</td><td>0.58</td><td>1.15</td><td>2.89</td></tr>
+        <tr><td>Meter 1 linearity</td><td>Rectangular, a = 0.5</td><td>0.29</td><td>0.29</td><td>0.29</td><td>0.29</td></tr>
+        <tr><td>Meter 2 linearity</td><td>Rectangular, a = 0.5</td><td>0.29</td><td>0.29</td><td>0.29</td><td>0.29</td></tr>
+        <tr><td>DC source stability</td><td>Normal, s = 0.3</td><td>0.30</td><td>0.30</td><td>0.30</td><td>0.30</td></tr>
+        <tr><td>AC source stability</td><td>Normal, s = 0.3, 0.5, 1, 3</td><td>0.30</td><td>0.50</td><td>1.00</td><td>3.00</td></tr>
+        <tr><td>Connector type / tee</td><td>Rectangular, a = 0.2, 0.5, 2, 15</td><td>0.12</td><td>0.29</td><td>1.15</td><td>8.66</td></tr>
+        <tr><td>Repeatability (Type A, \(s/\sqrt{N}\))</td><td>Normal, s = 0.5, 0.5, 1, 3</td><td>0.50</td><td>0.50</td><td>1.00</td><td>3.00</td></tr>
+        <tr><td>Environment stability</td><td>Rectangular, a = 0.5, 0.5, 1, 2</td><td>0.29</td><td>0.29</td><td>0.58</td><td>1.15</td></tr>
+        <tr><td>Response exponent \(n\)</td><td>Rectangular, a = 0.4, 0.4, 0.4, 0.8</td><td>0.23</td><td>0.23</td><td>0.23</td><td>0.46</td></tr>
+        <tr><th colspan="2">Combined standard uncertainty \(u_c\)</th><th>2.5</th><th>3.0</th><th>6.2</th><th>20</th></tr>
+        <tr><th colspan="2">Expanded uncertainty \(U\) (k = 2)</th><th>5</th><th>6</th><th>12</th><th>40</th></tr>
+      </table>
+
+      <h3>Basis for the values</h3>
+      <ul>
+        <li><strong>Standard:</strong> taken from typical national lab customer calibrations of SJTCs (a few µV/V at audio frequencies, about 10 µV/V at 100 kHz, tens of µV/V at 1 MHz), consistent with the SIM.EM-K6.a values above.  This is the largest component at every frequency.</li>
+        <li><strong>Drift:</strong> well-behaved SJTCs are stable to a µV/V or two per year at audio frequencies.  High-frequency values change more because of connector wear and range resistor aging.  A calibration history (control chart) is the best way to set this value.</li>
+        <li><strong>Level dependence:</strong> needed only when the standard is used at a different voltage than it was calibrated at.  If the calibration covers the exact level, this term can be dropped.</li>
+        <li><strong>Meter linearity:</strong> each meter only measures a small change (tens of µV/V) in an otherwise constant reading, so a high-resolution DVM or nanovoltmeter contributes a few tenths of a µV/V at most.  It does not depend on frequency because the meters read dc.</li>
+        <li><strong>Source stability:</strong> modern calibrators are very stable at audio frequencies.  Stability degrades at high frequencies, which shows up as more scatter.  Some labs fold this into the repeatability term instead of listing it separately; do not count it twice.</li>
+        <li><strong>Connector type / tee:</strong> negligible at audio frequencies but one of the dominant terms at 1 MHz.  Estimate it from the difference seen when interchanging converters on the tee and from known differences between connector types.</li>
+        <li><strong>Repeatability:</strong> the standard deviation of the mean of the measured cycles.  The values in the table correspond to good, well-settled measurements.</li>
+        <li><strong>Environment:</strong> effect of a ±1 °C room variation on the converters during the measurement.</li>
+        <li><strong>Response exponent n:</strong> \(|\varepsilon|\,u(n)/n\) with \(\varepsilon \approx 20\) µV/V and n known to about 2 % (see <a href="#n-exponent">Measuring the Response Exponent n</a>).</li>
+      </ul>
+
       <h3>Typical magnitudes</h3>
       <p>
-        Uncertainties grow quickly at the ends of the frequency range.  As a rough guide only, a commercial lab using a solid state transfer standard might report uncertainties of order 10 µV/V to 30 µV/V near 1 kHz, rising to hundreds of µV/V at 1 MHz.  National labs using MJTCs achieve well under 1 µV/V at audio frequencies for voltages in the volts range.  Actual values come from each lab's own uncertainty budget and scope of accreditation.
+        Comparing the example budget to the key comparison results shows how uncertainty grows down the traceability chain:
       </p>
+      <table>
+        <tr><th>Level</th><th>1 kHz</th><th>20 kHz</th><th>100 kHz</th><th>1 MHz</th></tr>
+        <tr><td>Best national labs (CCEM-K6.a)</td><td>0.4 – 1</td><td>0.8 – 2</td><td>2 – 4</td><td>10 – 25</td></tr>
+        <tr><td>National lab customer calibration</td><td>3 – 5</td><td>3 – 5</td><td>8 – 10</td><td>15 – 30</td></tr>
+        <tr><td>Secondary lab, SJTC reference (example above)</td><td>5</td><td>6</td><td>12</td><td>40</td></tr>
+        <tr><td>Commercial lab, solid state standard</td><td>10 – 30</td><td>10 – 30</td><td>30 – 60</td><td>100 – 300</td></tr>
+      </table>
+      <p style="font-size: 0.9rem;">Expanded uncertainty U (k = 2) in µV/V, for voltages in the volts range.  The bottom three rows are representative ranges, not published values; actual values come from each lab's own uncertainty budget and scope of accreditation.  Uncertainties are larger at low voltage (millivolts), at high voltage (hundreds of volts), and below about 40 Hz.</p>
     </div>
   </div>
 
@@ -416,6 +632,15 @@ footer: "AC-DC Difference — Stefan"
       <p>
         Pulse-driven ac Josephson voltage standards (sometimes called JAWS) synthesize ac waveforms with quantum-accurate amplitude.  These provide an independent, quantum-based check of thermal converters at low voltage and are an active area of research at national labs.
       </p>
+      <p><strong>Limitations:</strong></p>
+      <ul>
+        <li><strong>Not a practical device.</strong>  A quantum ac voltage standard is very costly to buy and run.  It needs superconducting Josephson junction arrays, cryogenic cooling (liquid helium or a cryocooler), specialized high-speed pulse bias electronics, and staff experienced in running it.  This limits it to a few national labs.  It is a research and primary-standard tool, not something a calibration lab can use in place of a thermal transfer standard.</li>
+        <li><strong>Cannot be compared directly against the best existing standards.</strong>  The best ac-dc standards (MJTCs and the transfer standards used in key comparisons) are characterized at levels of a few volts and with their own input loading.  Quantum ac standards produce voltages up to about 2 V and can deliver only a very small current.  SJTCs and MJTCs cannot be driven directly by a quantum ac standard, because their heaters need several milliamps of current to produce a usable output.  Connecting them requires added amplifiers, dividers, or transformers, and those bring their own errors and uncertainty, so the comparison is no longer a direct one.</li>
+        <li><strong>Useful frequency range is limited to the audio band.</strong>  The quantum accuracy of the waveform holds at the junction array, inside the cryostat.  The signal then travels to the room-temperature output through long leads, which act as transmission lines.  At audio frequencies their effect is negligible, but at higher frequencies it changes the voltage delivered at the output.  Higher frequencies are possible, but these transmission line effects must be measured and corrected for, and those corrections add uncertainty.</li>
+      </ul>
+      <p>
+        For these reasons, thermal converters remain the practical basis of ac-dc traceability.  Quantum ac voltage standards act as an independent cross-check rather than a replacement.
+      </p>
     </div>
   </div>
 
@@ -432,7 +657,7 @@ footer: "AC-DC Difference — Stefan"
         <tr><td>MJTC</td><td>Multijunction Thermal Converter.</td></tr>
         <tr><td>TTS</td><td>Thermal Transfer Standard: any device used to transfer between ac and dc by heating effect.</td></tr>
         <tr><td>δ</td><td>AC-DC difference, in µV/V or µA/A.</td></tr>
-        <tr><td>n</td><td>Response exponent of a converter, \(E \propto V^n\).</td></tr>
+        <tr><td>n</td><td>Response exponent of a converter, \(E \propto V^n\).  About 2 for MJTCs (1.97 – 2.03), about 1.6 – 2 for SJTCs, about 1 for solid state.</td></tr>
         <tr><td>Reference plane</td><td>The point (usually the tee center) where the ac-dc difference is defined.</td></tr>
         <tr><td>DC reversal error</td><td>Difference in output between DC+ and DC− caused by thermoelectric effects.</td></tr>
       </table>
@@ -443,6 +668,8 @@ footer: "AC-DC Difference — Stefan"
         <li>J. R. Kinard, T. E. Lipe, C. B. Childers, <em>AC-DC Difference Calibrations</em>, NIST Special Publication 250-27.</li>
         <li>F. L. Hermach, "Thermal converters as ac-dc transfer standards for current and voltage measurements at audio frequencies," <em>Journal of Research of the National Bureau of Standards</em>, 1952.</li>
         <li>Fluke Corporation, <em>Calibration: Philosophy in Practice</em> (chapters on ac-dc transfer).</li>
+        <li>BIPM Key Comparison Database, <a href="https://www.bipm.org/kcdb/comparison?id=28">CCEM-K6.a and linked comparisons (ac-dc voltage transfer, 3 V)</a>, and the KCDB CMC listings for each national lab's published ac-dc capabilities.</li>
+        <li>M. Klonz et al., CCEM-K6.a final report, <em>Metrologia</em> 39, Tech. Suppl. 01002 (2002).</li>
         <li>JCGM 100:2008, <em>Evaluation of measurement data — Guide to the expression of uncertainty in measurement</em> (GUM).</li>
       </ul>
     </div>
