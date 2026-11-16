@@ -276,6 +276,12 @@
         <h1>$S_k = \alpha\,\mathrm{sinc}(k\alpha)$</h1>
         <p>With the normalized $\mathrm{sinc}(x)=\sin(\pi x)/(\pi x)$: $\alpha\,\mathrm{sinc}(k\alpha) = \dfrac{\sin(\pi k\alpha)}{\pi k}$, exactly the result just derived.</p>
         <p>The first zero is at $k = 1/\alpha$ — the narrower the pulse, the wider the spectrum. As $\alpha \to 1$ the pulse fills the period and only $S_0$ survives ($\sin k\pi = 0$ for integer $k$).</p>
+        <div class="defn">
+          <div class="term">Pulse-train series (unit height, duty $\alpha$, even)</div>
+          <p style="margin:0;">Complex: $s(t)=\alpha+\sum_{k\neq0}\dfrac{\sin(k\pi\alpha)}{k\pi}\,e^{jk\omega_0 t}$</p>
+          <p style="margin:6px 0 0;">Real: $s(t)=\alpha+2\sum_{k=1}^{\infty}\dfrac{\sin(k\pi\alpha)}{k\pi}\cos(k\omega_0 t)$</p>
+          <p class="muted" style="margin:6px 0 0;">For $T_0=8$: $\omega_0=\pi/4$, so $e^{jk\pi t/4}$ and $\cos(k\pi t/4)$.</p>
+        </div>
       </div>
       <div class="defn">
         <div class="term">Numbers from the formula</div>

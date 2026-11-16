@@ -1,0 +1,779 @@
+---
+footer: "DC Voltage Metrology — Stefan"
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DC Voltage Metrology</title>
+
+    <!-- Link to shared stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- MathJax for equations -->
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] } };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Page-specific styles -->
+  <style>
+    .card h3 { color: #0a3d62; margin-top: 1.4em; margin-bottom: 0.4em; }
+    .card h3:first-child { margin-top: 0; }
+    .card h4 { color: #0a3d62; margin-top: 1.1em; margin-bottom: 0.3em; }
+    .tablewrap { overflow-x: auto; }
+    .card table { width: 100%; border-collapse: collapse; margin: 1em 0; text-align: left; font-size: 0.95rem; }
+    .card th, .card td { border: 1px solid #d5dde8; padding: 6px 10px; vertical-align: top; }
+    .card th { background: #eef3f9; color: #0a3d62; }
+    .card figure { margin: 1.2em 0; text-align: center; }
+    .card figure svg { max-width: 100%; height: auto; }
+    .card figcaption { font-size: 0.9rem; color: #555; margin-top: 0.4em; text-align: center; }
+    .note { background: #fff8e6; border-left: 4px solid #f0a500; padding: 10px 14px; margin: 1em 0; border-radius: 4px; text-align: left; }
+    .tip { background: #eaf6ee; border-left: 4px solid #2e9e5b; padding: 10px 14px; margin: 1em 0; border-radius: 4px; text-align: left; }
+    .toc ul { columns: 2; margin: 0; }
+    .card ol, .card ul { text-align: left; }
+    .calc { background: #eef3f9; border: 1px solid #d5dde8; border-radius: 8px; padding: 14px 16px; margin: 1em 0; text-align: left; }
+    .calc label { display: inline-block; min-width: 14em; margin: 3px 0; font-size: 0.95rem; }
+    .calc input { width: 8em; padding: 3px 6px; font-size: 0.95rem; }
+    .calc .out { margin-top: 8px; font-weight: 600; color: #0a3d62; }
+    .formula-box { overflow-x: auto; }
+    @media (max-width: 600px) {
+      .toc ul { columns: 1; }
+      .calc label { min-width: 100%; }
+    }
+  </style>
+
+</head>
+
+<body>
+
+{% include header.html %}
+
+ <!-- PAGE CONTENT -->
+  <div class="section">
+    <h2>DC Voltage Metrology</h2>
+
+    <div class="card toc">
+      <h3>Contents</h3>
+      <ul>
+        <li><a href="#chain">1. The traceability chain</a></li>
+        <li><a href="#basics">2. Measurement fundamentals</a></li>
+        <li><a href="#zener">3. Zener voltage references</a></li>
+        <li><a href="#compare">4. Zener-to-zener comparison</a></li>
+        <li><a href="#leakage">5. Leakage current measurements</a></li>
+        <li><a href="#ensemble">6. Reducing uncertainty with multiple zeners</a></li>
+        <li><a href="#jvs">7. Josephson voltage standards (JVS)</a></li>
+        <li><a href="#pjvs">8. Programmable JVS (PJVS)</a></li>
+        <li><a href="#cal">9. Calibrating zeners against a JVS / PJVS</a></li>
+        <li><a href="#budget">10. Example uncertainty budget</a></li>
+        <li><a href="#checklist">11. Best-practice checklist</a></li>
+        <li><a href="#refs">12. References</a></li>
+      </ul>
+    </div>
+
+    <!-- 1 ---------------------------------------------------------------->
+    <div class="card" id="chain">
+      <h3>1. The traceability chain</h3>
+      <p>
+        Since the 2019 revision of the SI, the volt is realized through two fixed constants: the elementary charge \(e\) and the Planck constant \(h\).  The <strong>Josephson effect</strong> converts a frequency into a voltage through those constants alone, which makes a Josephson voltage standard (JVS) a <em>primary</em> realization of the volt, reproducible anywhere to a few parts in \(10^{10}\) or better.
+      </p>
+      <p>
+        A JVS is expensive, needs liquid helium or a cryocooler, and cannot travel easily.  Most laboratories therefore keep a group of solid-state <strong>Zener voltage references</strong> as the day-to-day (<em>maintenance</em>) standard, calibrate them against the JVS at intervals, and use them to calibrate DMMs, calibrators, and other working standards.  Good dc-voltage metrology is mostly the discipline of moving the quantum value into the Zeners without losing it, then moving it out again to the customer.
+      </p>
+
+      <figure>
+        <svg viewBox="0 0 640 250" role="img" aria-label="Traceability chain from Josephson standard to Zener group to working standards to customer instruments" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#0a3d62"/>
+            </marker>
+          </defs>
+          <g font-family="sans-serif" font-size="13" text-anchor="middle">
+            <rect x="10"  y="20" width="190" height="60" rx="8" fill="#0a3d62"/>
+            <text x="105" y="46" fill="#fff" font-weight="bold">JVS / PJVS</text>
+            <text x="105" y="65" fill="#fff" font-size="11">primary; ~1–10 nV/V</text>
+
+            <rect x="225" y="20" width="190" height="60" rx="8" fill="#1e6091"/>
+            <text x="320" y="46" fill="#fff" font-weight="bold">Zener group</text>
+            <text x="320" y="65" fill="#fff" font-size="11">maintenance; ~0.02–0.1 µV/V</text>
+
+            <rect x="440" y="20" width="190" height="60" rx="8" fill="#3a86b4"/>
+            <text x="535" y="46" fill="#fff" font-weight="bold">Working Zeners / dividers</text>
+            <text x="535" y="65" fill="#fff" font-size="11">transport; ~0.1–0.5 µV/V</text>
+
+            <rect x="225" y="150" width="190" height="60" rx="8" fill="#eef3f9" stroke="#0a3d62"/>
+            <text x="320" y="176" fill="#0a3d62" font-weight="bold">Calibrators / DMMs</text>
+            <text x="320" y="195" fill="#0a3d62" font-size="11">~1–10 µV/V</text>
+
+            <path d="M200,50 H223" stroke="#0a3d62" stroke-width="2" marker-end="url(#ar1)"/>
+            <path d="M415,50 H438" stroke="#0a3d62" stroke-width="2" marker-end="url(#ar1)"/>
+            <path d="M535,80 V115 H320 V148" fill="none" stroke="#0a3d62" stroke-width="2" marker-end="url(#ar1)"/>
+            <path d="M320,80 V148" stroke="#0a3d62" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ar1)"/>
+          </g>
+          <text x="320" y="238" font-family="sans-serif" font-size="11" text-anchor="middle" fill="#555">Uncertainties are indicative (k = 1) and depend on the laboratory and the voltage level.</text>
+        </svg>
+        <figcaption>Figure 1.  Typical dc-voltage traceability chain.  Uncertainty grows at each step.</figcaption>
+      </figure>
+
+      <div class="note">
+        <strong>Units.</strong>  Dc-voltage uncertainties are written as fractions of the reading: 1 µV/V = 1 ppm = \(10^{-6}\), and 1 nV/V = 1 ppb = \(10^{-9}\).  At 10 V, 1 nV/V is 10 nV.  Always say whether a figure is a relative or an absolute uncertainty, and whether it is k = 1 or k = 2.
+      </div>
+    </div>
+
+    <!-- 2 ---------------------------------------------------------------->
+    <div class="card" id="basics">
+      <h3>2. Measurement fundamentals</h3>
+      <p>
+        The practices below apply to every measurement on this page, from calibrating a handheld DMM to a Josephson comparison.  At the nanovolt level, wiring, temperature, and cleanliness dominate over instrument specifications.
+      </p>
+
+      <h4>2.1 Thermal EMFs</h4>
+      <p>
+        Wherever two dissimilar metals join at a temperature that differs from another junction in the circuit, a thermoelectric voltage appears.  Typical values (approximate):
+      </p>
+      <div class="tablewrap">
+      <table>
+        <tr><th>Junction</th><th>Thermal EMF</th></tr>
+        <tr><td>Copper – copper (clean, same alloy)</td><td>≲ 0.2 µV/°C</td></tr>
+        <tr><td>Copper – tin/lead solder</td><td>1–3 µV/°C</td></tr>
+        <tr><td>Copper – cadmium/tin solder (low-thermal)</td><td>~0.2 µV/°C</td></tr>
+        <tr><td>Copper – gold-plated brass connector</td><td>~0.2–1 µV/°C</td></tr>
+        <tr><td>Copper – Kovar / nickel-plated parts</td><td>tens of µV/°C</td></tr>
+        <tr><td>Copper – oxidized copper</td><td>up to ~1 mV/°C</td></tr>
+      </table>
+      </div>
+      <ul>
+        <li>Use low-thermal binding posts and copper-to-copper (or gold-to-gold) connections; avoid banana plugs with plated springs, alligator clips, and ordinary solder in the signal path.</li>
+        <li>Keep the two connections of any measurement point at the same temperature: put them physically together, inside a common thermal mass or thermal shield, and away from drafts, air-conditioner vents, and body heat.</li>
+        <li>Allow the circuit to thermally settle after any handling or re-connection.  Minutes for small terminals, hours for large switch assemblies.</li>
+        <li>Reverse polarity (or use an ABBA sequence, below) so that a constant EMF cancels.  Reversal does <em>not</em> cancel an EMF that is drifting, so also reduce the drift.</li>
+        <li>Short the input and measure the offset regularly.  A drifting "zero" is the earliest warning of a thermal problem.</li>
+      </ul>
+
+      <h4>2.2 Grounding, guarding, and shielding</h4>
+      <ul>
+        <li>Use <strong>one</strong> ground reference for the whole measurement system.  Multiple grounds create loops that pick up 50/60 Hz magnetic fields and carry ground currents through lead resistance.</li>
+        <li>Float the sources where practical and connect the guard (or shield) to the point that minimizes current through the measured circuit.  Guarding a high-impedance node is also the way to eliminate leakage (section 5).</li>
+        <li>Twist the signal pair and keep loop area small; shield against electric fields; use mu-metal where magnetic coupling matters.</li>
+        <li>Instrument power line filters, isolation transformers, and removing nearby switching supplies can all reduce common-mode injection.  Radio-frequency interference rectified in a detector's input stage appears as a dc offset, so keep microwave sources (especially those of a JVS) well shielded.</li>
+      </ul>
+
+      <h4>2.3 Environment</h4>
+      <ul>
+        <li>Temperature: 23 °C ± 1 °C is typical, but <em>stability</em> matters more than the setpoint.  Log temperature near every standard and the scanner.</li>
+        <li>Humidity: 40–50 % RH is a good compromise; below about 30 % static is a problem, above about 60 % surface leakage rises.</li>
+        <li>Barometric pressure: Zeners have a small but significant pressure coefficient (section 3).  Log it.</li>
+        <li>Mains power: run Zener references from a clean, uninterruptible supply or battery.  Never power them down needlessly.</li>
+        <li>Cleanliness: handle terminals with gloves, clean with reagent-grade isopropyl alcohol, and keep dust off insulators.</li>
+      </ul>
+
+      <h4>2.4 Measurement sequence and statistics</h4>
+      <p>
+        A sequence of the form <strong>A B B A</strong> (unknown, reference, reference, unknown) cancels a drift that is linear in time.  When a detector must be reversed, use <strong>A B B A</strong> in each polarity; the result is
+      </p>
+      <div class="formula-box">
+      \[
+        \Delta V = \tfrac{1}{4}\left[(V_{A,+} - V_{B,+}) + (V_{A,-} - V_{B,-}) + (V_{A,-'} - V_{B,-'}) + (V_{A,+'} - V_{B,+'})\right]
+      \]
+      </div>
+      <p>
+        which is simply the mean of all A–B differences in a symmetric order.  Always plot the data in time order; look for trends, steps, and outliers before averaging.
+      </p>
+      <p>
+        <strong>Choosing an averaging time.</strong>  Averaging only helps while the noise is white.  Compute the <em>Allan deviation</em> of the difference signal \(\sigma_y(\tau)\): it falls as \(\tau^{-1/2}\) at short times, flattens at the 1/f floor, and rises for longer \(\tau\) due to drift.  The minimum is the best you can do; averaging past it only collects drift.  Evaluate the Type A uncertainty from the standard deviation of the mean using the effective number of independent samples, not the raw count, whenever the data are correlated.
+      </p>
+    </div>
+
+    <!-- 3 ---------------------------------------------------------------->
+    <div class="card" id="zener">
+      <h3>3. Zener voltage references</h3>
+      <p>
+        Commercial reference standards (for example, Fluke 732-series, Datron/Wavetek 4910, Measurements International, and several others) use a temperature-stabilized, buried-Zener diode in a thermostated oven.  A Zener alone has a Zener breakdown near 6–7 V, a large and positive temperature coefficient from the avalanche region, and an opposite-sign coefficient from a series forward diode formed in the same structure; with an oven holding the chip near 45–95 °C the net coefficient is nearly zero.  Output amplifiers and dividers then produce the usual 10 V and 1.018 V outputs (1.018 V comes from the Weston-cell era and is still widely used).
+      </p>
+
+      <h4>3.1 Characteristics to know</h4>
+      <div class="tablewrap">
+      <table>
+        <tr><th>Property</th><th>Typical order of magnitude</th><th>Practical consequence</th></tr>
+        <tr><td>Long-term drift</td><td>~0.1–1 µV/V per year, can be a very steady linear drift</td><td>Calibrate regularly and fit a drift model; never assume the certificate value remains valid.</td></tr>
+        <tr><td>Noise (0.1 Hz – 10 Hz)</td><td>~0.1–0.3 µV peak-to-peak at 10 V; 1/f dominated</td><td>Averaging beyond tens of seconds to minutes gives little improvement.</td></tr>
+        <tr><td>Temperature coefficient (ambient)</td><td>~0.01–0.1 µV/V per °C after the oven</td><td>Control and log the laboratory temperature.</td></tr>
+        <tr><td>Pressure coefficient</td><td>a few 10<sup>−3</sup> µV/V per hPa (unit-specific)</td><td>Weather and altitude changes of tens of hPa reach the 0.1 µV/V level.  Measure the coefficient for each unit in a pressure chamber, or by long-term regression against the JVS.</td></tr>
+        <tr><td>Humidity</td><td>Small for hermetic packages, larger for plastic-encapsulated ones</td><td>Log RH; avoid large changes.</td></tr>
+        <tr><td>Shipping / power-down hysteresis</td><td>Can step by 0.1 to several µV/V</td><td>Transport on battery power; allow weeks to recover after an interruption; re-calibrate after shipping.</td></tr>
+        <tr><td>Output resistance</td><td>≲ 0.1 Ω at 10 V; much higher at 1.018 V (check the manual)</td><td>Drives the sensitivity to leakage and loading (section 5).</td></tr>
+        <tr><td>Load current</td><td>Limited by the unit specification</td><td>Use a high-input-impedance detector; do not draw more than a few µA from the 1.018 V output.</td></tr>
+      </table>
+      </div>
+
+      <h4>3.2 Care and handling</h4>
+      <ul>
+        <li>Keep Zeners powered continuously, on battery or UPS, with the oven stabilized.  Document every power event.</li>
+        <li>Mount them away from heat sources, direct airflow, and vibration, in a space with a stable temperature.</li>
+        <li>Never short the output, and never leave the 1.018 V and 10 V outputs loaded by low-impedance equipment.</li>
+        <li>Record the temperature, humidity, pressure, and power-supply status with every measurement.</li>
+        <li>Use <em>control charts</em> (value minus prediction versus date) to see changes in time.  Investigate a step as soon as it appears.</li>
+      </ul>
+    </div>
+
+    <!-- 4 ---------------------------------------------------------------->
+    <div class="card" id="compare">
+      <h3>4. Zener-to-zener comparison</h3>
+      <p>
+        Comparisons are done at the <em>difference</em> level: both standards are connected in series-opposing, and the small residual is measured with a sensitive nanovoltmeter or null detector.  Since the detector range can be around 100 µV to 1 mV instead of 10 V, its gain and linearity errors are scaled down by a factor of \(10^4\)–\(10^5\) and become negligible.  The accuracy of the comparison is then set by the reference, the leads, and leakage and thermal effects, not by the detector.
+      </p>
+
+      <figure>
+        <svg viewBox="0 0 640 270" role="img" aria-label="Series-opposing comparison of two Zener references with a null detector, showing leakage resistances to ground" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#0a3d62"/>
+            </marker>
+          </defs>
+          <g font-family="sans-serif" font-size="13" stroke="#0a3d62" stroke-width="2" fill="none">
+            <!-- Zener X -->
+            <rect x="30" y="80" width="130" height="70" rx="8" fill="#eef3f9"/>
+            <text x="95" y="112" text-anchor="middle" stroke="none" fill="#0a3d62" font-weight="bold">Zener X</text>
+            <text x="95" y="132" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="11">V<tspan baseline-shift="sub" font-size="9">X</tspan> ≈ 10 V</text>
+            <!-- Zener R -->
+            <rect x="480" y="80" width="130" height="70" rx="8" fill="#eef3f9"/>
+            <text x="545" y="112" text-anchor="middle" stroke="none" fill="#0a3d62" font-weight="bold">Zener R (reference)</text>
+            <text x="545" y="132" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="11">V<tspan baseline-shift="sub" font-size="9">R</tspan> ≈ 10 V</text>
+            <!-- Detector -->
+            <rect x="255" y="26" width="130" height="50" rx="8" fill="#fff"/>
+            <text x="320" y="50" text-anchor="middle" stroke="none" fill="#0a3d62" font-weight="bold">Null detector</text>
+            <text x="320" y="66" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="11">nanovoltmeter</text>
+            <!-- wires: X(+) to detector, detector to R(+) -->
+            <path d="M95,80 V51 H255"/>
+            <path d="M385,51 H545 V80"/>
+            <!-- X(-) to R(-) via low thermal reversing switch -->
+            <path d="M95,150 V190 H545 V150"/>
+            <rect x="285" y="177" width="70" height="26" fill="#fff"/>
+            <text x="320" y="195" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="11">reversing switch</text>
+            <!-- leakage resistors to ground -->
+            <path d="M95,190 V215 l-6,6 l12,10 l-12,10 l12,10 l-6,6 V260" stroke="#c0392b"/>
+            <text x="115" y="238" stroke="none" fill="#c0392b" font-size="11">R<tspan baseline-shift="sub" font-size="9">L</tspan></text>
+            <path d="M545,190 V215 l-6,6 l12,10 l-12,10 l12,10 l-6,6 V260" stroke="#c0392b"/>
+            <text x="565" y="238" stroke="none" fill="#c0392b" font-size="11">R<tspan baseline-shift="sub" font-size="9">L</tspan></text>
+            <path d="M80,260 H110 M530,260 H560 M85,266 H105 M535,266 H555"/>
+          </g>
+          <text x="320" y="262" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">Series-opposing: detector reads V<tspan baseline-shift="sub" font-size="9">X</tspan> − V<tspan baseline-shift="sub" font-size="9">R</tspan></text>
+        </svg>
+        <figcaption>Figure 2.  Series-opposing comparison.  Stray leakage resistances (red) from the low side to ground shunt the sources; their effect is discussed in section 5.</figcaption>
+      </figure>
+
+      <h4>4.1 Procedure</h4>
+      <ol>
+        <li><strong>Prepare.</strong>  Zeners powered and stable for at least a few days; instruments warmed up for at least an hour; log all environmental data.</li>
+        <li><strong>Connect.</strong>  Use low-thermal leads of equal length, with shields tied to the common guard.  Keep both Zener-to-lead connections at the same temperature.</li>
+        <li><strong>Check zeros.</strong>  Short the detector input at the point of the connection and record the offset.</li>
+        <li><strong>Measure.</strong>  Take a symmetric sequence (ABBA) of readings with the detector reversed in each half.  Choose the integration time as a whole number of power-line cycles (NPLC) of at least 10, ideally 100 for an 8½-digit meter, and wait for settling after each reversal (the reversing switch and the detector's input filter have long time constants).</li>
+        <li><strong>Repeat.</strong>  Collect at least 10 complete cycles.  Plot the difference, compute the mean and the standard deviation of the mean.</li>
+        <li><strong>Check.</strong>  Repeat with the units' positions swapped (X on the left, R on the right).  A result that changes sign with a swap exposes leakage, thermal, and ground-loop effects that would otherwise be hidden.</li>
+        <li><strong>Correct.</strong>  Apply temperature, pressure, and humidity corrections; propagate their uncertainties.</li>
+      </ol>
+
+      <h4>4.2 Computing the value</h4>
+      <div class="formula-box">
+      \[
+        V_X = V_R + \overline{\Delta V}\, + \sum_k c_k\,(x_k - x_{k,0})
+      \]
+      </div>
+      <p>
+        where \(V_R\) is the certified value of the reference at the date of measurement (predicted from its drift model), \(\overline{\Delta V}\) is the mean difference, and the sum collects the environmental corrections \(c_k\) (temperature, pressure, humidity) relative to the reference conditions \(x_{k,0}\).  Where the two units have different coefficients, apply the corrections to each separately.
+      </p>
+
+      <h4>4.3 Comparing 10 V against 1.018 V (ratio measurements)</h4>
+      <p>
+        When the two standards are at different voltages, a ratio device is needed.  Options, in rising order of accuracy and effort:
+      </p>
+      <ul>
+        <li><strong>DMM</strong> in its dc-volts function on a 10 V and a 1 V range, relying on its linearity and calibration.  Practical to a few \(\mu\)V/V.</li>
+        <li><strong>Resistive voltage divider</strong> (for example a 10:1 Kelvin–Varley divider such as the Fluke 720A or the Julie/Guildline types).  Divider linearity is typically \(\sim\)0.1 µV/V; calibrate by <em>self-calibration</em> (comparing equal decade steps with one another) or against a Josephson array.</li>
+        <li><strong>Hamon transfer standard.</strong>  A set of \(n\) nominally equal resistors is measured in series and in parallel, so that the ratio \(n^2\) is determined by an intrinsic comparison.  Uncertainties of \(\sim\)10 nV/V or better are possible at a 10:1 ratio, with a dedicated bridge.</li>
+        <li><strong>Josephson array</strong> used as a divider, with the voltage selected to match both the 1 V and 10 V levels, which removes the divider from the chain entirely (sections 7 and 8).</li>
+      </ul>
+    </div>
+
+    <!-- 5 ---------------------------------------------------------------->
+    <div class="card" id="leakage">
+      <h3>5. Leakage current measurements</h3>
+      <p>
+        Insulation is never perfect.  Any path with a finite resistance \(R_L\) from a source terminal to ground (or to a nearby lead at another potential) carries a leakage current \(I_L = V/R_L\), which flows through the source resistance \(R_S\) and the lead resistance and produces an error voltage.  For a source of resistance \(R_S\) loaded by a leakage resistance \(R_L\), the relative error is
+      </p>
+      <div class="formula-box">
+      \[
+        \varepsilon \;\approx\; -\frac{R_S}{R_L}, \qquad \Delta V = I_L R_S = \frac{V R_S}{R_L}
+      \]
+      </div>
+      <p>
+        Leakage matters most at high source resistances (a 1.018 V output with a source resistance of several kΩ, a divider output, a Josephson array lead with ohms of contact resistance) and high voltages (10 V).  For example, a source resistance of 1 kΩ with a leakage resistance of \(10^{12}\ \Omega\) causes 1 nV/V, or 10 nV at 10 V, which is comparable to the full uncertainty of a Josephson comparison.  Leakage paths come from connectors, switches, cables, circuit boards, cryoprobe feedthroughs, and moisture or contamination on any of them.
+      </p>
+
+      <div class="calc" id="leakcalc">
+        <strong>Leakage error calculator</strong><br />
+        <label>Voltage V (volts)</label> <input id="lk_v" type="number" value="10" step="any" /><br />
+        <label>Source resistance R<sub>S</sub> (ohms)</label> <input id="lk_rs" type="number" value="1000" step="any" /><br />
+        <label>Leakage resistance R<sub>L</sub> (ohms)</label> <input id="lk_rl" type="number" value="1e12" step="any" /><br />
+        <div class="out" id="lk_out"></div>
+      </div>
+
+      <h4>5.1 Typical insulation resistances</h4>
+      <div class="tablewrap">
+      <table>
+        <tr><th>Material</th><th>Volume resistivity (order of magnitude)</th><th>Comments</th></tr>
+        <tr><td>PTFE (Teflon)</td><td>&gt; 10<sup>18</sup> Ω·cm</td><td>Excellent, but surface contamination dominates in practice.  Does not absorb water.</td></tr>
+        <tr><td>Polyethylene, polystyrene</td><td>10<sup>16</sup>–10<sup>18</sup> Ω·cm</td><td>Good; polystyrene is sensitive to solvents.</td></tr>
+        <tr><td>Glass-epoxy (FR-4)</td><td>10<sup>12</sup>–10<sup>14</sup> Ω·cm</td><td>Surface resistance falls steeply with humidity and flux residue; avoid for the highest-impedance nodes.</td></tr>
+        <tr><td>Phenolic, nylon</td><td>10<sup>9</sup>–10<sup>12</sup> Ω·cm</td><td>Absorb moisture; unsuitable.</td></tr>
+      </table>
+      </div>
+
+      <h4>5.2 Methods to measure and control leakage</h4>
+
+      <figure>
+        <svg viewBox="0 0 640 230" role="img" aria-label="Series resistor leakage test: a source with an inserted series resistor, a detector, and a leakage resistance to ground" xmlns="http://www.w3.org/2000/svg">
+          <g font-family="sans-serif" font-size="13" stroke="#0a3d62" stroke-width="2" fill="none">
+            <rect x="30" y="60" width="120" height="70" rx="8" fill="#eef3f9"/>
+            <text x="90" y="90" text-anchor="middle" stroke="none" fill="#0a3d62" font-weight="bold">Source</text>
+            <text x="90" y="110" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="11">V, R<tspan baseline-shift="sub" font-size="9">S</tspan></text>
+            <path d="M150,75 H220"/>
+            <path d="M220,63 l8,12 l8,-24 l8,24 l8,-24 l8,24 l8,-12 H320" stroke-linejoin="round"/>
+            <text x="270" y="42" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="11">switchable R<tspan baseline-shift="sub" font-size="9">ser</tspan> (0, 1 k, 10 k, 100 k)</text>
+            <path d="M320,75 H480"/>
+            <rect x="480" y="55" width="130" height="90" rx="8" fill="#fff"/>
+            <text x="545" y="92" text-anchor="middle" stroke="none" fill="#0a3d62" font-weight="bold">High-Z detector</text>
+            <text x="545" y="112" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="11">reads V<tspan baseline-shift="sub" font-size="9">d</tspan></text>
+            <path d="M150,115 H480"/>
+            <!-- leakage branch -->
+            <path d="M400,75 V150 l-6,6 l12,10 l-12,10 l12,10 l-6,6 V205" stroke="#c0392b"/>
+            <text x="420" y="178" stroke="none" fill="#c0392b" font-size="11">R<tspan baseline-shift="sub" font-size="9">L</tspan> (unknown)</text>
+            <path d="M385,205 H415 M390,211 H410"/>
+          </g>
+        </svg>
+        <figcaption>Figure 3.  Series-resistor leakage test.  Reading the detector as a function of the inserted \(R_{ser}\) gives the leakage conductance as the slope.</figcaption>
+      </figure>
+
+      <ol>
+        <li><strong>Series-resistance (slope) method.</strong>  Insert a known series resistance \(R_{ser}\) in one lead (in practice a switched set such as 0, 1 kΩ, 10 kΩ, 100 kΩ) and record the detector reading for each value.  The reading is
+          <div class="formula-box">
+          \[
+            V_d(R_{ser}) = V_0 - V \,\frac{R_S + R_{ser}}{R_L}\;\;\Rightarrow\;\; \frac{dV_d}{dR_{ser}} = -\frac{V}{R_L}
+          \]
+          </div>
+          A straight-line fit gives \(1/R_L\) from the slope, and the intercept \(V_0\) is the value at zero added resistance.  The correction at the actual operating condition is \(V\,R_S/R_L\).  Use equal-length measurement times and ABBA ordering, because each step also disturbs the thermal EMFs.  Use resistors with low temperature coefficients and low thermal EMF.</li>
+        <li><strong>Direct current measurement.</strong>  Disconnect the source terminal from the measurement and connect a picoammeter or electrometer between the node and ground, with the voltage on.  Resolutions of 1–10 fA are achievable with a good electrometer; keep the lead guarded (triax), and let dielectric absorption decay (minutes to hours).  This is the most direct method for isolating <em>which</em> component leaks.</li>
+        <li><strong>Voltage-decay (RC) method.</strong>  Charge a known capacitance \(C\) on the node through the insulation under test, then isolate it and watch \(V(t) = V_0\, e^{-t/(R_L C)}\).  Excellent for very large \(R_L\) (greater than \(10^{13}\ \Omega\)); dielectric absorption causes an initial fast decay that is not leakage, so fit only the late-time tail.</li>
+        <li><strong>Guarded (three-terminal) measurement.</strong>  Surround the high-impedance node by a guard driven at the same potential by a buffer (or by the source's guard terminal).  Because the voltage across the guarded insulation is zero, no leakage current flows in the measured path.  A leakage test with the guard removed and replaced shows how much the guard helps.</li>
+        <li><strong>Polarity and position reversal.</strong>  A leakage error scales with the voltage and with the lead's potential, so it changes sign when the source polarity is reversed relative to ground, but a thermal EMF does not.  Comparing results with the potential of the ground point at different positions in the circuit separates the two.</li>
+        <li><strong>Step-voltage method.</strong>  Measure the same difference at 1 V, 5 V, and 10 V (a Josephson array makes this easy).  The part that scales with \(V\) is leakage; the part independent of \(V\) is thermal offset.</li>
+      </ol>
+
+      <h4>5.3 Reducing leakage</h4>
+      <ul>
+        <li>Use PTFE or guarded-triaxial cables; avoid PVC and plain polyethylene.</li>
+        <li>Clean connectors and terminals with isopropyl alcohol and dry them; do not touch the insulators.</li>
+        <li>Keep humidity moderate.  In cryogenic systems, keep the cryoprobe dry and check for ice or condensation in feedthroughs.</li>
+        <li>Make \(R_S\) as small as possible at the points where leakage is possible.  Keep leads short, and use a low-resistance Kelvin connection.</li>
+        <li>Fix the grounding point so that leakage currents flow in a path that does not include the measured loop (usually at the low side of the detector, or at the low side of the lower-impedance standard).</li>
+        <li>Include leakage as an uncertainty component even after measuring it.  The leakage may change with humidity, so enter a Type B component equal to the observed spread, not just the corrected value.</li>
+      </ul>
+
+      <div class="tip">
+        <strong>Rule of thumb.</strong>  Make sure that \(R_L \ge 10^3 \times R_S\times(V/u_{target}\cdot V)\) ... in plain terms, for a target relative uncertainty of \(u\), the leakage resistance must be greater than \(R_S/u\).  For \(R_S = 1\ \text{k}\Omega\) and \(u = 1\ \text{nV/V}\), that means \(R_L > 10^{12}\ \Omega\).
+      </div>
+    </div>
+
+    <!-- 6 ---------------------------------------------------------------->
+    <div class="card" id="ensemble">
+      <h3>6. Reducing uncertainty with multiple Zeners</h3>
+      <p>
+        A single Zener has noise, drift, and unpredictable steps.  A group of \(N\) Zeners lets you (a) average the random part, (b) detect and reject a unit that has failed, (c) estimate each unit's drift without a JVS visit, and (d) keep the unit of voltage alive between primary calibrations.  The benefits are real but limited by <em>correlation</em> between units and by the way the group is analyzed.
+      </p>
+
+      <h4>6.1 What averaging actually buys</h4>
+      <p>
+        If each Zener has independent errors of standard uncertainty \(u\) and any two are correlated with coefficient \(\rho\) (common temperature, pressure, humidity, supply, or reference), the uncertainty of the equal-weight mean is
+      </p>
+      <div class="formula-box">
+      \[
+        u_{\bar V} = u\,\sqrt{\frac{1 + (N-1)\rho}{N}}
+      \]
+      </div>
+      <p>
+        For \(\rho = 0\), \(u_{\bar V} = u/\sqrt{N}\); for \(\rho = 1\), nothing improves, because every unit makes the same error.  Fortunately, <strong>diversity</strong> reduces \(\rho\): use units from different manufacturers, batches, and designs; store them in different thermal locations (while keeping each one stable); and compare them against a common reference only through the same measurement path.
+      </p>
+
+      <div class="calc" id="enscalc">
+        <strong>Ensemble-mean uncertainty</strong><br />
+        <label>Number of Zeners N</label> <input id="en_n" type="number" value="6" min="1" step="1" /><br />
+        <label>Single-unit uncertainty u (nV/V)</label> <input id="en_u" type="number" value="100" step="any" /><br />
+        <label>Pairwise correlation ρ (0 to 1)</label> <input id="en_r" type="number" value="0.2" min="0" max="1" step="0.05" /><br />
+        <div class="out" id="en_out"></div>
+      </div>
+
+      <h4>6.2 Weighted mean</h4>
+      <p>
+        The units are rarely equal.  Weight each by the reciprocal of its variance of <em>prediction error</em>, not its specification: use the root-mean-square residual of its past data about its drift model.
+      </p>
+      <div class="formula-box">
+      \[
+        \bar V = \sum_{i=1}^{N} w_i V_i, \qquad w_i = \frac{1/\sigma_i^2}{\sum_j 1/\sigma_j^2}, \qquad u^2(\bar V) = \frac{1}{\sum_i 1/\sigma_i^2} \quad (\text{uncorrelated})
+      \]
+      </div>
+      <p>
+        Cap the weight of any single unit (for example at 30–40 %), or the ensemble may be dominated by one lucky, but possibly wrong, unit.  Time-scale laboratories use exactly this approach (the AT1 algorithm for atomic clocks is the model).  Recompute the weights at set intervals; do not change them after every measurement or the "mean" will chase the noise.
+      </p>
+
+      <h4>6.3 Round-robin intercomparison and least squares</h4>
+      <p>
+        Instead of comparing every unit with only one reference, measure <em>many</em> pairs.  For \(N\) Zeners there are \(M = N(N-1)/2\) pairs, giving \(M\) measured differences \(d_{ij} = V_i - V_j + \epsilon_{ij}\).  In matrix form
+      </p>
+      <div class="formula-box">
+      \[
+        \mathbf{d} = \mathbf{X}\,\mathbf{v} + \boldsymbol{\epsilon}, \qquad \hat{\mathbf{v}} = \left(\mathbf{X}^{T}\mathbf{W}\mathbf{X} + \mathbf{c}\mathbf{c}^{T}\right)^{-1}\mathbf{X}^{T}\mathbf{W}\,\mathbf{d}
+      \]
+      </div>
+      <p>
+        where each row of \(\mathbf{X}\) has +1 and −1 in the columns of the two units compared, \(\mathbf{W}\) holds the inverse variances of the measurements, and the <strong>constraint</strong> \(\mathbf{c}^{T}\mathbf{v} = 0\) (or a fixed value) defines the origin, since differences alone cannot fix an absolute level.  For a complete, equally-weighted matrix with the constraint \(\sum_i V_i = 0\) (deviations from the group mean) the solution is simply
+      </p>
+      <div class="formula-box">
+      \[
+        \hat v_i = \frac{1}{N}\sum_{j \ne i} d_{ij}
+      \]
+      </div>
+      <p>
+        The benefit is <strong>redundancy</strong>: the \(M - (N-1)\) degrees of freedom allow a goodness-of-fit test (the residual standard deviation \(s^2 = \mathbf{r}^T\mathbf{W}\mathbf{r}/\nu\), \(\nu = M-N+1\)).  If one unit has jumped, the residuals of the measurements involving it are large, so it is identified immediately.  The same matrix also reveals a systematic error in the comparison system, such as a leakage that depends on which unit is in which position, because that error does not close around the loops: \(d_{12} + d_{23} + d_{31} \neq 0\).
+      </p>
+      <div class="note">
+        Always randomize the order and position of the units (and use each pair in both orientations).  An unbalanced design allows errors that depend on position (a bad scanner channel, a leaky lead) to look like a unit's value.
+      </div>
+
+      <h4>6.4 Drift models and prediction</h4>
+      <p>
+        Between Josephson calibrations, each unit is predicted by a model, usually linear:
+      </p>
+      <div class="formula-box">
+      \[
+        V_i(t) = a_i + b_i (t - t_0) + \gamma_P\,(P - P_0) + \gamma_T\,(T - T_0) + \gamma_H\,(H - H_0) + \eta_i(t)
+      \]
+      </div>
+      <p>
+        Fit \(a_i\) and \(b_i\) to the history of calibration values of the group, and the environmental coefficients \(\gamma\) to the residuals (together with long-term regressions).  Quadratic terms are rarely justified; a drift that seems curved is usually a step in disguise.  The prediction uncertainty of a fitted line grows away from the data, with a minimum at the mean of the calibration dates:
+      </p>
+      <div class="formula-box">
+      \[
+        u^2(\hat V(t)) = s^2\left[\frac{1}{n} + \frac{(t-\bar t)^2}{\sum (t_k-\bar t)^2}\right]
+      \]
+      </div>
+      <p>
+        Calibrate the group <em>more often at first</em>, then lengthen the interval as the drift is shown to be predictable.  More frequent intercomparison among units (which is cheap) between JVS calibrations strengthens the drift model for the group even when the JVS data are sparse.
+      </p>
+
+      <h4>6.5 A strategy that works</h4>
+      <ol>
+        <li><strong>Choose N ≥ 4</strong> Zeners, ideally from at least two designs.  Four units give a rich enough pair matrix for redundancy checks (six pairs, three degrees of freedom).</li>
+        <li><strong>Compare weekly (or more often)</strong> using a randomized round-robin and the least-squares analysis above; all units remain powered.</li>
+        <li><strong>Calibrate against the JVS/PJVS</strong> at intervals (months).  Use these results to anchor the group value and to measure each unit's drift.</li>
+        <li><strong>Define the group value</strong> as a weighted mean of the predicted values, with weights set from the residual history, and with a cap on the weight.</li>
+        <li><strong>Add a check standard</strong> that is <em>not</em> a member of the group, and plot its predicted-minus-measured value.  A Zener that is excluded from the mean provides an independent test of the group.</li>
+        <li><strong>Apply control limits</strong> (for example ±3 s on the residual of each unit), investigate any point outside, and record the investigation.  Never discard data silently.</li>
+        <li><strong>Evaluate the uncertainty of the mean</strong> including the correlation terms (section 6.1), the prediction uncertainty (section 6.4), and the Josephson calibration uncertainty, which is common to the whole group and so does not decrease with \(N\).</li>
+        <li><strong>Maintain environmental records</strong> for every comparison so that corrections can be re-derived later.</li>
+      </ol>
+      <div class="note">
+        <strong>What does not average out:</strong> the uncertainty of the primary standard; leakage and thermal offsets that are common to the measurement system; a lab-wide pressure or temperature excursion; and the same drift trend shared by units from the same lot.  Multiple Zeners reduce the <em>random</em> and <em>independent</em> parts, and make failures visible.
+      </div>
+    </div>
+
+    <!-- 7 ---------------------------------------------------------------->
+    <div class="card" id="jvs">
+      <h3>7. Josephson voltage standards (JVS)</h3>
+      <h4>7.1 Principle</h4>
+      <p>
+        When a superconductor–insulator–superconductor (SIS) junction is irradiated with microwaves of frequency \(f\), its current–voltage curve develops constant-voltage <em>Shapiro steps</em> at voltages that depend only on the frequency and the fundamental constants:
+      </p>
+      <div class="formula-box">
+      \[
+        V_n = n\,\frac{f}{K_J}, \qquad K_J = \frac{2e}{h} = 483\,597.848\,416\,984\ \text{GHz/V (exact)}
+      \]
+      </div>
+      <p>
+        A series array of \(N\) junctions biased on the same step number \(n\) gives
+      </p>
+      <div class="formula-box">
+      \[
+        V_{array} = N\,n\,\frac{f}{K_J}
+      \]
+      </div>
+      <p>
+        With \(f = 75\ \text{GHz}\), a single junction produces about 155 µV per step; a conventional array of roughly 20,000 junctions biased on \(n = 1\) to \(3\) generates up to about 10 V.  The microwave frequency is traceable to a cesium or GPS-disciplined 10 MHz reference, with a relative uncertainty of about \(10^{-12}\) or better, so the frequency term is negligible.
+      </p>
+      <div class="note">
+        <strong>The 2019 redefinition.</strong>  Before 2019, laboratories used the conventional value \(K_{J-90} = 483\,597.9\) GHz/V.  Since the redefinition, \(K_J\) is exact, and the SI volt is about 0.107 µV/V larger than the \(V_{90}\) representation.  Make sure that a certificate states which value was used, and compare data taken before and after the change carefully.
+      </div>
+
+      <figure>
+        <svg viewBox="0 0 640 290" role="img" aria-label="Block diagram of a Josephson voltage standard comparison with a Zener reference" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#0a3d62"/>
+            </marker>
+          </defs>
+          <g font-family="sans-serif" font-size="12" stroke="#0a3d62" stroke-width="2" fill="none">
+            <!-- cryostat -->
+            <rect x="20" y="20" width="200" height="180" rx="10" fill="#eef3f9" stroke-dasharray="6 4"/>
+            <text x="120" y="40" text-anchor="middle" stroke="none" fill="#0a3d62" font-weight="bold">Cryoprobe (4 K)</text>
+            <rect x="60" y="85" width="120" height="50" rx="6" fill="#fff"/>
+            <text x="120" y="108" text-anchor="middle" stroke="none" fill="#0a3d62">Josephson array</text>
+            <text x="120" y="124" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="10">N junctions</text>
+            <!-- microwave -->
+            <rect x="260" y="20" width="130" height="50" rx="6" fill="#fff"/>
+            <text x="325" y="42" text-anchor="middle" stroke="none" fill="#0a3d62">Microwave source</text>
+            <text x="325" y="58" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="10">f ≈ 75 GHz</text>
+            <rect x="260" y="95" width="130" height="40" rx="6" fill="#fff"/>
+            <text x="325" y="120" text-anchor="middle" stroke="none" fill="#0a3d62">10 MHz reference</text>
+            <path d="M260,45 H150 V85" marker-end="url(#ar3)"/>
+            <path d="M325,95 V72" marker-end="url(#ar3)"/>
+            <!-- bias -->
+            <rect x="20" y="225" width="120" height="45" rx="6" fill="#fff"/>
+            <text x="80" y="245" text-anchor="middle" stroke="none" fill="#0a3d62">Bias source</text>
+            <text x="80" y="260" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="10">step selection</text>
+            <path d="M80,225 V200"/>
+            <path d="M80,200 V135" stroke-dasharray="2 3"/>
+            <!-- zener -->
+            <rect x="500" y="85" width="120" height="50" rx="6" fill="#fff"/>
+            <text x="560" y="108" text-anchor="middle" stroke="none" fill="#0a3d62">Zener</text>
+            <text x="560" y="124" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="10">10 V or 1.018 V</text>
+            <!-- detector -->
+            <rect x="260" y="190" width="130" height="50" rx="6" fill="#fff"/>
+            <text x="325" y="212" text-anchor="middle" stroke="none" fill="#0a3d62">Nanovoltmeter</text>
+            <text x="325" y="228" text-anchor="middle" stroke="none" fill="#0a3d62" font-size="10">(V<tspan baseline-shift="sub" font-size="8">Z</tspan> − V<tspan baseline-shift="sub" font-size="8">J</tspan>)</text>
+            <!-- wiring: array + to detector - to zener -->
+            <path d="M180,110 H220 V215 H260"/>
+            <path d="M390,215 H560 V135"/>
+            <path d="M120,135 V160 H460 V105 H500" stroke-opacity="0"/>
+          </g>
+          <text x="320" y="282" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">Array and Zener are series-opposing; the detector sees only the small difference.</text>
+        </svg>
+        <figcaption>Figure 4.  Conventional JVS comparison with a Zener.</figcaption>
+      </figure>
+
+      <h4>7.2 Operating a conventional (hysteretic) array</h4>
+      <p>
+        Conventional SIS arrays are strongly hysteretic.  The I–V curve has many stable steps at the same current, so the operator must <em>find</em> and <em>hold</em> the correct step number.
+      </p>
+      <ol>
+        <li><strong>Prepare.</strong>  Cool the array in a magnetic shield (Cryoperm or mu-metal) to avoid flux trapping, which lowers the critical current and causes missing junctions.  Check that no junction is shorted or open (the I–V in the absence of microwaves).</li>
+        <li><strong>Set the microwave power and frequency</strong> to maximize the width of the step; a typical bias margin is a few tens of µA.  Choose the frequency so that \(V_{array}\) matches the Zener within the detector range (frequency tuning gives a few percent).</li>
+        <li><strong>Select the step</strong> by pulsing the bias through zero and ramping to the target.  Verify the step number by measuring the voltage with a calibrated DMM to better than the step spacing, or by the known voltage from the frequency change, \(\Delta V = N\,n\,\Delta f/K_J\).</li>
+        <li><strong>Measure the difference</strong> \(V_Z - V_J\) with a nanovoltmeter, with the source polarity reversed (a Josephson array reverses by reversing the bias).  A reversing switch doubles the sensitivity and cancels constant thermal EMFs.</li>
+        <li><strong>Monitor the bias current</strong> for the step's stability.  If the step is lost during a reading, discard the reading; do not attempt to correct it.</li>
+      </ol>
+
+      <h4>7.3 Systematic effects to control</h4>
+      <div class="tablewrap">
+      <table>
+        <tr><th>Effect</th><th>Typical size</th><th>Mitigation</th></tr>
+        <tr><td>Frequency error</td><td>≲ 0.001 nV/V</td><td>Lock to a 10 MHz primary reference; count the frequency.</td></tr>
+        <tr><td>Leakage in cryoprobe and leads</td><td>0.1–10 nV/V</td><td>Section 5 methods: series-resistor test, guard, dry cryoprobe.</td></tr>
+        <tr><td>Thermal EMFs in the leads and cryoprobe</td><td>10–1000 nV before reversal</td><td>Polarity reversal; copper wiring; thermal anchoring; settling time.</td></tr>
+        <tr><td>Detector gain and offset</td><td>≲ 1 nV when the null is within ~10 µV</td><td>Adjust until the residual is small; check gain on the range used.</td></tr>
+        <tr><td>Microwave leakage and rectification</td><td>0.1–5 nV</td><td>Filters, shielded enclosure, check with microwave on/off at a step with no junction in the pass band.</td></tr>
+        <tr><td>Wrong step number</td><td>Large, easily seen</td><td>Verify with a DMM and by the frequency change.</td></tr>
+        <tr><td>Trapped flux or missing junctions</td><td>Variable</td><td>Shield, verify I–V with microwaves, warm and re-cool if needed.</td></tr>
+        <tr><td>Series-resistance of the leads</td><td>mΩ–Ω with µA currents</td><td>Four-wire connection; null the detector so the current is near zero.</td></tr>
+      </table>
+      </div>
+    </div>
+
+    <!-- 8 ---------------------------------------------------------------->
+    <div class="card" id="pjvs">
+      <h3>8. Programmable JVS (PJVS)</h3>
+      <p>
+        A programmable Josephson voltage standard replaces each SIS junction with a stack of overdamped, <em>non-hysteretic</em> junctions (SNS or SNIS barriers) that have single-valued I–V characteristics.  The array is divided into segments, usually with binary-weighted numbers of junctions (1, 2, 4, 8, …).  Each segment has its own bias and can be switched among \(n = -1, 0, +1\), so the output is
+      </p>
+      <div class="formula-box">
+      \[
+        V_{PJVS} = \frac{f}{K_J}\sum_{k} n_k N_k, \qquad n_k \in \{-1, 0, +1\}
+      \]
+      </div>
+      <p>
+        With about \(2\times 10^5\) to \(3\times 10^5\) junctions on a chip operated at 15–20 GHz (varying with the design), a 10 V PJVS covers −10 V to +10 V in steps of well under a millivolt, and its output can be programmed to any step in microseconds.  Because the steps are intrinsically stable, the circuit does not require step-hunting, and the bias currents can be set automatically.
+      </p>
+
+      <h4>8.1 Comparison of the two types</h4>
+      <div class="tablewrap">
+      <table>
+        <tr><th></th><th>Conventional JVS</th><th>Programmable JVS</th></tr>
+        <tr><td>Junction type</td><td>Hysteretic SIS</td><td>Non-hysteretic SNS / SNIS</td></tr>
+        <tr><td>Operating frequency</td><td>~70–75 GHz</td><td>~10–20 GHz (design dependent)</td></tr>
+        <tr><td>Step selection</td><td>Manual / automated step-finding</td><td>Digital programming, instant</td></tr>
+        <tr><td>Output voltage</td><td>Few steps, set by f and n</td><td>Any of thousands of values, ±10 V</td></tr>
+        <tr><td>Step stability</td><td>Can be lost; sensitive to noise</td><td>Intrinsically stable during measurement</td></tr>
+        <tr><td>Direct comparison to Zener</td><td>Zener must match one step ± detector range</td><td>Choose the PJVS step closest to the Zener voltage</td></tr>
+        <tr><td>Divider / linearity checks</td><td>Limited</td><td>Easy: any voltage from 0 to full scale</td></tr>
+        <tr><td>Ac waveforms</td><td>Not practical</td><td>Quantum-accurate sampled waveforms (JAWS and stepwise-approximated)</td></tr>
+        <tr><td>Typical type-B uncertainty (10 V)</td><td>~1–2 nV/V</td><td>~1–2 nV/V</td></tr>
+      </table>
+      </div>
+
+      <h4>8.2 Measurement practices specific to PJVS</h4>
+      <ul>
+        <li><strong>Transient behavior.</strong>  When the step changes, the output transitions in a few microseconds but the measurement circuit has a much longer time constant (cable capacitance, detector filter).  Discard samples for a settling time after each step change; the effect is a systematic error if included.</li>
+        <li><strong>Reversal.</strong>  A PJVS can reverse polarity <em>electronically</em> at a high rate (up to tens of Hz), which cancels slowly varying offsets to a far greater degree than manual reversal.  Fast reversal at 0.1–10 Hz also moves the measurement to higher frequencies, past much of the 1/f noise in the detector.</li>
+        <li><strong>Digital bias.</strong>  Use a bias that is stable, low-noise, and filtered.  Bias noise causes steps to jump, particularly at the edges of the operating margins, so establish the margins for every segment, and operate in the middle of them.</li>
+        <li><strong>Microwave frequency.</strong>  The step voltage depends on \(f\) only; use phase-locked sources and a gated counter.  Microwave power should be adjusted for the best simultaneous margin on all segments.</li>
+        <li><strong>Verify the segment configuration.</strong>  Check, for each segment, the step width and the closure: the sum of binary-segment voltages must equal the full-array voltage.  A failed segment shows up as a deviation at the matching codes.</li>
+        <li><strong>Choose the step nearest to the Zener's voltage</strong> so the detector reads a null within a few µV, and the detector gain error is negligible.  If the Zener drifts, change the step in the next measurement; this is possible only with a PJVS.</li>
+        <li><strong>Shielded cryoprobe or cryocooler.</strong>  A closed-cycle cryocooler gives convenience, but also adds temperature oscillations, vibration, and interference.  Evaluate the pulse-tube frequency's contribution to the detector noise.</li>
+        <li><strong>Low-frequency interference.</strong>  Integrate for a whole number of line cycles and put the detector, cabling, and cryostat on a single-point ground.</li>
+      </ul>
+    </div>
+
+    <!-- 9 ---------------------------------------------------------------->
+    <div class="card" id="cal">
+      <h3>9. Calibrating Zeners against a JVS / PJVS</h3>
+      <ol>
+        <li><strong>Pre-measurement checks.</strong>
+          <ul>
+            <li>Confirm the date and status of the frequency standard and the counter.</li>
+            <li>Confirm I–V characteristics with microwaves on and off; record the margins.</li>
+            <li>Short the detector input; record the zero.  Check the detector's gain on the range in use with a known small voltage (a PJVS can supply it).</li>
+          </ul>
+        </li>
+        <li><strong>Set up the loop.</strong>  Zener (+) to array (+); the detector in the loop (Figure 4).  Use the same guard and ground at all times.  Perform the leakage tests (section 5): series resistance, polarity, and voltage steps, with the Zener connected and the microwaves on.</li>
+        <li><strong>Measure.</strong>  For each Zener output (10 V, 1.018 V, and any other levels) take enough reversal cycles for the Type A uncertainty to reach the floor given by the Allan deviation of the loop.  For the PJVS, change the step to follow the Zener drift.</li>
+        <li><strong>Test linearity</strong> of the loop using a PJVS at several voltages, or by changing \(n\) and \(f\) on a JVS, to verify that the result does not depend on the voltage at which the leakage and thermal EMF components cross over.</li>
+        <li><strong>Correct to reference conditions.</strong>  Use pressure, temperature, and humidity coefficients; record the ambient values.  For a Zener to be shipped, transfer the calibration to the reference conditions of the destination lab.</li>
+        <li><strong>Compute</strong>
+          <div class="formula-box">
+          \[
+            V_Z = N\,n\,\frac{f}{K_J} + \overline{\Delta V}_{det} + \delta_{leak} + \delta_{EMF} + \delta_{env}
+          \]
+          </div>
+          where each \(\delta\) is a correction with its own uncertainty (zero for a negligible correction that carries an uncertainty).</li>
+        <li><strong>Repeat</strong> on different days and, for the most important results, with the Zener and detector connections swapped.  Compare to the group prediction; investigate any discrepancy larger than 3 times the combined uncertainty.</li>
+        <li><strong>Update the group:</strong> include the new value in the drift fit (section 6.4) and the ensemble weights (section 6.2).</li>
+      </ol>
+    </div>
+
+    <!-- 10 --------------------------------------------------------------->
+    <div class="card" id="budget">
+      <h3>10. Example uncertainty budget</h3>
+      <p>
+        An <strong>illustrative</strong> budget for a 10 V Zener calibration against a PJVS.  Numbers are examples for the structure of the budget; evaluate your own system and do not copy them.
+      </p>
+      <div class="tablewrap">
+      <table>
+        <tr><th>Component</th><th>Type</th><th>Distribution</th><th>u (nV/V, k = 1)</th></tr>
+        <tr><td>Zener noise / loop repeatability (Allan floor)</td><td>A</td><td>Normal</td><td>5</td></tr>
+        <tr><td>Microwave frequency</td><td>B</td><td>Normal</td><td>&lt; 0.01</td></tr>
+        <tr><td>Detector gain / linearity</td><td>B</td><td>Rectangular</td><td>0.5</td></tr>
+        <tr><td>Leakage (after correction)</td><td>B</td><td>Rectangular</td><td>2</td></tr>
+        <tr><td>Residual thermal EMF</td><td>B</td><td>Rectangular</td><td>2</td></tr>
+        <tr><td>Microwave/RF rectification</td><td>B</td><td>Rectangular</td><td>0.5</td></tr>
+        <tr><td>Step-transition residual</td><td>B</td><td>Rectangular</td><td>0.5</td></tr>
+        <tr><td>Environmental correction (T, P, H)</td><td>B</td><td>Normal</td><td>3</td></tr>
+        <tr><td><strong>Combined (root-sum-square)</strong></td><td></td><td></td><td><strong>≈ 6.8</strong></td></tr>
+        <tr><td><strong>Expanded (k = 2)</strong></td><td></td><td></td><td><strong>≈ 14 nV/V (0.14 µV at 10 V)</strong></td></tr>
+      </table>
+      </div>
+      <p>
+        The combined uncertainty is the root sum of squares \(u_c = \sqrt{\sum u_i^2}\) (uncorrelated components).  Since the repeatability and the environmental terms dominate, the way to improve this budget is not to improve the PJVS, but to improve the Zener's measurement noise (longer, better-timed averaging; better environmental control) and to use the group of Zeners (section 6) to reduce the random part for the <em>maintenance</em> standard.  Combine the results with the GUM <em>(JCGM 100)</em> method, and include the correlation of components between Zeners when you propagate to a group mean.
+      </p>
+    </div>
+
+    <!-- 11 --------------------------------------------------------------->
+    <div class="card" id="checklist">
+      <h3>11. Best-practice checklist</h3>
+      <ul>
+        <li>☐ Zeners powered continuously; power events logged; battery transport only.</li>
+        <li>☐ Temperature, humidity, and pressure recorded with every measurement and corrected with known coefficients.</li>
+        <li>☐ Low-thermal-EMF wiring; copper-to-copper connections; thermal settling time observed.</li>
+        <li>☐ One ground point; guards and shields connected consistently; mains filtering.</li>
+        <li>☐ ABBA measurement sequences with polarity reversal; time-ordered data inspected before averaging.</li>
+        <li>☐ Allan deviation used to choose the averaging time; correlated data handled correctly.</li>
+        <li>☐ Leakage tested with the series-resistor, polarity, and voltage-step methods; guard effectiveness verified; humidity noted.</li>
+        <li>☐ Position/orientation swap used for every comparison.</li>
+        <li>☐ At least four Zeners from at least two designs; randomized round-robin; least-squares solution with a goodness-of-fit check.</li>
+        <li>☐ Drift model fitted and updated at each JVS/PJVS calibration; control charts maintained.</li>
+        <li>☐ Check standard outside the group.</li>
+        <li>☐ JVS: shielded cooldown, verified I–V and margins, step number confirmed, frequency traceable.</li>
+        <li>☐ PJVS: segment closure checked, settling samples discarded, fast reversal used, step chosen close to the Zener value.</li>
+        <li>☐ Certificate states \(K_J\) used (exact SI value vs. the old conventional value) and the uncertainty coverage factor.</li>
+        <li>☐ Complete uncertainty budget including common (non-averaging) components.</li>
+      </ul>
+    </div>
+
+    <!-- 12 --------------------------------------------------------------->
+    <div class="card" id="refs">
+      <h3>12. References and further reading</h3>
+      <ul>
+        <li>C. A. Hamilton, "Josephson voltage standards," <em>Review of Scientific Instruments</em>, vol. 71, no. 10, pp. 3611–3623, 2000.</li>
+        <li>R. L. Kautz, "Noise, chaos, and the Josephson voltage standard," <em>Reports on Progress in Physics</em>, vol. 59, pp. 935–992, 1996.</li>
+        <li>C. J. Burroughs <em>et al.</em>, "NIST 10 V programmable Josephson voltage standard system," <em>IEEE Transactions on Instrumentation and Measurement</em>, vol. 60, no. 7, pp. 2482–2488, 2011.</li>
+        <li>T. J. Witt, "Maintenance and dissemination of voltage standards by Zener-diode-based instruments," <em>IEE Proceedings – Science, Measurement and Technology</em>, vol. 149, no. 6, pp. 305–312, 2002.</li>
+        <li>B. N. Taylor and T. J. Witt, "New international electrical reference standards based on the Josephson and quantum Hall effects," <em>Metrologia</em>, vol. 26, pp. 47–62, 1989.</li>
+        <li>JCGM 100:2008, <em>Evaluation of measurement data – Guide to the expression of uncertainty in measurement</em> (GUM).</li>
+        <li>Keithley Instruments, <em>Low Level Measurements Handbook</em> (thermal EMFs, leakage, guarding, and electrometer practice).</li>
+        <li>Zener manufacturers' manuals (for example the Fluke 732-series) for the specified temperature, pressure, and load behavior of a particular unit.</li>
+      </ul>
+      <div class="note">
+        The numerical values on this page are typical orders of magnitude for educational purposes.  Always consult the specification and the characterization data of the particular instruments, and verify the references against the originals.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Leakage error calculator
+    (function () {
+      function fmt(x) {
+        var a = Math.abs(x);
+        if (a === 0) return "0";
+        if (a >= 1e-3 && a < 1e4) return x.toPrecision(3);
+        return x.toExponential(2);
+      }
+      function leak() {
+        var v = parseFloat(document.getElementById("lk_v").value);
+        var rs = parseFloat(document.getElementById("lk_rs").value);
+        var rl = parseFloat(document.getElementById("lk_rl").value);
+        var out = document.getElementById("lk_out");
+        if (!(rl > 0) || isNaN(v) || isNaN(rs)) { out.textContent = "Enter positive values."; return; }
+        var eps = rs / rl;           // relative error
+        var dv = v * eps;            // volts
+        var il = v / rl;             // amps
+        out.textContent = "Relative error: " + fmt(eps * 1e9) + " nV/V   |   Voltage error: " +
+          fmt(dv * 1e9) + " nV   |   Leakage current: " + fmt(il * 1e12) + " pA";
+      }
+      ["lk_v", "lk_rs", "lk_rl"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", leak);
+      });
+      leak();
+    })();
+
+    // Ensemble uncertainty calculator
+    (function () {
+      function ens() {
+        var n = parseInt(document.getElementById("en_n").value, 10);
+        var u = parseFloat(document.getElementById("en_u").value);
+        var r = parseFloat(document.getElementById("en_r").value);
+        var out = document.getElementById("en_out");
+        if (!(n >= 1) || isNaN(u) || isNaN(r) || r < 0 || r > 1) { out.textContent = "Check inputs (N ≥ 1, 0 ≤ ρ ≤ 1)."; return; }
+        var um = u * Math.sqrt((1 + (n - 1) * r) / n);
+        var floor = u * Math.sqrt(r);
+        out.textContent = "Uncertainty of the mean: " + um.toFixed(1) + " nV/V (single unit: " + u + " nV/V; " +
+          "limit as N grows: " + floor.toFixed(1) + " nV/V)";
+      }
+      ["en_n", "en_u", "en_r"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", ens);
+      });
+      ens();
+    })();
+  </script>
+
+ {% include footer.html %}
+
+</body>
+</html>

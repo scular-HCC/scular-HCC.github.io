@@ -35,6 +35,7 @@
         <li><strong>Apply</strong> the time-shift rule $x(t - T) \leftrightarrow e^{-j k\omega_0 T}\, X_k$.</li>
         <li><strong>Apply</strong> the modulation rule $x(t)\,e^{j K\omega_0 t} \leftrightarrow X_{k-K}$.</li>
         <li><strong>Recognise</strong> that <em>time scaling</em> by $\beta > 0$ leaves $X_k$ unchanged.</li>
+        <li><strong>Use</strong> differentiation: $x'(t) \leftrightarrow jk\omega_0 X_k$.</li>
       </ol>
     </div>
     <div class="slide-footer"><span class="label">Objectives</span><span class="rule"></span><span class="author">ENES-222 · L20</span></div>
@@ -423,6 +424,11 @@
           </div>
           <p>$y$ has period $T_0/\beta$ and fundamental $\beta\omega_0$: the harmonics ride along. The coefficient values are unchanged; only the frequency grid $k\beta\omega_0$ moves.</p>
           <p class="muted">No DFT analogue: the DFT lives on a fixed grid of size $N$.</p>
+          <div class="defn">
+            <div class="term">Prop 7 · differentiation</div>
+            <p style="margin:0;">$y(t)=\dfrac{dx}{dt} \Rightarrow Y_k = jk\omega_0\,X_k$ (differentiate $e^{jk\omega_0 t}$ term by term; $Y_0=0$).</p>
+            <p style="margin:6px 0 0;">Real form: $\dfrac{d}{dt}\big[2B_k\sin(k\omega_0 t)\big]=2k\omega_0B_k\cos(k\omega_0 t)$, so a sine series turns into a cosines-only series. For real odd $x$: $X_k=-jB_k$ ($k>0$), $X_{-k}=jB_k$.</p>
+          </div>
         </div>
         <div class="step">
           <div class="step-label">Derivation</div>
@@ -664,9 +670,9 @@
           <div class="how">Coefficients invariant under stretch.</div>
         </div>
         <div class="cell">
-          <div class="num">LINKED</div>
-          <div class="what">DT &amp; CT theories mirror each other.</div>
-          <div class="how">Use the table you know.</div>
+          <div class="num">DIFFERENTIATE</div>
+          <div class="what">$x'(t) \leftrightarrow jk\omega_0 X_k$</div>
+          <div class="how">DC term disappears; sines become cosines.</div>
         </div>
       </div>
     </div>
