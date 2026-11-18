@@ -439,7 +439,7 @@ n & x[n] & \text{filter} & \text{formula}\\\hline
       </div>
       <div class="cols even">
         <div class="bordered-math huge-math">
-          $$H(z) \,=\, H_1(z)\, H_2(z) \,=\, H_2(z)\, H_1(z)$$
+          $$\begin{aligned}H(z)&=H_1(z)\,H_2(z)\\&=H_2(z)\,H_1(z)\end{aligned}$$
         </div>
         <div class="stack gap-item">
           <p>Proof: feed $x[n]=z^n$. Filter 1 gives $H_1(z)z^n$; by linearity filter 2 scales that by $H_2(z)$, so $y[n]=H_2(z)H_1(z)z^n$.</p>
